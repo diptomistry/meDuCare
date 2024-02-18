@@ -1,0 +1,112 @@
+/* home.css */
+
+.home {
+    text-align: center;
+  }
+  
+  .top-bar {
+    background-color: #1d3556; /* Use your preferred color */
+    color: #fff;
+    padding: 10px;
+    
+    border-bottom: 1px solid #000;
+  }
+  
+  .top-bar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px; /* Set a maximum width for the content */
+    margin: 0 auto; /* Center the content horizontally */
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .home-logo {
+    height: 50px; /* Adjust the height based on your logo size */
+    margin-right: 10px; /* Add margin to the right for spacing */
+  }
+  
+  .university-text {
+    font-size: 18px; /* Adjust the font size as needed */
+    font-weight: bold;
+    letter-spacing: 2px; /* Add letter-spacing for better readability */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add a subtle text shadow */
+    transition: font-size 0.3s ease-in-out, text-shadow 0.3s ease-in-out; /* Add a smooth transition effect */
+  }
+  
+  .university-text:hover {
+    font-size: 22px; /* Adjust the font size on hover */
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5); /* Increase the text shadow on hover */
+  }
+  
+  .center-text {
+    flex-grow: 1;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0; /* Set initial opacity to 0 */
+    animation: fadeIn 1s ease-in-out forwards; /* Add a fadeIn animation */
+    color: #a8d9da;
+    font-size: 24px; 
+  
+    
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hero-section {
+    padding: 20px;
+  }
+  
+  footer {
+    margin-top: 200px;
+  }
+  .login-button {
+
+    padding: 8px 35px;
+    font-size: 16px;
+    cursor: pointer;
+    /*increase button size*/
+    
+  }
+  .spacing {
+    margin-top: 100px;
+  }
+
+  .button-column {
+    display: flex;
+    align-items: center;
+  }
+  
+  .button-column button {
+    margin-left: 50px; /* Add some spacing between buttons */
+    padding: 10px 20px; /* Increase button padding for larger size */
+    font-size: 16px; /* Increase font size */
+    background-color: #3498db; /* Set initial button color */
+    color: #fff; /* Set text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .button-column button:hover {
+    background-color: #2980b9; /* Change color on hover */
+  }
+  
+  .button-column button:focus {
+    background-color: #1f618d; /* Change color when clicked */
+  }
+  
