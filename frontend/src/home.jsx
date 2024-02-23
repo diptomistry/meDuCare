@@ -60,15 +60,20 @@ function Home() {
       case "people":
         return (
           <div
-            className="flex flex-wrap gap-6"
+            className="flex flex-wrap gap-16"
             style={{
-              marginLeft: "100px",
+              marginLeft: "170px",
               marginTop: "50px",
-              marginRight: "100px",
+              marginRight: "170px",
             }}
           >
             {doctors.map((doctor) => (
-              <DoctorCard key={doctor.id} {...doctor} />
+              <div
+                key={doctor.id}
+                className="w-80 bg-black p-4 rounded-lg shadow-md "
+              >
+                <DoctorCard {...doctor} />
+              </div>
             ))}
           </div>
         );
