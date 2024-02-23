@@ -1,14 +1,31 @@
 // Home.js
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "./assets/logo.png";
 import MeducareImage from "./assets/meducare.png";
 import styles from "./style";
 import "./css_style/home.css";
 import { medicalCenterContent } from "./constants";
+import DoctorCard from "./home/doctorcard"; // Use correct case
+import axios from "axios";
 
 function Home() {
   const [activeButton, setActiveButton] = useState("about");
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    // Fetch doctors' data when the component mounts
+    const fetchDoctors = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/doctor/");
+        setDoctors(response.data.data);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
+    };
+
+    fetchDoctors();
+  }, []); //
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -42,8 +59,17 @@ function Home() {
         );
       case "people":
         return (
-          <div style={boxStyle} className="bg-gray-200 p-8 rounded-lg">
-            <p>People Section Content</p>
+          <div
+            className="flex flex-wrap gap-6"
+            style={{
+              marginLeft: "100px",
+              marginTop: "50px",
+              marginRight: "100px",
+            }}
+          >
+            {doctors.map((doctor) => (
+              <DoctorCard key={doctor.id} {...doctor} />
+            ))}
           </div>
         );
       case "contact":
