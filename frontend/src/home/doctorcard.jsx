@@ -7,7 +7,12 @@ const DoctorCard = ({ id, name, position, contact_no, email, image_path }) => {
   return (
     <div
       className="bg-white border-gray-200 dark:bg-gray-900"
-      style={{ border: "1px solid #1d4ed8", borderRadius: "4px" }}
+      style={{
+        border: "1px solid #1d4ed8",
+        borderRadius: "4px",
+        width: "290px",
+        height: "380px",
+      }}
     >
       <img
         src={image_path}
