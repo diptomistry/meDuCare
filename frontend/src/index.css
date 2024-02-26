@@ -17,7 +17,7 @@
 * {
   scroll-behavior: smooth;
 }
-
+/*Text Styles*/
 .text-gradient {
   background: radial-gradient(
     64.18% 64.18% at 71.16% 35.69%,
@@ -33,7 +33,7 @@
   background-clip: text;
   text-fill-color: transparent;
 }
-
+/*Background Gradients*/
 .bg-blue-gradient {
   background: linear-gradient(
     157.81deg,

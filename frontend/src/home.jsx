@@ -1,13 +1,13 @@
-// Home.js
+// Home.jsx
 
 import React, { useState, useEffect } from "react";
 import Logo from "./assets/logo.png";
-import MeducareImage from "./assets/meducare.png";
-import styles from "./style";
+import styles, { layout } from "./style";
 import "./css_style/home.css";
 import { medicalCenterContent } from "./constants";
 import DoctorCard from "./home/doctorcard"; // Use correct case
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Home() {
   const [activeButton, setActiveButton] = useState("about");
@@ -60,7 +60,7 @@ function Home() {
       case "people":
         return (
           <div
-            className="flex flex-wrap gap-16"
+            className={` ${layout.sectionPeople}`}
             style={{
               marginLeft: "170px",
               marginTop: "50px",
@@ -118,12 +118,13 @@ function Home() {
             </span>
           </a>
           <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <button
+            <Link
+              to="/get-started"
               type="button"
               class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Get started
-            </button>
+            </Link>
             <button
               data-collapse-toggle="navbar-cta"
               type="button"

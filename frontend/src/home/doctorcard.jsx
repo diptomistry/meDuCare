@@ -11,7 +11,7 @@ const DoctorCard = ({ id, name, position, contact_no, email, image_path }) => {
         border: "1px solid #1d4ed8",
         borderRadius: "4px",
         width: "290px",
-        height: "380px",
+        height: "395px",
       }}
     >
       <img
@@ -36,13 +36,13 @@ const DoctorCard = ({ id, name, position, contact_no, email, image_path }) => {
         className="font-poppins font-normal text-dimWhite text-[18px] leading-[30.8px]"
         style={{ marginLeft: "8px", marginRight: "8px" }}
       >
-        {contact_no}
+        📞 {contact_no}
       </p>
       <p
-        className="font-poppins font-normal text-dimWhite text-[18px] leading-[30.8px]"
+        className="font-poppins font-normal text-dimWhite text-[18px] leading-[30.8px] break-all"
         style={{ marginLeft: "8px", marginRight: "8px" }}
       >
-        {email}
+        ✉️ {email}
       </p>
     </div>
   );
