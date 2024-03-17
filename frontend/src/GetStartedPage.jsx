@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import meducareLogo from "./assets/meducareLogin.png";
 import mobileApp from "./assets/mobileApp.png";
 import styles from "./style";
+import Popup from "./getStarted/clickHere";
 
 const GetStartedPage = () => {
+  const [isPopupOpen, setPopupOpen] = useState(false);
+
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 h-screen">
-      <div className="flex flex-col h-full ">
+    <section className="bg-gray-50 dark:bg-gray-900">
+      <div className="flex flex-col  ">
         <div className="flex-1">
           <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto ">
             <a
@@ -92,10 +102,35 @@ const GetStartedPage = () => {
                     <a
                       href="#"
                       className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                      onClick={openPopup} // Add onClick event to open the popup
                     >
-                      Sign up
+                      Click Here
                     </a>
                   </p>
+
+                  {/* Render the Popup component when isPopupOpen is true */}
+                  {isPopupOpen && (
+                    <Popup onClose={closePopup}>
+                      {/* Add your pop-up content here */}
+                      <div>
+                        <p className="text-base">
+                          You can create an account if and only if you are
+                          connected with
+                        </p>
+                        <p className="text-red-500 font-bold">
+                        Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre
+                        </p>
+                        <br />
+                        <p className="text-base">
+                          Please contact with{" "}
+                          <span className="text-red-500 font-bold">
+                            Dr. Mohammad Tanvir Ali
+                          </span>{" "}
+                          to create an account
+                        </p>
+                      </div>
+                    </Popup>
+                  )}
                 </form>
               </div>
             </div>
@@ -105,7 +140,7 @@ const GetStartedPage = () => {
         <div
           className={`box-shadow text-center sidebar ${styles.heading2}`}
           style={{
-            marginBottom: "5%",
+            marginBottom: "2%",
           }}
         >
           If you are a healthcare seeker, please download our mobile app
