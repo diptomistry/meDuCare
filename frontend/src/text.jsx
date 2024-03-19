@@ -7,7 +7,7 @@ import { medicalCenterContent } from "./constants";
 import DoctorCard from "./home/doctorcard"; // Use correct case
 import axios from "axios";
 import { Link } from "react-router-dom";
-function text() {
+function Text() {
   const [activeButton, setActiveButton] = useState("about");
   const [doctors, setDoctors] = useState([]);
 
@@ -174,12 +174,15 @@ function text() {
             </ul>
           </div>
           <div>
-            <a
-              href="#"
-              class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0"
-            >
-              Get Started
-            </a>
+          <Link
+              to="/get-started"
+              type="button"
+              class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-blue-800 mt-4 lg:mt-0"
+              >
+              Get started
+            </Link>
+
+
           </div>
         </div>
       </nav>
@@ -191,4 +194,4 @@ function text() {
   );
 }
 
-export default text;
+export default Text;
