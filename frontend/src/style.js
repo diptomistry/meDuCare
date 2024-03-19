@@ -21,7 +21,7 @@ const styles = {
 };
 
 export const layout = {
-  sectionPeople: "flex flex-wrap gap-16",
+  sectionPeople: "flex flex-wrap gap-16 justify-center",
   section: `flex md:flex-row flex-col ${styles.paddingY}`,
   sectionReverse: `flex md:flex-row flex-col-reverse ${styles.paddingY}`,
 

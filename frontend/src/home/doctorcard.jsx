@@ -6,7 +6,7 @@ import styles from "../style";
 const DoctorCard = ({ id, name, position, contact_no, email, image_path }) => {
   return (
     <div
-      className="bg-white border-gray-200 dark:bg-gray-900"
+      className="border-gray-200 dark:bg-gray-900"
       style={{
         border: "1px solid #1d4ed8",
         borderRadius: "4px",
