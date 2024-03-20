@@ -15,7 +15,7 @@ const GetStartedPage = () => {
     setPopupOpen(false);
   };
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
+    <section className="bg-gray-50 bg-gray-900">
       <div className="flex flex-col  ">
         <div className="flex-1">
           <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto ">
@@ -91,12 +91,13 @@ const GetStartedPage = () => {
                       Forgot password?
                     </a>
                   </div>
-                  <button
-                    type="submit"
-                    className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  <a
+                    href="/get-started/doctor"
+                    className="block w-full text-center text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
                     Sign in
-                  </button>
+                  </a>
+
                   <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                     Don’t have an account yet?{" "}
                     <a
@@ -118,7 +119,7 @@ const GetStartedPage = () => {
                           connected with
                         </p>
                         <p className="text-red-500 font-bold">
-                        Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre
+                          Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre
                         </p>
                         <br />
                         <p className="text-base">

@@ -139,3 +139,8 @@
   background: rgba(255, 255, 255, 0.6);
   filter: blur(750px);
 }
+body {
+  @apply bg-gray-800 ;
+  margin: 0;
+  padding: 0;
+}
