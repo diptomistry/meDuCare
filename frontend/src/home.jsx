@@ -31,78 +31,87 @@ function Home() {
 
   const renderContent = () => {
     const boxStyle = {
-      height: '50vh', // 50% of the viewport height
-      marginLeft: '5vw', // 5% of the viewport width
-      marginRight: '5vw', // 5% of the viewport width
-      marginTop: '2.5vh', // 2.5% of the viewport height
-      border: '0.25vw solid #1d4ed8', // 0.25% of the viewport width for border width
-      borderRadius: '0.5vw', // 0.5% of the viewport width for border radius
-      overflowY: 'auto', // Add this line to enable vertical scrolling
+      height: "50vh", // 50% of the viewport height
+      marginLeft: "5vw", // 5% of the viewport width
+      marginRight: "5vw", // 5% of the viewport width
+      marginTop: "2.5vh", // 2.5% of the viewport height
+      border: "0.25vw solid #1d4ed8", // 0.25% of the viewport width for border width
+      borderRadius: "0.5vw", // 0.5% of the viewport width for border radius
+      overflowY: "auto", // Add this line to enable vertical scrolling
     };
-  
+
     const contentWrapperStyle = {
-      maxHeight: 'calc(50vh - 4rem)', // Adjust this value based on your padding and margin requirements
-      padding: '1rem', // Add some padding for better readability
+      maxHeight: "calc(50vh - 4rem)", // Adjust this value based on your padding and margin requirements
+      padding: "1rem", // Add some padding for better readability
     };
-  
+
     switch (activeButton) {
       case "about":
         return (
-          <div style={boxStyle} className="bg-white border-gray-200 dark:bg-gray-900 rounded-lg">
+          <div
+            style={boxStyle}
+            className="bg-white border-gray-200 dark:bg-gray-900 rounded-lg"
+          >
             <div style={contentWrapperStyle}>
-              <h2 className={`${styles.heading2} sm:text-lg md:text-xl`}>{medicalCenterContent[1].title}</h2>
-              <p className={`${styles.paragraph} mb-4 sm:text-sm md:text-base leading-tight`}>
+              <h2 className={`${styles.heading2} sm:text-lg md:text-xl`}>
+                {medicalCenterContent[1].title}
+              </h2>
+              <p
+                className={`${styles.paragraph} mb-4 sm:text-sm md:text-base leading-tight`}
+              >
                 {medicalCenterContent[0].paragraph}
               </p>
-              <p className={`${styles.paragraph} sm:text-sm md:text-base leading-tight`}>
+              <p
+                className={`${styles.paragraph} sm:text-sm md:text-base leading-tight`}
+              >
                 {medicalCenterContent[1].paragraph}
               </p>
             </div>
           </div>
         );
-        case "people":
-          return (
-            <div
-              className={` ${layout.sectionPeople}`}
-              style={{
-                marginLeft: "170px",
-                marginTop: "50px",
-                marginRight: "170px",
-              }}
-            >
-              {doctors.map((doctor) => (
-                <div
-                  key={doctor.id}
-                  className="w-80 bg-black p-4 rounded-lg shadow-md "
-                >
-                  <DoctorCard {...doctor} />
-                </div>
-              ))}
-            </div>
-          );
-        case "contact":
-          return (
-            <div
-              style={boxStyle}
-              className="bg-white border-gray-200 dark:bg-gray-900 p-8 rounded-lg"
-            >
-              <h2 className={styles.heading2}>Contact</h2>
-  
-              <p className={styles.paragraph}>
-                {medicalCenterContent[2].paragraph[0]}
-                <br />
-                {medicalCenterContent[2].paragraph[1]}
-                <br />
-                {medicalCenterContent[2].paragraph[2]}
-                <br />
-                {medicalCenterContent[2].paragraph[3]}
-                <br />
-                <br />
-  
-                {medicalCenterContent[2].paragraph[4]}
-              </p>
-            </div>
-          );
+      case "people":
+        return (
+          <div
+            className={` ${layout.sectionPeople}`}
+            style={{
+              marginLeft: "170px",
+              marginTop: "50px",
+              marginRight: "170px",
+            }}
+          >
+            {doctors.map((doctor) => (
+              <div
+                key={doctor.id}
+                className="w-80 bg-black p-4 rounded-lg shadow-md "
+              >
+                <DoctorCard {...doctor} />
+              </div>
+            ))}
+          </div>
+        );
+      case "contact":
+        return (
+          <div
+            style={boxStyle}
+            className="bg-white border-gray-200 dark:bg-gray-900 p-8 rounded-lg"
+          >
+            <h2 className={styles.heading2}>Contact</h2>
+
+            <p className={styles.paragraph}>
+              {medicalCenterContent[2].paragraph[0]}
+              <br />
+              {medicalCenterContent[2].paragraph[1]}
+              <br />
+              {medicalCenterContent[2].paragraph[2]}
+              <br />
+              {medicalCenterContent[2].paragraph[3]}
+              <br />
+              <br />
+
+              {medicalCenterContent[2].paragraph[4]}
+            </p>
+          </div>
+        );
       default:
         return null;
     }
@@ -174,15 +183,13 @@ function Home() {
             </ul>
           </div>
           <div>
-          <Link
+            <Link
               to="/get-started"
               type="button"
               class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-blue-800 mt-4 lg:mt-0"
-              >
+            >
               Get started
             </Link>
-
-
           </div>
         </div>
       </nav>

@@ -7,9 +7,14 @@ import { medicalCenterContent } from "./constants";
 import DoctorCard from "./home/doctorcard"; // Use correct case
 import axios from "axios";
 import { Link } from "react-router-dom";
-function Text() {
+function Home() {
   const [activeButton, setActiveButton] = useState("about");
   const [doctors, setDoctors] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   useEffect(() => {
     // Fetch doctors' data when the component mounts
@@ -109,34 +114,35 @@ function Text() {
   };
   return (
     <div className="flex flex-col">
-      <nav class="flex items-center justify-between flex-wrap bg-white border-gray-200 dark:bg-gray-900 p-6">
-        <div class="flex items-center flex-shrink-0 text-white mr-6">
-          <a
-            href="https://www.du.ac.bd//"
-            class="flex items-center space-x-3 rtl:space-x-reverse"
-          >
-            <img src={Logo} class="h-8" alt="DU" />
+      <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <img src={Logo} class="h-8" alt="DU" />
             <span class="self-center sm:text-xl md:text-2xl font-semibold whitespace-nowrap dark:text-white">
               UNIVERSITY OF DHAKA
             </span>
-          </a>
-        </div>
-        <div class="block lg:hidden">
-          <button class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
-            <svg
-              class="fill-current h-3 w-3"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
+        </a>
+        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+          <div>
+            <Link
+              to="/get-started"
+              type="button"
+              class="className=text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              <title>Menu</title>
-              <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+              Get started
+            </Link>
+          </div>
+          <button onClick={toggleMenu} type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-expanded={isMenuOpen ? "true" : "false"}>
+            <span className="sr-only">Open main menu</span>
+            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />
             </svg>
           </button>
         </div>
-        <div class=" w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-          <div class="text-sm lg:flex-grow">
-            <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-              <a
+        <div className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${isMenuOpen ? 'block' : 'hidden'}`} id="navbar-sticky">
+          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <li>
+            <a
                 href="#"
                 className={`block mt-4 lg:inline-block lg:mt-0  mr-4 ${
                   activeButton === "about"
@@ -147,8 +153,9 @@ function Text() {
                 aria-current={activeButton === "about" ? "page" : undefined}
               >
                 About
-              </a>
-              <a
+              </a>            </li>
+            <li>
+            <a
                 href="#"
                 className={`"block mt-4 lg:inline-block lg:mt-0 " ${
                   activeButton === "people"
@@ -158,9 +165,9 @@ function Text() {
                 onClick={() => handleButtonClick("people")}
               >
                 People
-              </a>
-
-              <a
+              </a>            </li>
+            <li>
+            <a
                 href="#"
                 className={`block mt-4 lg:inline-block lg:mt-0 ${
                   activeButton === "contact"
@@ -170,22 +177,13 @@ function Text() {
                 onClick={() => handleButtonClick("contact")}
               >
                 Contact
-              </a>
-            </ul>
-          </div>
-          <div>
-          <Link
-              to="/get-started"
-              type="button"
-              class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-blue-800 mt-4 lg:mt-0"
-              >
-              Get started
-            </Link>
-
-
-          </div>
+              </a>            </li>
+            
+          </ul>
         </div>
-      </nav>
+       
+      </div>
+    </nav>
       <div className={`center-text ${styles.heading1}`}>
         <p>Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre</p>
       </div>
@@ -194,4 +192,4 @@ function Text() {
   );
 }
 
-export default Text;
+export default Home;
