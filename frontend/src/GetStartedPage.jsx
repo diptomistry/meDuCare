@@ -3,7 +3,16 @@ import meducareLogo from "./assets/meducareLogin.png";
 import mobileApp from "./assets/mobileApp.png";
 import styles from "./style";
 
+
+
 const GetStartedPage = () => {
+ 
+  const handleLogin = (e) => {
+    // e.preventDefault();
+    window.location.href = '/dashboard';
+     console.log("Login clicked");
+   
+  };
   return (
     <section className="bg-gray-50 dark:bg-gray-900 h-screen">
       <div className="flex flex-col h-full ">
@@ -82,12 +91,15 @@ const GetStartedPage = () => {
                     </a>
                   </div>
                   <button
+                 
                     type="submit"
                     className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
                     Sign in
                   </button>
-                  <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                  <p  onSubmit={handleLogin}
+                  onClick={handleLogin}
+                  className="text-sm font-light text-gray-500 dark:text-gray-400">
                     Don’t have an account yet?{" "}
                     <a
                       href="#"
@@ -122,8 +134,8 @@ const GetStartedPage = () => {
         >
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             <div className=" ">
-              <div class="flex  w-48 h-14 bg-black text-white rounded-lg items-center justify-center">
-                <div class="mr-3">
+              <div className="flex  w-48 h-14 bg-black text-white rounded-lg items-center justify-center">
+                <div className="mr-3">
                   <svg viewBox="30 336.7 120.9 129.2" width="30">
                     <path
                       fill="#FFD400"
@@ -144,8 +156,8 @@ const GetStartedPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <div class="text-xs">GET IT ON</div>
-                  <div class="text-xl font-semibold font-sans -mt-1">
+                  <div className="text-xs">GET IT ON</div>
+                  <div className="text-xl font-semibold font-sans -mt-1">
                     Google Play
                   </div>
                 </div>
@@ -153,8 +165,8 @@ const GetStartedPage = () => {
             </div>
 
             <div className="">
-              <div class="flex  w-48 h-14 bg-black text-white rounded-xl items-center justify-center">
-                <div class="mr-3">
+              <div className="flex  w-48 h-14 bg-black text-white rounded-xl items-center justify-center">
+                <div className="mr-3">
                   <svg viewBox="0 0 384 512" width="30">
                     <path
                       fill="currentColor"
@@ -163,8 +175,8 @@ const GetStartedPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <div class="text-xs">Download on the</div>
-                  <div class="text-2xl font-semibold font-sans -mt-1">
+                  <div className="text-xs">Download on the</div>
+                  <div className="text-2xl font-semibold font-sans -mt-1">
                     App Store
                   </div>
                 </div>
