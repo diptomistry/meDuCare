@@ -1,14 +1,12 @@
-// Home.jsx
-
-import React, { useState, useEffect } from "react";
 import Logo from "./assets/logo.png";
+import React, { useState, useEffect } from "react";
+
 import styles, { layout } from "./style";
 import "./css_style/home.css";
 import { medicalCenterContent } from "./constants";
 import DoctorCard from "./home/doctorcard"; // Use correct case
 import axios from "axios";
 import { Link } from "react-router-dom";
-
 function Home() {
   const [activeButton, setActiveButton] = useState("about");
   const [doctors, setDoctors] = useState([]);
@@ -33,28 +31,42 @@ function Home() {
 
   const renderContent = () => {
     const boxStyle = {
-      // Set your desired width
-      height: styles.homeBoxHeight, // Set your desired height
-      marginLeft: "100px",
-      marginRight: "100px",
-      marginTop: "50px",
-      border: "4px solid #1d4ed8", // Set your desired border properties
-      borderRadius: "8px",
+      height: "50vh", // 50% of the viewport height
+      marginLeft: "5vw", // 5% of the viewport width
+      marginRight: "5vw", // 5% of the viewport width
+      marginTop: "2.5vh", // 2.5% of the viewport height
+      border: "0.25vw solid #1d4ed8", // 0.25% of the viewport width for border width
+      borderRadius: "0.5vw", // 0.5% of the viewport width for border radius
+      overflowY: "auto", // Add this line to enable vertical scrolling
     };
+
+    const contentWrapperStyle = {
+      maxHeight: "calc(50vh - 4rem)", // Adjust this value based on your padding and margin requirements
+      padding: "1rem", // Add some padding for better readability
+    };
+
     switch (activeButton) {
       case "about":
         return (
           <div
             style={boxStyle}
-            className="bg-white border-gray-200 dark:bg-gray-900 p-8 rounded-lg"
+            className="bg-white border-gray-200 dark:bg-gray-900 rounded-lg"
           >
-            <h2 className={styles.heading2}>{medicalCenterContent[1].title}</h2>
-            <p className={`${styles.paragraph} mb-4`}>
-              {medicalCenterContent[0].paragraph}
-            </p>
-            <p className={styles.paragraph}>
-              {medicalCenterContent[1].paragraph}
-            </p>
+            <div style={contentWrapperStyle}>
+              <h2 className={`${styles.heading2} sm:text-lg md:text-xl`}>
+                {medicalCenterContent[1].title}
+              </h2>
+              <p
+                className={`${styles.paragraph} mb-4 sm:text-sm md:text-base leading-tight`}
+              >
+                {medicalCenterContent[0].paragraph}
+              </p>
+              <p
+                className={`${styles.paragraph} sm:text-sm md:text-base leading-tight`}
+              >
+                {medicalCenterContent[1].paragraph}
+              </p>
+            </div>
           </div>
         );
       case "people":
@@ -105,98 +117,79 @@ function Home() {
     }
   };
   return (
-    <div>
-      <nav className={`bg-white border-gray-200 dark:bg-gray-900 `}>
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <div className="flex flex-col">
+      <nav class="flex items-center justify-between flex-wrap bg-white border-gray-200 dark:bg-gray-900 p-6">
+        <div class="flex items-center flex-shrink-0 text-white mr-6">
           <a
             href="https://www.du.ac.bd//"
             class="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={Logo} class="h-8" alt="DU" />
-            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+            <span class="self-center sm:text-xl md:text-2xl font-semibold whitespace-nowrap dark:text-white">
               UNIVERSITY OF DHAKA
             </span>
           </a>
-          <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        </div>
+        <div class="block lg:hidden">
+          <button class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
+            <svg
+              class="fill-current h-3 w-3"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>Menu</title>
+              <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+            </svg>
+          </button>
+        </div>
+        <div class=" w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+          <div class="text-sm lg:flex-grow">
+            <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+              <a
+                href="#"
+                className={`block mt-4 lg:inline-block lg:mt-0  mr-4 ${
+                  activeButton === "about"
+                    ? "text-blue-700"
+                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                }`}
+                onClick={() => handleButtonClick("about")}
+                aria-current={activeButton === "about" ? "page" : undefined}
+              >
+                About
+              </a>
+              <a
+                href="#"
+                className={`"block mt-4 lg:inline-block lg:mt-0 " ${
+                  activeButton === "people"
+                    ? "text-blue-700 "
+                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                }`}
+                onClick={() => handleButtonClick("people")}
+              >
+                People
+              </a>
+
+              <a
+                href="#"
+                className={`block mt-4 lg:inline-block lg:mt-0 ${
+                  activeButton === "contact"
+                    ? "text-blue-700"
+                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                }`}
+                onClick={() => handleButtonClick("contact")}
+              >
+                Contact
+              </a>
+            </ul>
+          </div>
+          <div>
             <Link
               to="/get-started"
               type="button"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-blue-800 mt-4 lg:mt-0"
             >
               Get started
             </Link>
-            <button
-              data-collapse-toggle="navbar-cta"
-              type="button"
-              class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-              aria-controls="navbar-cta"
-              aria-expanded="false"
-            >
-              <span class="sr-only">Open main menu</span>
-              <svg
-                class="w-5 h-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 17 14"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M1 1h15M1 7h15M1 13h15"
-                />
-              </svg>
-            </button>
-          </div>
-          <div
-            class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-            id="navbar-cta"
-          >
-            <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-              <li>
-                <a
-                  href="#"
-                  className={`block py-2 px-3 md:p-0 ${
-                    activeButton === "about"
-                      ? "text-blue-700"
-                      : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  }`}
-                  onClick={() => handleButtonClick("about")}
-                  aria-current={activeButton === "about" ? "page" : undefined}
-                >
-                  About
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className={`block py-2 px-3 md:p-0 ${
-                    activeButton === "people"
-                      ? "text-blue-700 "
-                      : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  }`}
-                  onClick={() => handleButtonClick("people")}
-                >
-                  People
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="#"
-                  className={`block py-2 px-3 md:p-0 ${
-                    activeButton === "contact"
-                      ? "text-blue-700"
-                      : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  }`}
-                  onClick={() => handleButtonClick("contact")}
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
       </nav>
