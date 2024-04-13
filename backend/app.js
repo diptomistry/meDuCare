@@ -1,14 +1,34 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const cors=require("cors");
-app.use(express.json());//to convert the data to json format,otherwise we cant post data to the server from postman
-app.use(cors());//to allow the client to access the server
-const userRouter = require("./routes/api/users/user.router");
-const pool = require("./routes/database");
-const doctorRouter = require("./routes/api/doctors/doctor.router");
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import usersRouter from "./routes/api/users/createUser.js";
+import multer from "multer";
+import morgan from 'morgan';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-app.use("/api/doctor", doctorRouter);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const upload = multer(
+  { dest: 'public/' }
+);
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(cors());
+app.use(morgan('dev'));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+
+//print uploads folder path
+
+
+app.use("/api/users", usersRouter);
+
 
 
 app.listen(process.env.APP_PORT, () => {
