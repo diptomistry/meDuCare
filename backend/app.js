@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import usersRouter from "./routes/api/users/createUser.js";
+import rolesRouter from "./routes/api/roles/role.js";
 import multer from "multer";
 import morgan from 'morgan';
 import { fileURLToPath } from 'url';
@@ -28,6 +29,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 
 app.use("/api/users", usersRouter);
+app.use("/api/roles", rolesRouter);
 
 
 
