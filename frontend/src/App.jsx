@@ -1,9 +1,9 @@
 import Home from "./home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GetStartedPage from "./GetStartedPage";
-import Doctor from "./doctor.jsx"
-import Prescribe from "./doctor/prescribe"
-
+import Doctor from "./doctor.jsx";
+import Prescribe from "./doctor/prescribe";
+import Dash from "./dashboard.jsx";
 
 import SecDashBoard from "./section_officer_dashboard/sec_o_dashboard";
 
@@ -14,8 +14,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/get-started" element={<GetStartedPage />} />
         <Route path="/dashboard" element={<SecDashBoard />} />
-        
-        <Route path="/get-started/doctor" element={<Doctor />} />
+
+        <Route path="/get-started/doctor" element={<Dash />} />
         <Route path="/get-started/doctor/prescribe" element={<Prescribe />} />
       </Routes>
     </BrowserRouter>

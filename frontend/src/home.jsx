@@ -35,7 +35,7 @@ function Home() {
       marginLeft: "5vw", // 5% of the viewport width
       marginRight: "5vw", // 5% of the viewport width
       marginTop: "2.5vh", // 2.5% of the viewport height
-      border: "0.25vw solid #1d4ed8", // 0.25% of the viewport width for border width
+      border: "0.25vw solid #F4802E", // 0.25% of the viewport width for border width
       borderRadius: "0.5vw", // 0.5% of the viewport width for border radius
       overflowY: "auto", // Add this line to enable vertical scrolling
     };
@@ -50,10 +50,10 @@ function Home() {
         return (
           <div
             style={boxStyle}
-            className="bg-white border-gray-200 dark:bg-gray-900 rounded-lg"
+            className=" border-gray-200 bg-white rounded-lg"
           >
             <div style={contentWrapperStyle}>
-              <h2 className={`${styles.heading2} sm:text-lg md:text-xl`}>
+              <h2 className={`${styles.heading2} sm:text-lg md:text-xl `}>
                 {medicalCenterContent[1].title}
               </h2>
               <p
@@ -93,7 +93,7 @@ function Home() {
         return (
           <div
             style={boxStyle}
-            className="bg-white border-gray-200 dark:bg-gray-900 p-8 rounded-lg"
+            className="bg-white border-gray-200  p-8 rounded-lg"
           >
             <h2 className={styles.heading2}>Contact</h2>
 
@@ -118,7 +118,7 @@ function Home() {
   };
   return (
     <div className="flex flex-col">
-      <nav class="flex items-center justify-between flex-wrap bg-white border-gray-200 dark:bg-gray-900 p-6">
+      <nav class="flex items-center justify-between flex-wrap  border-gray-200 bg-bgOrange p-6">
         <div class="flex items-center flex-shrink-0 text-white mr-6">
           <a
             href="https://www.du.ac.bd//"
@@ -144,13 +144,13 @@ function Home() {
         </div>
         <div class=" w-full block flex-grow lg:flex lg:items-center lg:w-auto">
           <div class="text-sm lg:flex-grow">
-            <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
               <a
                 href="#"
-                className={`block mt-4 lg:inline-block lg:mt-0  mr-4 ${
+                className={`block mt-4 lg:inline-block lg:mt-0  mr-4 ml-4 ${
                   activeButton === "about"
-                    ? "text-blue-700"
-                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                    ? "text-bgOrange"
+                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-bgOrangeDark "
                 }`}
                 onClick={() => handleButtonClick("about")}
                 aria-current={activeButton === "about" ? "page" : undefined}
@@ -159,10 +159,10 @@ function Home() {
               </a>
               <a
                 href="#"
-                className={`"block mt-4 lg:inline-block lg:mt-0 " ${
+                className={`block mt-4 lg:inline-block lg:mt-0 ml-4  ${
                   activeButton === "people"
-                    ? "text-blue-700 "
-                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                    ? "text-bgOrange"
+                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-bgOrangeDark "
                 }`}
                 onClick={() => handleButtonClick("people")}
               >
@@ -171,10 +171,10 @@ function Home() {
 
               <a
                 href="#"
-                className={`block mt-4 lg:inline-block lg:mt-0 ${
+                className={`block mt-4 lg:inline-block lg:mt-0 ml-4 ${
                   activeButton === "contact"
-                    ? "text-blue-700"
-                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                    ? "text-bgOrange"
+                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-bgOrangeDark "
                 }`}
                 onClick={() => handleButtonClick("contact")}
               >
@@ -186,7 +186,7 @@ function Home() {
             <Link
               to="/get-started"
               type="button"
-              class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-blue-800 mt-4 lg:mt-0"
+              class="inline-block ml-4 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-bgOrangeDark mt-4 lg:mt-0"
             >
               Get started
             </Link>

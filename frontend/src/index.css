@@ -75,6 +75,15 @@
 .bg-discount-gradient {
   background: linear-gradient(125.17deg, #272727 0%, #11101d 100%);
 }
+.bg-orange-gradient {
+  background: linear-gradient(
+    144.39deg,
+    #FFA500, /* Start color (orange) */
+    #FF6347, /* Middle color (tomato) */
+    #FFD700 /* End color (gold) */
+  );
+}
+
 
 .box-shadow {
   box-shadow: 0px 20px 100px -10px rgba(66, 71, 91, 0.1);
@@ -139,8 +148,35 @@
   background: rgba(255, 255, 255, 0.6);
   filter: blur(750px);
 }
+
+
 body {
-  @apply bg-gray-800 ;
-  margin: 0;
-  padding: 0;
+  /* Replace with your desired color code */
+  /*gradient*/
+  background: linear-gradient(90deg, #FFE4B5 0%, hsl(35, 100%, 90%) 100%);
+
+}
+/* styles.css */
+input:focus {
+  outline: none; /* Removes the default focus outline */
+  border-color: #FFB37E; /* Change the border color when focused */
+  background-color: #fdefe5;
+  /* Add any other styling you want for the focused state */
+  
+}
+input[type='checkbox'] {
+  accent-color: #F4802E;
+
+  
+}
+button {
+  /* Change the background color */
+
+
+  background-color: #F4802E; /* Replace with your desired color code */
+  
+  /* Optionally, you can change other styles such as text color, border, etc. */
+  color: #ffffff; /* Text color */
+  border: none; /* Remove border */
+  /* Add more styles as needed */
 }
