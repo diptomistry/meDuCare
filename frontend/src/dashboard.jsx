@@ -28,26 +28,23 @@ import { ToastContainer } from "react-toastify";
 const Dash = () => {
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(true);
-  const [stsSubmenuOpen, setStsSubmenuOpen] = useState(false); // State for STS submenu
-  const [vehicleSubmenuOpen, setVehicleSubmenuOpen] = useState(false); // State for Vehicle submenu
+  const [open, setOpen] = useState(window.innerWidth >= 768);
+  // State for STS submenu
+  // State for Vehicle submenu
   const [UserSubmenuOpen, setUserSubmenuOpen] = useState(false);
-  const [landfillSubmenuOpen, setLandfillSubmenuOpen] = useState(false);
-  const [OptimizationSubmenuOpen, setOptimizationSubmenuOpen] = useState(false);
 
   const Menus = [
+    {
+        title: "Dashboard",
+        icon: <AiOutlineBarChart />,
+        route: "/auth/login/admin/dashboard",
+      },
     {
       title: "Prescribe",
 
       icon: <LuUserCog />,
-      /* submenu: true,
-      submenuItems: [
-        { title: "Manage Users", route: "/auth/login/admin/ManageUsers" },
-        { title: "Create User", route: "/auth/login/admin/CreateUser" },
-      ],
-      */
 
-        route: "/get-started/doctor/prescribe",
+      route: "/get-started/doctor/prescribe",
     },
 
     {
@@ -61,27 +58,7 @@ const Dash = () => {
       ],
     },
 
-    {
-      title: "Vehicle",
-      icon: <IoCartOutline />,
-      submenu: true,
-
-      submenuItems: [
-        { title: "Create Vehicle", route: "/auth/login/admin/CreateVehicle" },
-      ],
-    },
-
     //make it available for role 1 or 3
-
-    {
-      title: "Landfill",
-      icon: <GoInbox />,
-      spacing: true,
-      submenu: true,
-      submenuItems: [
-        { title: "Create Landfill", route: "/auth/login/admin/CreateLandfill" },
-      ],
-    },
 
     {
       title: "Profile",
@@ -95,13 +72,7 @@ const Dash = () => {
     <div className="flex">
       <div
         className={`bg-bgOrange p-5 pt-8 ${open ? "w-72" : "w-20 h-screen"} ${
-          stsSubmenuOpen ||
-          vehicleSubmenuOpen ||
-          UserSubmenuOpen ||
-          landfillSubmenuOpen ||
-          OptimizationSubmenuOpen
-            ? "min-h-screen"
-            : "h-screen"
+          UserSubmenuOpen ? "min-h-screen" : "h-screen"
         } duration-300 relative`}
       >
         <BsArrowLeftShort
@@ -121,27 +92,10 @@ const Dash = () => {
               !open && "scale-0"
             }`}
           >
-            EcoSync
+            MeduCare
           </h1>
         </div>
-        <div
-          className={`flex items-center rounded-md bg-light-white mt-6 ${
-            !open ? "px-2.5" : "px-4"
-          } py-2`}
-        >
-          <BsSearch
-            className={`text-black text-lg block float-left cursor-pointer ${
-              open && "mr-2"
-            }`}
-          />
-          <input
-            type={"search"}
-            placeholder="Search"
-            className={`text-base bg-transparent w-full text-black focus:outline-none ${
-              !open && "hidden"
-            }`}
-          />
-        </div>
+
         <ul className="pt-2">
           {Menus.map((menu, index) => (
             <>
@@ -169,76 +123,15 @@ const Dash = () => {
                 >
                   {menu.title}
                 </span>
-                {menu.submenu && open && menu.title === "STS" && (
-                  <BsChevronDown
-                    className={`${stsSubmenuOpen && "rotate-180"}`}
-                    onClick={() => setStsSubmenuOpen(!stsSubmenuOpen)}
-                  />
-                )}
 
-                {menu.submenu && open && menu.title === "Vehicle" && (
-                  <BsChevronDown
-                    className={`${vehicleSubmenuOpen && "rotate-180"}`}
-                    onClick={() => setVehicleSubmenuOpen(!vehicleSubmenuOpen)}
-                  />
-                )}
                 {menu.submenu && open && menu.title === "User Management" && (
                   <BsChevronDown
                     className={`${UserSubmenuOpen && "rotate-180"}`}
                     onClick={() => setUserSubmenuOpen(!UserSubmenuOpen)}
                   />
                 )}
-                {menu.submenu && open && menu.title === "Landfill" && (
-                  <BsChevronDown
-                    className={`${landfillSubmenuOpen && "rotate-180"}`}
-                    onClick={() => setLandfillSubmenuOpen(!landfillSubmenuOpen)}
-                  />
-                )}
-                {menu.submenu && open && menu.title === "Optimization" && (
-                  <BsChevronDown
-                    className={`${OptimizationSubmenuOpen && "rotate-180"}`}
-                    onClick={() =>
-                      setOptimizationSubmenuOpen(!OptimizationSubmenuOpen)
-                    }
-                  />
-                )}
               </li>
-              {menu.submenu &&
-                stsSubmenuOpen &&
-                open &&
-                menu.title === "STS" && (
-                  <ul>
-                    {menu.submenuItems.map((submenuitem, index) => (
-                      <li
-                        key={index}
-                        className="text-gray-700 text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md "
-                        onClick={() =>
-                          submenuitem.route && navigate(submenuitem.route)
-                        }
-                      >
-                        {submenuitem.title}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              {menu.submenu &&
-                vehicleSubmenuOpen &&
-                open &&
-                menu.title === "Vehicle" && (
-                  <ul>
-                    {menu.submenuItems.map((submenuitem, index) => (
-                      <li
-                        key={index}
-                        className="text-gray-700 text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md "
-                        onClick={() =>
-                          submenuitem.route && navigate(submenuitem.route)
-                        }
-                      >
-                        {submenuitem.title}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+
               {menu.submenu &&
                 UserSubmenuOpen &&
                 open &&
@@ -248,42 +141,6 @@ const Dash = () => {
                       <li
                         key={index}
                         className="text-gray-700 text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md "
-                        onClick={() =>
-                          submenuitem.route && navigate(submenuitem.route)
-                        }
-                      >
-                        {submenuitem.title}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              {menu.submenu &&
-                landfillSubmenuOpen &&
-                open &&
-                menu.title === "Landfill" && (
-                  <ul>
-                    {menu.submenuItems.map((submenuitem, index) => (
-                      <li
-                        key={index}
-                        className="text-gray-700 text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md "
-                        onClick={() =>
-                          submenuitem.route && navigate(submenuitem.route)
-                        }
-                      >
-                        {submenuitem.title}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              {menu.submenu &&
-                OptimizationSubmenuOpen &&
-                open &&
-                menu.title === "Optimization" && (
-                  <ul>
-                    {menu.submenuItems.map((submenuitem, index) => (
-                      <li
-                        key={index}
-                        className="text-gray-300 text-sm flex items-center gap-x-4 cursor-pointer p-2 px-5 hover:bg-light-white rounded-md "
                         onClick={() =>
                           submenuitem.route && navigate(submenuitem.route)
                         }
