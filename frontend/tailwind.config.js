@@ -6,9 +6,9 @@ module.exports = {
     extend: {
       colors: {
         primary2: "#3b82f6",
-        bgOrange: "#F4802E",
-        bgOrangeDark: "#C85103",
-        lightOrange: "#FFB37E",
+        bgOrange: "#339d33",
+        bgOrangeDark: "008000",
+        lightOrange: "#70aa70",
         secondary: "#00f6ff",
         dimWhite: "rgba(255, 255, 255, 0.7)",
         dimBlue: "rgba(9, 151, 124, 0.1)",

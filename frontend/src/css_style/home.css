@@ -2,12 +2,12 @@
   font-size: 24px;
   font-weight: bold;
   text-align: center;
-  color: #F4802E;
+  color: #339d33;
   transition: color 0.5s ease; /* Add a transition for the color property */
 }
 
 .center-text:hover p {
-  color: #f87171; /* Change the color on hover */
+  color: #008000; /* Change the color on hover */
   transition: color 0.5s ease; /* Add a transition for the color property on hover */
 }
 

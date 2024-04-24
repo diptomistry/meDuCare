@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRef } from "react";
 import SubMenu from "./SubMenu";
 import { motion } from "framer-motion";
-import { Outlet } from "react-router-dom";
+import { FaClinicMedical } from "react-icons/fa";
 
 // * React icons
 
@@ -107,12 +107,15 @@ const Sidebar = () => {
          h-screen "
       >
         <div className="flex items-center gap-2.5 font-medium border-b py-3 border-slate-300  mx-3">
-          <img
-            src="https://img.icons8.com/color/512/firebase.png"
-            width={45}
-            alt=""
+          <FaClinicMedical
+            size={25}
+            className={`min-w-max ml-2 bg-amber-300 rounded block float-left duration-500 ${
+              open && "rotate-[360deg]"
+            }`}
           />
-          <span className="text-xl whitespace-pre">Fireball</span>
+          <span className="text-xl whitespace-pre ml-2 text-bgOrange">
+            MeDuCare
+          </span>
         </div>
 
         <div className="flex flex-col  h-full">
@@ -198,7 +201,6 @@ const Sidebar = () => {
       <div className="m-3 md:hidden  " onClick={() => setOpen(true)}>
         <MdMenu size={25} />
       </div>
-      
     </div>
   );
 };

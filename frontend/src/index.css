@@ -152,10 +152,7 @@
 
 
 body {
-  /* Replace with your desired color code */
-  /*gradient*/
-  background: linear-gradient(90deg, #FFE4B5 0%, hsl(35, 100%, 90%) 100%);
-
+  @apply bg-gradient-to-r from-white via-green-100 to-white;
 }
 /* styles.css */
 input:focus {
@@ -197,5 +194,5 @@ button {
 }
 
 .active {
-  @apply bg-blue-100 text-blue-600;
+  @apply bg-blue-100 text-bgOrange;
 }

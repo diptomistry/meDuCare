@@ -35,9 +35,11 @@ function Home() {
       marginLeft: "5vw", // 5% of the viewport width
       marginRight: "5vw", // 5% of the viewport width
       marginTop: "2.5vh", // 2.5% of the viewport height
-      border: "0.25vw solid #F4802E", // 0.25% of the viewport width for border width
+      ///  border: "0.25vw solid #339d33", // 0.25% of the viewport width for border width
       borderRadius: "0.5vw", // 0.5% of the viewport width for border radius
       overflowY: "auto", // Add this line to enable vertical scrolling
+      // Add box shadow with gray color
+      boxShadow: "0 0 20px 0 rgba(0, 0, 0, 0.2)",
     };
 
     const contentWrapperStyle = {
@@ -125,23 +127,12 @@ function Home() {
             class="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <img src={Logo} class="h-8" alt="DU" />
-            <span class="self-center sm:text-xl md:text-2xl font-semibold whitespace-nowrap dark:text-white">
+            <span class="self-center sm:text-xl md:text-2xl font-semibold whitespace-nowrap ">
               UNIVERSITY OF DHAKA
             </span>
           </a>
         </div>
-        <div class="block lg:hidden">
-          <button class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
-            <svg
-              class="fill-current h-3 w-3"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>Menu</title>
-              <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-            </svg>
-          </button>
-        </div>
+
         <div class=" w-full block flex-grow lg:flex lg:items-center lg:w-auto">
           <div class="text-sm lg:flex-grow">
             <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white ">
@@ -150,7 +141,7 @@ function Home() {
                 className={`block mt-4 lg:inline-block lg:mt-0  mr-4 ml-4 ${
                   activeButton === "about"
                     ? "text-bgOrange"
-                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-bgOrangeDark "
+                    : "text-gray-900 rounded hover:bg-transparent hover:text-bgOrange"
                 }`}
                 onClick={() => handleButtonClick("about")}
                 aria-current={activeButton === "about" ? "page" : undefined}
@@ -162,7 +153,7 @@ function Home() {
                 className={`block mt-4 lg:inline-block lg:mt-0 ml-4  ${
                   activeButton === "people"
                     ? "text-bgOrange"
-                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-bgOrangeDark "
+                    : "text-gray-900 rounded hover:bg-transparent hover:text-bgOrange "
                 }`}
                 onClick={() => handleButtonClick("people")}
               >
@@ -174,7 +165,7 @@ function Home() {
                 className={`block mt-4 lg:inline-block lg:mt-0 ml-4 ${
                   activeButton === "contact"
                     ? "text-bgOrange"
-                    : "text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-bgOrangeDark "
+                    : "text-gray-900 rounded hover:bg-transparent hover:text-bgOrange "
                 }`}
                 onClick={() => handleButtonClick("contact")}
               >
@@ -186,7 +177,7 @@ function Home() {
             <Link
               to="/get-started"
               type="button"
-              class="inline-block ml-4 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent  hover:bg-bgOrangeDark mt-4 lg:mt-0"
+              class="inline-block ml-4 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-gray-700  hover:bg-bgOrangeDark mt-4 lg:mt-0"
             >
               Get started
             </Link>

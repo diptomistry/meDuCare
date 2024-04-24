@@ -9,7 +9,9 @@ const SubMenu = ({ data }) => {
   return (
     <>
       <li
-        className={`link ${pathname.includes(data.name) && "text-blue-600"}`}
+        className={`link ${
+          pathname.includes(data.name) && "text-bgOrangeDark"
+        }`}
         onClick={() => setSubMenuOpen(!subMenuOpen)}
       >
         <data.icon size={23} className="min-w-max" />
