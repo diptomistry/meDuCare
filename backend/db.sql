@@ -24,11 +24,15 @@ INSERT INTO Roles (RoleName) VALUES
 INSERT INTO Roles (RoleName) VALUES
 ('student');
 INSERT INTO Roles (RoleName) VALUES
-('teacher_staff');
+('teacher');
+INSERT INTO Roles (RoleName) VALUES
+('staff');
 INSERT INTO Roles (RoleName) VALUES
 ('dispensary_officer');
 INSERT INTO Roles (RoleName) VALUES
 ('senior_officer');
+INSERT INTO Roles (RoleName) VALUES
+('section_officer');
 
 INSERT INTO Permissions (Permission) VALUES ('ManageUsers');
 INSERT INTO Permissions (Permission) VALUES ('ManageDoctors');
@@ -87,13 +91,53 @@ CREATE TABLE Student (
     Session VARCHAR(100) NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
+CREATE TABLE Department (
+    DepartmentID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT,
+    Image VARCHAR(200)
+);
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Pathology', 'Department specializing in the study of diseases through examination of tissues, organs, and bodily fluids.',
+ 'pathology_image.jpg');
 
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('X-ray', 'Department responsible for conducting diagnostic imaging tests using X-rays to visualize the internal structures of the body.', 
+'xray_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Dental', 'Department focused on oral health, providing services such as dental check-ups, cleanings, and treatments for dental issues.',
+ 'dental_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Ophthalmology', 'Department specializing in the diagnosis and treatment of eye diseases and disorders, including vision correction procedures.', 
+'ophthalmology_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Physiotherapy', 'Department offering rehabilitative services to help patients recover from injuries or surgeries through exercises, stretches, and manual therapy techniques.',
+ 'physiotherapy_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Ultrasonogram', 'Department providing diagnostic imaging using ultrasound waves to visualize internal organs and tissues.',
+ 'ultrasonogram_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Pharmacy', 'Department responsible for dispensing medications and providing pharmaceutical services to patients and healthcare professionals.', 
+'pharmacy_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('Nursing', 'Department comprising skilled nurses who provide patient care, assist with medical procedures, and educate patients and families about health management.',
+ 'nursing_image.jpg');
+
+INSERT INTO Department (Name, Description, Image) 
+VALUES ('ICU', 'Intensive Care Unit department specializing in providing critical care to patients with life-threatening illnesses or injuries.', 'icu_image.jpg');
 
 
 CREATE TABLE Doctors (
     DoctorID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT UNIQUE,
-    Specialization VARCHAR(100) NOT NULL,
+    DepartmentID INT,
+    FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID)
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 CREATE TABLE Appointments (
@@ -124,6 +168,12 @@ CREATE TABLE Dispensation (
     DispensedDateTime DATETIME,
     FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID),
     FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID)
+);
+CREATE TABLE Services (
+    ServiceID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT,
+    Image VARCHAR(200)
 );
 
 
