@@ -102,7 +102,7 @@ const Sidebar = () => {
 
         initial={{ x: isTabletMid ? -250 : 0 }}
         animate={open ? "open" : "closed"}
-        className=" bg-white text-gray shadow-xl z-[999] max-w-[16rem]  w-[16rem] 
+        className=" bg-backgroundColor text-gray shadow-xl z-[999] max-w-[16rem]  w-[16rem] 
             overflow-hidden md:relative fixed
          h-screen "
       >
@@ -113,7 +113,7 @@ const Sidebar = () => {
               open && "rotate-[360deg]"
             }`}
           />
-          <span className="text-xl whitespace-pre ml-2 text-bgOrange">
+          <span className="text-xl whitespace-pre ml-2 text-brightColor">
             MeDuCare
           </span>
         </div>
@@ -148,7 +148,7 @@ const Sidebar = () => {
                   Product categories
                 </small>
                 {subMenusList?.map((menu) => (
-                  <div key={menu.name} className="flex flex-col gap-1">
+                  <div key={menu.name} className="flex flex-col gap-1 ">
                     <SubMenu data={menu} />
                   </div>
                 ))}

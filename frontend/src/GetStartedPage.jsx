@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import meducareLogo from "./assets/meducareLogin.png";
+import Logo from "./assets/img/dumc.png";
 import mobileApp from "./assets/mobileApp.png";
 import styles from "./style";
 import Popup from "./getStarted/clickHere";
+import Button from "./layouts/Button";
 
 const GetStartedPage = () => {
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -21,22 +22,26 @@ const GetStartedPage = () => {
     console.log("Login clicked");
   };
   return (
-    <div className="flex flex-col  ">
-      <div className="flex-1">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto ">
+    <div className="flex flex-col max-h-screen ">
+      <div className="flex-1 bg-backgroundColor bg-opacity-50 ">
+        <div className="flex flex-col items-center justify-center px-1 py-2 mx-auto ">
           <a
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 "
           >
-            <img className="w-10 h-10 mr-2" src={meducareLogo} alt="logo" />
-            meDuCare
+            <div className="flex flex-col">
+            <div className="flex justify-center"><img className="w-20 h-20 mr-2" src={Logo} alt="logo" /></div>
+              <div className=" text-2xl font-semibold"> Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre</div>
+
+            </div>
+            
           </a>
           <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0  border-gray-700">
-            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
+            <div className="p-4 space-y-2 md:space-y-4 sm:p-6">
+              <h1 className="text-xl font-semibold text-center text-backgroundColor    md:text-2xl ">
                 Sign in to your account
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="w-80 md:w-96 space-y-4 bg-white p-5 rounded-xl md:space-y-6" action="#">
                 <div>
                   <label
                     htmlFor="email"
@@ -48,7 +53,7 @@ const GetStartedPage = () => {
                     type="email"
                     name="email"
                     id="email"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg  block w-full p-2.5  "
+                    className=" bg-[#d5f2ec] rounded-lg  border border-gray-300 text-gray-900 sm:text-sm   block w-full p-2.5  "
                     placeholder="name@company.com"
                     required
                   />
@@ -65,7 +70,7 @@ const GetStartedPage = () => {
                     name="password"
                     id="password"
                     placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg  block w-full p-2.5 "
+                    className="bg-[#d5f2ec] border border-gray-300 text-gray-900 sm:text-sm rounded-lg  block w-full p-2.5 "
                     required
                   />
                 </div>
@@ -76,7 +81,7 @@ const GetStartedPage = () => {
                         id="remember"
                         aria-describedby="remember"
                         type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300  "
                         required
                       />
                     </div>
@@ -88,17 +93,19 @@ const GetStartedPage = () => {
                   </div>
                   <a
                     href="#"
-                    className="text-sm font-medium text-bgOrange hover:underline "
+                    className="text-sm font-medium text-brightColor hover:underline "
                   >
                     Forgot password?
                   </a>
                 </div>
                 <a
                   href="/get-started/doctor"
-                  className="block w-full text-center text-white bg-bgOrange hover:bg-bgOrangeDark focus:ring-4 focus:outline-none focus:ring-primary-700   font-medium rounded-lg text-sm px-5 py-2.5  "
+                  className="block w-full text-center text-white bg-brightColor hover:bg-hoverColor focus:ring-4 focus:outline-none focus:ring-primary-700   font-medium rounded-lg text-sm px-5 py-2.5  "
                 >
                   Sign in
                 </a>
+               
+           
 
                 <p
                   onSubmit={handleLogin}
@@ -108,7 +115,7 @@ const GetStartedPage = () => {
                   Don’t have an account yet?{" "}
                   <a
                     href="#"
-                    className="font-medium text-bgOrange hover:underline "
+                    className="font-medium text-brightColor hover:underline "
                     onClick={openPopup} // Add onClick event to open the popup
                   >
                     Click Here
@@ -144,15 +151,16 @@ const GetStartedPage = () => {
         </div>
       </div>
 
-      <div
+    <div className="bg-backgroundColor shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+    <div
         className={`box-shadow text-center sidebar ${styles.heading1}`}
         style={{
-          marginBottom: "2%",
+          //marginBottom: "",
         }}
       >
         If you are a healthcare seeker, please download our mobile app
       </div>
-      <div className={`animate-bounce text-center text-4xl text-bgOrange`}>
+      <div className={`animate-bounce text-center text-4xl text-brightColor`}>
         Download Now
       </div>
 
@@ -214,6 +222,7 @@ const GetStartedPage = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

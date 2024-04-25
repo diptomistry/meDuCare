@@ -1,3 +1,4 @@
+/*
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800&family=Play:wght@700&display=swap");
 
@@ -19,6 +20,7 @@
   scroll-behavior: smooth;
 }
 /*Text Styles*/
+/*
 .text-gradient {
   background: radial-gradient(
     64.18% 64.18% at 71.16% 35.69%,
@@ -35,6 +37,7 @@
   text-fill-color: transparent;
 }
 /*Background Gradients*/
+/*
 .bg-blue-gradient {
   background: linear-gradient(
     157.81deg,
@@ -80,8 +83,11 @@
   background: linear-gradient(
     144.39deg,
     #FFA500, /* Start color (orange) */
+    /*
     #FF6347, /* Middle color (tomato) */
+    /*
     #FFD700 /* End color (gold) */
+    /*
   );
 }
 
@@ -155,11 +161,15 @@ body {
   @apply bg-gradient-to-r from-white via-green-100 to-white;
 }
 /* styles.css */
+/*
 input:focus {
   outline: none; /* Removes the default focus outline */
+  /*
   border-color: #FFB37E; /* Change the border color when focused */
+  /*
   background-color: #fdefe5;
   /* Add any other styling you want for the focused state */
+  /*
   
 }
 input[type='checkbox'] {
@@ -169,14 +179,16 @@ input[type='checkbox'] {
 }
 button {
   /* Change the background color */
-
+/*
 
   background-color: #F4802E; /* Replace with your desired color code */
   
   /* Optionally, you can change other styles such as text color, border, etc. */
-  color: #ffffff; /* Text color */
+  /*
+  /*
   border: none; /* Remove border */
   /* Add more styles as needed */
+  /*
 }
 
 @layer base {
@@ -195,4 +207,26 @@ button {
 
 .active {
   @apply bg-blue-100 text-bgOrange;
+}
+*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.slick-slide > div {
+  margin: 0 10px;
+}
+.link {
+  @apply p-2.5 flex rounded-md gap-6 items-center md:cursor-pointer cursor-default duration-300 font-medium;
+}
+
+.active {
+  @apply bg-blue-100 text-backgroundColor rounded-lg;
 }

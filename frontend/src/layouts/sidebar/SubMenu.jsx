@@ -10,7 +10,7 @@ const SubMenu = ({ data }) => {
     <>
       <li
         className={`link ${
-          pathname.includes(data.name) && "text-bgOrangeDark"
+          pathname.includes(data.name) && "text-brightColor"
         }`}
         onClick={() => setSubMenuOpen(!subMenuOpen)}
       >
@@ -30,7 +30,7 @@ const SubMenu = ({ data }) => {
                 height: 0,
               }
         }
-        className="flex h-0 flex-col pl-14 text-[0.8rem] font-normal overflow-hidden"
+        className="flex h-0 flex-col pl-14 text-[0.8rem] font-normal overflow-hidden bg-white/50 rounded-lg"
       >
         {data.menus?.map((menu) => (
           <li key={menu}>
