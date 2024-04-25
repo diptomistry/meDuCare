@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-scroll";
+import { Link as RouterLink } from "react-router-dom";
+          
 
 const Footer = () => {
   return (
@@ -93,13 +95,39 @@ const Footer = () => {
           </nav>
         </div>
       </div>
+    <div className="grid grid-cols-3 justify-items-center ">
+      <div className="py-4 underline">
+        
+Create Account
+      </div>
       <div>
-        <p className=" text-center py-4">
+      <div>
+        <p className=" py-4 hidden md:block">
           @copyright developed by
-          <span className=" text-hoverColor"> DRM</span> | All
+          <span className="text-hoverColor"> DRM</span> | All
           rights reserved
         </p>
       </div>
+      </div>
+      <div className="py-4">
+      <RouterLink
+              to="/get-started"
+              type="button"
+              class="inline-block  text-sm px-6 py-2 leading-none border rounded text-white border-white   hover:bg-brightColor  "
+            >
+              Login
+            </RouterLink>
+      </div>
+
+    </div>
+    <div className="md:hidden">
+    <p className=" py-4 text-center">
+          @copyright developed by
+          <span className="text-hoverColor"> DRM</span> | All
+          rights reserved
+        </p>
+
+    </div>
     </div>
   );
 };

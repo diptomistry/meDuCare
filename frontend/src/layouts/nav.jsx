@@ -15,7 +15,7 @@ const Nav = () => {
         <button
           type="button"
           className={`flex text-sm bg-gray-100 rounded-full focus:ring-2 ${
-            dropdownOpen && "focus:ring-bgOrange"
+            dropdownOpen && "focus:ring-hoverColor"
           }`}
           id="user-menu-button"
           aria-expanded={dropdownOpen}
@@ -29,7 +29,7 @@ const Nav = () => {
           />
         </button>
         {dropdownOpen && (
-          <div className="z-50 absolute right-0 mt-2 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow ">
+          <div className="z-50 absolute right-0 mt-2 text-base list-none bg-backgroundColor divide-y divide-gray-100 rounded-lg shadow ">
             <div className="px-4 py-3">
               <span className="block text-sm text-gray-900 ">Bonnie Green</span>
               <span className="block text-sm text-gray-500 truncate ">

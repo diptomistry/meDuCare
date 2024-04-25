@@ -4,6 +4,7 @@ import { RiMicroscopeLine } from "react-icons/ri";
 import ServicesCard from "../layouts/ServicesCard";
 import { MdHealthAndSafety } from "react-icons/md";
 import { FaHeartbeat } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Services = () => {
   const icon1 = <RiMicroscopeLine size={35} className="text-backgroundColor" />;
@@ -22,7 +23,11 @@ const Services = () => {
           </p>
         </div>
         <div className="mt-4 lg:mt-0">
-          <Button title="See Services" />
+        <Link to="/duty-roster">
+            <Button title="See Duty Roster" />
+          </Link>
+          
+          
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-5 pt-14">

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import "../css_style/getStarted.css";
+
 
 const Popup = ({ onClose, children }) => {
   const popupRef = useRef(null);

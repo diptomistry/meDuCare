@@ -109,12 +109,12 @@ const Sidebar = () => {
         <div className="flex items-center gap-2.5 font-medium border-b py-3 border-slate-300  mx-3">
           <FaClinicMedical
             size={25}
-            className={`min-w-max ml-2 bg-amber-300 rounded block float-left duration-500 ${
+            className={`min-w-max ml-2 bg-blue-100 rounded block float-left duration-500 ${
               open && "rotate-[360deg]"
             }`}
           />
           <span className="text-xl whitespace-pre ml-2 text-brightColor">
-            MeDuCare
+            Du HealthCare
           </span>
         </div>
 
