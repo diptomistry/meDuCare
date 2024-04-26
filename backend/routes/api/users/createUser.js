@@ -2,9 +2,18 @@ import express from 'express';
 import pool from '../../database.js'; // Import your database connection pool
 import multer from 'multer';
 import bcryptjs from 'bcryptjs';
-const upload = multer(
-  { dest: 'public/' }
-);
+import crypto from 'crypto';
+import nodemailer from "nodemailer"; // Optional: Use Nodemailer for sending emails
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, 'public/')
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+});
+const upload = multer({ storage: storage });
 const router = express.Router();
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -13,92 +22,194 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // POST /api/users/create-user
-router.post('/create-user', upload.single('file'),async (req, res) => {
-  const { username, password, email, dob, name, sex, user_type, specialization, department, session ,registration_no } = req.body;
+router.post('/create-user', upload.single('file'), async (req, res) => {
+  const {  password, email, dob, name, sex, user_type, department_id, department, session, registration_no } = req.body;
 
-  // Check if required parameters are empty
-  if (!username || !password || !email || !dob || !name || !sex || !user_type) {
+  if ( !password || !email || !dob || !name || !sex || !user_type) {
     return res.status(400).json({ success: false, message: 'All required parameters must be provided' });
   }
-  
 
   try {
     var filePath;
-    if(req.file){
-    
-     
+    if (req.file) {
       const host = req.hostname;
- filePath = req.protocol + "://" + host + '/' + req.file.path;
-console.log(filePath);
+      filePath = `${req.protocol}://${host}:8000/${req.file.path}`;
+    } else {
+      filePath = `${req.protocol}://${req.get('host')}/public/avatar.jpg`;
+    }
 
-    }
-    else{
 
-       filePath = req.protocol + "://" + req.get('host') + '/public/' + 'avatar.jpg';
-       console.log(filePath);
-    }
-    // Check if user already exists
-    const [users] = await pool.query('SELECT * FROM Users WHERE Username = ?', [username]);
-    if (users.length > 0) {
-      return res.status(200).json({ success: false, message: 'User already exists' });
-    }
+  
+
     // Check if email already exists
     const [emails] = await pool.query('SELECT * FROM Users WHERE Email = ?', [email]);
     if (emails.length > 0) {
       return res.status(200).json({ success: false, message: 'Email already exists' });
     }
-    if(user_type=='student'){
-      const [registration] = await pool.query('SELECT * FROM Student WHERE RegistrationNo = ?', [registration_no]);
-      if (registration.length > 0) {
-        return res.status(200).json({ success: false, message: 'Registration No. already exists' });
-      }
+
+    // Additional checks for students
+    if (user_type === 'student' && (!department || !session || !registration_no)) {
+      return res.status(200).json({ success: false, message: 'Department, session, and registration number must be provided for students' });
     }
+
+    // Hash password
     const hashedPassword = await bcryptjs.hash(password, 10);
-    console.log(hashedPassword);
+    const token = await bcryptjs.hash(email, 10);
+    var status='Pending';
+    if(user_type==='student'||user_type==='teacher'||user_type==='staff')
+    status='Approved';
+
     // Insert user into Users table
-    const userInsertQuery = 'INSERT INTO Users (Username, Password, Email, DOB, Name, Sex, RoleID,Image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    const [result] = await pool.query(userInsertQuery, [username, hashedPassword, email, dob, name, sex, getUserRoleId(user_type), filePath]);
+    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )';
+    const roleID = getUserRoleId(user_type);
+    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, sex, roleID, filePath,token,status ]);
 
     // Insert additional data based on user type
-    switch (user_type) {
-      case 'admin':
-        // Insert admin specific data
-        break;
-      case 'doctor':
-        // Insert doctor specific data into Doctors table
-        if (!specialization) {
-          return res.status(400).json({ success: false, message: 'Specialization must be provided for doctor user type' });
-        }
-        const doctorInsertQuery = 'INSERT INTO Doctors (UserID, Specialization) VALUES (?, ?)';
-        await pool.query(doctorInsertQuery, [result.insertId, specialization]);
-        break;
-      case 'student':
-        // Insert user specific data into Student table
-        if (!department || !session || !registration_no) {
-          return res.status(200).json({ success: false, message: 'Department and session and Registration No. must be provided' });
-        }
-        const studentInsertQuery = 'INSERT INTO Student (UserID, Department, Session ,RegistrationNo) VALUES (?, ?, ?, ?)';
-        await pool.query(studentInsertQuery, [result.insertId, department, session,registration_no]);
-        break;
-      case 'teacher_staff':
-        // Insert teacher/staff specific data
-        break;
-
-      case 'dispensary_officer':
-        // Insert dispensary officer specific data
-        break;
-      case 'senior_officer':
-        // Insert senior officer specific data
-        break;
-      default:
-        throw new Error('Invalid user type');
+    if (user_type === 'doctor') {
+      if (!department_id) {
+        //delete user
+        const deleteUserQuery = 'DELETE FROM Users WHERE UserID = ?';
+        await pool.query(deleteUserQuery, [result.insertId]);
+        return res.status(200).json({ success: false, message: 'Specialization must be provided for doctors' });
+      }
+      const doctorInsertQuery = 'INSERT INTO Doctors (UserID, DepartmentID) VALUES (?, ?)';
+      await pool.query(doctorInsertQuery, [result.insertId, department_id]);
+    } else if (user_type === 'student') {
+      
+      const studentInsertQuery = 'INSERT INTO Student (UserID, Department, Session, RegistrationNo) VALUES (?, ?, ?, ?)';
+      await pool.query(studentInsertQuery, [result.insertId, department, session, registration_no]);
     }
-    const user = await pool.query('SELECT * FROM Users WHERE UserID = ?', [result.insertId]);
 
-    res.json({ success: true, message: 'User created successfully' , user: user[0][0]});
+    res.json({ success: true, message: 'User created successfully' });
   } catch (error) {
     console.error('Error creating user:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while creating user' });
+    res.status(500).json({ success: false, message: 'An error occurred while creating the user' });
+  }
+});
+
+// POST /api/users/update-user
+
+router.post('/update-user', upload.single('file'), async (req, res) => {
+
+  const { user_id, password, email, dob, name,department, session, registration_no} = req.body;
+  try{
+  if (!user_id) {
+    return res.status(200).json({ success: false, message: 'User ID must be provided' });
+  }
+  const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [user_id]);
+  if (user.length === 0) {
+    return res.status(200).json({ success: false, message: 'User does not exist' });
+  }
+  if(password)
+  {
+   //update password
+   const hashedPassword = await bcryptjs.hash(password, 10);
+    const updatePasswordQuery = 'UPDATE Users SET Password = ? WHERE UserID = ?';
+    await pool.query(updatePasswordQuery, [hashedPassword, user_id]);
+  }
+  if(email){
+    //update email
+    const updateEmailQuery = 'UPDATE Users SET Email = ? WHERE UserID = ?';
+    await pool.query(updateEmailQuery, [email, user_id]);
+  }
+  if(dob){
+    //update dob
+    const updateDobQuery = 'UPDATE Users SET DOB = ? WHERE UserID = ?';
+    await pool.query(updateDobQuery, [dob, user_id]);
+  }
+  if(name){
+    //update name
+    const updateNameQuery = 'UPDATE Users SET Name = ? WHERE UserID = ?';
+    await pool.query(updateNameQuery, [name, user_id]);
+  }
+  if(department){
+    //update department
+    const updateDepartmentQuery = 'UPDATE Student SET Department = ? WHERE UserID = ?';
+    await pool.query(updateDepartmentQuery, [department, user_id]);
+  }
+  if(session){
+    //update session
+    const updateSessionQuery = 'UPDATE Student SET Session = ? WHERE UserID = ?';
+    await pool.query(updateSessionQuery, [session, user_id]);
+  }
+  if(registration_no){
+    //update registration_no
+    const updateRegistrationNoQuery = 'UPDATE Student SET RegistrationNo = ? WHERE UserID = ?';
+    await pool.query(updateRegistrationNoQuery, [registration_no, user_id]);
+  }
+  if(req.file){
+    //update image
+    const host = req.hostname;
+    const filePath = `${req.protocol}://${host}:8000/${req.file.path}`;
+    const updateImageQuery = 'UPDATE Users SET Image = ? WHERE UserID = ?';
+    await pool.query(updateImageQuery, [filePath, user_id]);
+  }
+  res.json({ success: true, message: 'User updated successfully' });
+}catch (error) {
+  console.error('Error updating user:', error);
+  res.status(200).json({ success: false, message: 'An error occurred while updating the user' });
+}
+});
+
+
+// POST /api/users/delete-user
+router.post('/delete-user', async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id) {
+    return res.status(200).json({ success: false, message: 'User ID must be provided' });
+  }
+  try {
+    const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [user_id]);
+    if (user.length === 0) {
+      return res.status(200).json({ success: false, message: 'User does not exist' });
+    }
+    const deleteUserQuery = 'DELETE FROM Users WHERE UserID = ?';
+    await pool.query(deleteUserQuery, [user_id]);
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while deleting the user' });
+  }
+});
+
+
+// POST /api/users/update-status
+router.post('/update-status', async (req, res) => {
+  const { user_id, status } = req.body;
+  if (!user_id || !status) {
+    return res.status(200).json({ success: false, message: 'User ID and status must be provided' });
+  }
+  try {
+    const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [user_id]);
+    if (user.length === 0) {
+      return res.status(200).json({ success: false, message: 'User does not exist' });
+    }
+    const updateStatusQuery = 'UPDATE Users SET Status = ? WHERE UserID = ?';
+    await pool.query(updateStatusQuery, [status, user_id]);
+    res.json({ success: true, message: 'User status updated successfully' });
+  } catch (error) {
+    console.error('Error updating user status:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while updating the user status' });
+  }
+});
+
+// POST /api/users/update-role
+router.post('/update-role', async (req, res) => {
+  const { user_id, role_id } = req.body;
+  if (!user_id || !role_id) {
+    return res.status(200).json({ success: false, message: 'User ID and role ID must be provided' });
+  }
+  try {
+    const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [user_id]);
+    if (user.length === 0) {
+      return res.status(200).json({ success: false, message: 'User does not exist' });
+    }
+    const updateRoleQuery = 'UPDATE Users SET RoleID = ? WHERE UserID = ?';
+    await pool.query(updateRoleQuery, [role_id, user_id]);
+    res.json({ success: true, message: 'User role updated successfully' });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while updating the user role' });
   }
 });
 
@@ -111,12 +222,16 @@ const getUserRoleId = (userType) => {
       return 2;
     case 'student':
       return 3;
-    case 'teacher_staff':
+    case 'teacher':
       return 4;
-    case 'dispensary_officer':
+    case 'staff':
       return 5;
-    case 'senior_officer':
+    case 'dispensary_officer':
       return 6;
+    case 'senior_officer':
+      return 7;
+    case 'section_officer':
+      return 8;
     default:
       throw new Error('Invalid user type');
   }
@@ -153,24 +268,107 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+router.post('/send-otp',  async (req, res) => {
+  const {  password ,email} = req.body;
+ console.log(req.body);
+
+
+  try {
+    
+    const [results] = await pool.execute('SELECT * FROM Users WHERE Email = ?', [email]);
+    console.log(results);
+
+    if (results.length === 0) {
+      return res.status(200).json({success:false, message: 'User does not exists' });
+    }
+
+    const user = results[0];
+    // console.log(user);
+
+    // 2. Hash the new password
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    const randomBytes = crypto.randomBytes(2); // 2 bytes will give us a range up to 65535
+
+    // Convert bytes to an integer
+    const randomNumber = randomBytes[0] << 8 | randomBytes[1];
+    
+    // Ensure the random number is in the range of 1000 to 9999
+    const min = 1000;
+    const max = 9999;
+    const otp = min + Math.floor(randomNumber / 65535 * (max - min + 1));
+
+    const updateOtpQuery = 'UPDATE Users SET otp = ? WHERE Email = ?';
+
+    await pool.query(updateOtpQuery, [otp, email]);
+
+    // 3. Send the OTP to the user's email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "2003raselhossen@gmail.com",
+        pass: "bxwt tify omgd tvsy",
+      },
+    });
+    const mailOptions = {
+      from: "2003raselhossen@gmail.com", // Replace with your sender email
+      to: email,
+      subject: "Password Reset Request",
+      text: `Use this token to reset your password: ${otp}`, // or include reset link with token
+    };
+
+  await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: 'OTP sent successfully' });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while sending OTP' });
+  }
+});
+// reset password
+router.post('/reset-password', async (req, res) => {
+  const { email, current_pass,confirm_pass } = req.body;
+  if (!email || !current_pass) {
+    return res.status(200).json({ success: false, message: 'Email and password must be provided' });
+  }
+  try {
+    // Check if user exists
+    const [users] = await pool.query('SELECT * FROM Users WHERE Email = ?', [email]);
+    if (users.length === 0) {
+      return res.status(200).json({ success: false, message: 'User does not exist' });
+    }
+    if(current_pass!==confirm_pass)
+    {
+      return res.status(200).json({ success: false, message: 'Password does not match' });
+    }
+    const hashedPassword = await bcryptjs.hash(current_pass, 10);
+    const updatePasswordQuery = 'UPDATE Users SET Password = ? WHERE Email = ?';
+    await pool.query(updatePasswordQuery, [hashedPassword, email]);
+    res.json({ success: true, message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while resetting password' });
+  }
+});
+
 //login
 router.post('/login', async (req, res) => {
-  const { username, password ,email} = req.body;
-  console.log(username);
+  const { password ,email} = req.body;
+ 
   if(!password)
   {
     return res.status(200).json({ success: false, message: 'Password is missing' });
   }
-  if(!username && !email){
+  if( !email){
     return res.status(200).json({ success: false, message: 'User name or email is missing' });
   }
   try {
     // Check if user exists
-    const [users] = await pool.query('SELECT * FROM Users WHERE Username = ? or Email = ?', [username,email]);
+    const [users] = await pool.query('SELECT * FROM Users WHERE  Email = ?', [email]);
     if (users.length === 0) {
       return res.status(200).json({ success: false, message: 'User does not exists.' });
     }
     const user = users[0];
+    console.log(user);
     // Check if password is correct
     const isPasswordValid = await bcryptjs.compare(password, user.Password);
     if (!isPasswordValid) {
@@ -178,10 +376,51 @@ router.post('/login', async (req, res) => {
     }
     // Get user role
     const role = await getRoleById(user.RoleID);
-    res.json({ success: true, message: 'Login successful', user: { username: user.Username, email: user.Email, dob: user.DOB, role: role, name: user.Name } });
+    var registration_no='';
+    var department='';
+    var session='';
+    var doctorDepartment;
+
+    if(role==='student')
+    {
+      const [student] = await pool.query('SELECT * FROM Student WHERE UserID = ?', [user.UserID]);
+      registration_no=student[0].RegistrationNo;
+      department=student[0].Department;
+      session=student[0].Session;
+    }
+    if(role==='doctor')
+    {
+      const [doctor] = await pool.query('SELECT * FROM Doctors WHERE UserID = ?', [user.UserID]);
+      const [departmentName] = await pool.query('SELECT * FROM Department WHERE DepartmentID = ?', [doctor[0].DepartmentID]);
+      doctorDepartment=departmentName[0];
+    }
+    const to_return={
+      success: true, 
+      message: 'Login successful',
+       user: {
+          user_id: user.UserID,
+          email: user.Email,
+          status: user.Status,
+          sex:user.Sex,
+          image: user.Image,
+           dob: user.DOB, 
+           role: role, 
+           token: user.Token,
+           name: user.Name,
+           role_id: user.RoleID,
+           otp: user.otp,
+           registration_no: registration_no,
+            department: department,
+              session: session,
+              doctor_department: doctorDepartment
+
+           
+    }
+  };
+    res.json(to_return);
   } catch (error) {
     console.error('Error logging in:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while logging in' });
+    res.status(200).json({ success: false, message: 'An error occurred while logging in' });
   }
 }
 );

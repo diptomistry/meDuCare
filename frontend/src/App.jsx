@@ -47,7 +47,8 @@ import RootLayout from "./layouts/RootLayout";
 import AllApps from "./pages/AllApps";
 import Analytics from "./pages/Analytics";
 import Authentication from "./pages/Authentication";
-import Build from "./pages/Build";
+import PhotoUpload from "./pages/public/PhotoUpload.jsx";
+import DepartmentManage from "./pages/public/Departments.jsx";
 import Settings from "./pages/Settings";
 import Stroage from "./pages/Stroage";
 import HomeRootLayout from "./layouts/HomeRootLayout";
@@ -68,16 +69,20 @@ function App() {
             <Route path="/get-started" element={<GetStartedPage />} />
             <Route path="/create-account" element={<RegistartionForm/>} />
           <Route path="/dashboard" element={<SecDashBoard />} />
+         
     
          <Route path="/get-started/doctor" element={<RootLayout />}>
                <Route path="allApps" element={<Prescribe />} />
                <Route path="authentication" element={<AppointmentData  />} />
                <Route path="stroage" element={<Stroage />} />
                <Route path="settings" element={<Settings />} />
-               <Route path="build/:bID" element={<Build />} />
+               <Route path="public-info/gallery" element={<PhotoUpload />} />
                <Route path="analytics/:aID" element={<Analytics />} />
+             <  Route path="public-info/department" element={<DepartmentManage />} />
              </Route>
            </Routes>
+           
+
          </BrowserRouter>
     
   );

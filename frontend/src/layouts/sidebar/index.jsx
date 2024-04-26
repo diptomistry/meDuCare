@@ -73,9 +73,9 @@ const Sidebar = () => {
 
   const subMenusList = [
     {
-      name: "build",
+      name: "Public Info",
       icon: RiBuilding3Line,
-      menus: ["auth", "app settings", "stroage", "hosting"],
+      menus: ["Gallery", "Department", "stroage", "hosting"],
     },
     {
       name: "analytics",
@@ -113,7 +113,7 @@ const Sidebar = () => {
               open && "rotate-[360deg]"
             }`}
           />
-          <span className="text-xl whitespace-pre ml-2 text-brightColor">
+          <span className="text-xl whitespace-pre ml-2 text-white">
             Du HealthCare
           </span>
         </div>
@@ -145,7 +145,7 @@ const Sidebar = () => {
             {(open || isTabletMid) && (
               <div className="border-y py-5 border-slate-300 ">
                 <small className="pl-3 text-slate-500 inline-block mb-2">
-                  Product categories
+                  Admin Panel
                 </small>
                 {subMenusList?.map((menu) => (
                   <div key={menu.name} className="flex flex-col gap-1 ">
