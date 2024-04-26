@@ -53,6 +53,8 @@ import Stroage from "./pages/Stroage";
 import HomeRootLayout from "./layouts/HomeRootLayout";
 import AppointmentData from "./pages/AppointmentData.jsx";
 import DutyRoster from "./models/DutyRoster.jsx";
+import RegistartionForm from "./models/RegistrationForm.jsx";
+
 
 
 import SecDashBoard from "./section_officer_dashboard/sec_o_dashboard";
@@ -64,6 +66,7 @@ function App() {
              <Route path="/" element={<HomeRootLayout/>} />
              <Route path="/duty-roster" element={<DutyRoster />} />
             <Route path="/get-started" element={<GetStartedPage />} />
+            <Route path="/create-account" element={<RegistartionForm/>} />
           <Route path="/dashboard" element={<SecDashBoard />} />
     
          <Route path="/get-started/doctor" element={<RootLayout />}>

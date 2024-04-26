@@ -98,7 +98,13 @@ const Footer = () => {
     <div className="grid grid-cols-3 justify-items-center ">
       <div className="py-4 underline">
         
+<RouterLink
+  to="/create-account"
+  class=" hover:text-brightColor  "
+
+>
 Create Account
+</RouterLink>
       </div>
       <div>
       <div>
