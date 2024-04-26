@@ -28,8 +28,8 @@ CREATE TABLE Users (
     Sex VARCHAR(10),
     Image VARCHAR(200),
     RoleID INT,
-    status VARCHAR(20) DEFAULT 'active',
-    token VARCHAR(100),
+    Status VARCHAR(20) DEFAULT 'Pending',
+    Token VARCHAR(100),
     otp VARCHAR(100),
     FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
 );

@@ -75,7 +75,7 @@ const Sidebar = () => {
     {
       name: "Public Info",
       icon: RiBuilding3Line,
-      menus: ["Gallery", "app settings", "stroage", "hosting"],
+      menus: ["Gallery", "Department", "stroage", "hosting"],
     },
     {
       name: "analytics",

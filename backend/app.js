@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import galleryRouter from "./routes/api/public/photoGallery.js";
+import doctorsRouter from "./routes/api/doctors/doctors.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -38,6 +39,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use("/api/users", usersRouter);
 app.use("/api/roles", rolesRouter);
 app.use("/api/public", galleryRouter);
+app.use("/api/admin", doctorsRouter);
 
 
 
