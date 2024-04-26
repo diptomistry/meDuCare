@@ -47,7 +47,9 @@ const HomeRootLayout = () => {
         </div>
       </main>
 
-      <Footer />
+      <div id='footer'>
+        <Footer />
+      </div>
     </div>
     </div>
   )
