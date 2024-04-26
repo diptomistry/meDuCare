@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/appointment/search_doctor.dart';
+import 'package:mobile_app/homepage/home.dart';
 
 class LoginSignup extends StatefulWidget {
   @override
@@ -56,7 +57,7 @@ class LoginCard extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SearchDoctor()),
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
                   );
                   // Handle login logic here
                 },

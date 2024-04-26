@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:mobile_app/appointment/AppointmentScreen.dart';
+import 'package:mobile_app/homepage/home.dart';
 
 
 class SearchDoctor extends StatelessWidget {
@@ -41,6 +42,10 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black54),
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+            );
             // Add functionality to go back
           },
         ),
