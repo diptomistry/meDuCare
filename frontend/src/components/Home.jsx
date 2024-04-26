@@ -3,30 +3,12 @@ import { TypeAnimation } from "react-type-animation";
 
 
 
-/*
-     <div class="relative flex overflow-x-hidden">
-        <div class="py-12 animate-marquee whitespace-nowrap">
-          <span class="text-4xl mx-4">রাণীর নেকলেস চুরির মাস্টারপ্ল্যান</span>
-          <span class="text-4xl mx-4">Marquee Item 2</span>
-          <span class="text-4xl mx-4">Marquee Item 3</span>
-          <span class="text-4xl mx-4">Marquee Item 4</span>
-          <span class="text-4xl mx-4">Marquee Item 5</span>
-        </div>
-
-        <div class="absolute top-0 py-12 animate-marquee2 whitespace-nowrap">
-          <span class="text-4xl mx-4">রাণীর নেকলেস চুরির মাস্টারপ্ল্যান</span>
-          <span class="text-4xl mx-4">Marquee Item 2</span>
-          <span class="text-4xl mx-4">Marquee Item 3</span>
-          <span class="text-4xl mx-4">Marquee Item 4</span>
-          <span class="text-4xl mx-4">Marquee Item 5</span>
-        </div>
-      </div>
-*/
 
 
 import React, { useState } from 'react';
 import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { RxDotFilled } from 'react-icons/rx';
+import Marquee from "react-fast-marquee";
 
    
 
@@ -116,21 +98,19 @@ return (
     </div>
   </div>
     </div>
-    <div className="mt-2 ">
-    <div className=" bg-backgroundColor text-white py-2 px-4 flex items-center rounded-lg">
-      <span className="font-bold mr-2 bg-red-600 rounded-lg p-1">Breaking News</span>
-      <div className="flex overflow-hidden">
-        <div className="animate-marquee whitespace-nowrap">
-          <span>{breakingNewsText} </span>
-          
-        </div>
-        <div className="animate-marquee2 whitespace-nowrap">
-          <span>{breakingNewsText} </span>
-          
-        </div>
+    
+   
+    <div className="mt-2 bg-backgroundColor md:text-2xl text-red-700 py-2 px-1 flex items-center rounded-md relative">
+      {/* Left border */}
+      <div className="absolute inset-y-0 left-0 w-2  bg-gray-700 rounded-lg"></div>
+      {/* Right border */}
+      <div className="absolute inset-y-0 right-0 w-2  bg-gray-700 rounded-lg"></div>
+      {/* Main content */}
+      <div className="flex-grow">
+        <Marquee speed={100}>
+          I can be a React component, multiple React components, or just some text.
+        </Marquee>
       </div>
-    </div>
-
     </div>
   </div>
 );

@@ -61,7 +61,20 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      animation: {
+     
+      colors: {
+        hoverColor: "#004AAD",
+        brightColor: "#5271FF",
+        backgroundColor: "#36ae9a",
+        textStyleColor: "#339d33",
+      },
+    },
+  },
+  
+  plugins: [],
+};
+/*
+ animation: {
                 marquee: 'marquee 5s linear infinite',
                 marquee2: 'marquee2 5s linear infinite',
               },
@@ -75,14 +88,4 @@ export default {
                   '100%': { transform: 'translateX(0%)' },
                 },
               },
-      colors: {
-        hoverColor: "#004AAD",
-        brightColor: "#5271FF",
-        backgroundColor: "#36ae9a",
-        textStyleColor: "#339d33",
-      },
-    },
-  },
-  
-  plugins: [],
-};
+*/
