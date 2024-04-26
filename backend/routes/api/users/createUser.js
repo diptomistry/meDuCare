@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 // POST /api/users/create-user
 router.post('/create-user', upload.single('file'),async (req, res) => {
-  const { username, password, email, dob, name, sex, user_type, specialization, department, session ,registration_no } = req.body;
+  const { username, password, email, dob, name, sex, user_type, specialization, department, session ,registration_no,joining_date } = req.body;
 
   // Check if required parameters are empty
   if (!username || !password || !email || !dob || !name || !sex || !user_type) {
@@ -80,7 +80,7 @@ console.log(filePath);
         const studentInsertQuery = 'INSERT INTO Student (UserID, Department, Session ,RegistrationNo) VALUES (?, ?, ?, ?)';
         await pool.query(studentInsertQuery, [result.insertId, department, session,registration_no]);
         break;
-      case 'teacher_staff':
+      case 'teacher':
         // Insert teacher/staff specific data
         break;
 
@@ -88,6 +88,10 @@ console.log(filePath);
         // Insert dispensary officer specific data
         break;
       case 'senior_officer':
+        // Insert senior officer specific data
+        break;
+      case 'section_officer':
+        break
         // Insert senior officer specific data
         break;
       default:
@@ -111,12 +115,16 @@ const getUserRoleId = (userType) => {
       return 2;
     case 'student':
       return 3;
-    case 'teacher_staff':
+    case 'teacher':
       return 4;
-    case 'dispensary_officer':
+    case 'staff':
       return 5;
-    case 'senior_officer':
+    case 'dispensary_officer':
       return 6;
+    case 'senior_officer':
+      return 7;
+    case 'section_officer':
+      return 8;
     default:
       throw new Error('Invalid user type');
   }

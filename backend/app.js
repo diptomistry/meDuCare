@@ -7,13 +7,20 @@ import multer from "multer";
 import morgan from 'morgan';
 import { fileURLToPath } from 'url';
 import path from 'path';
-
+import galleryRouter from "./routes/api/public/photoGallery.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const upload = multer(
-  { dest: 'public/' }
-);
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, 'public/')
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+});
+
+const upload = multer({ storage: storage });
 
 dotenv.config();
 
@@ -30,6 +37,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use("/api/users", usersRouter);
 app.use("/api/roles", rolesRouter);
+app.use("/api/public", galleryRouter);
 
 
 
