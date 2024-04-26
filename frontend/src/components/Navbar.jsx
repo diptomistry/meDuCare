@@ -39,7 +39,7 @@ const Navbar = () => {
           <div className=" flex flex-row items-center cursor-pointer">
           <img src={Logo} class="h-12 w-12  mr-4" alt="DU" />
             <Link to="home" spy={true} smooth={true} duration={500}>
-              <h1 className=" text-2xl font-semibold">Du HealthCare</h1>
+              <h1 className=" text-2xl font-semibold">DU HEALTHCARE</h1>
             </Link>
             
            

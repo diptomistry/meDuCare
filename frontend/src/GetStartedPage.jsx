@@ -114,11 +114,11 @@ const GetStartedPage = () => {
                 >
                   Don’t have an account yet?{" "}
                   <a
-                    href="#"
+                    href="/create-account"
                     className="font-medium text-brightColor hover:underline "
-                    onClick={openPopup} // Add onClick event to open the popup
+                    //onClick={openPopup} // Add onClick event to open the popup
                   >
-                    Click Here
+                    Sign up
                   </a>
                 </p>
 
@@ -227,8 +227,6 @@ const GetStartedPage = () => {
   );
 };
 
-function getRandom() {
-  return "#" + (((1 << 24) * Math.random()) | 0).toString(16);
-}
+
 
 export default GetStartedPage;
