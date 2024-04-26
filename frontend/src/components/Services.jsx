@@ -4,7 +4,8 @@ import { RiMicroscopeLine } from "react-icons/ri";
 import ServicesCard from "../layouts/ServicesCard";
 import { MdHealthAndSafety } from "react-icons/md";
 import { FaHeartbeat } from "react-icons/fa";
-import { Link } from "react-router-dom";
+
+import { Link } from "react-scroll";
 
 const Services = () => {
   const icon1 = <RiMicroscopeLine size={35} className="text-backgroundColor" />;
@@ -23,9 +24,16 @@ const Services = () => {
           </p>
         </div>
         <div className="mt-4 lg:mt-0">
-        <Link to="/duty-roster">
-            <Button title="See Duty Roster" />
-          </Link>
+        
+          <Link
+              to="doctor-schedule"
+              spy={true}
+              smooth={true}
+              duration={500}
+              className=" hover:text-hoverColor transition-all cursor-pointer"
+            >
+               <Button title="See Duty Roster" />
+            </Link>
           
           
         </div>

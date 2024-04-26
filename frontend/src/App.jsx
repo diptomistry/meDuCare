@@ -53,7 +53,7 @@ import Settings from "./pages/Settings";
 import Stroage from "./pages/Stroage";
 import HomeRootLayout from "./layouts/HomeRootLayout";
 import AppointmentData from "./pages/AppointmentData.jsx";
-import DutyRosterNav from "./models/DutyRosterNav.jsx";
+
 import RegistartionForm from "./models/RegistrationForm.jsx";
 
 
@@ -65,7 +65,7 @@ function App() {
     <BrowserRouter>
           <Routes>
              <Route path="/" element={<HomeRootLayout/>} />
-             <Route path="/duty-roster" element={<DutyRosterNav />} />
+             
             <Route path="/get-started" element={<GetStartedPage />} />
             <Route path="/create-account" element={<RegistartionForm/>} />
           <Route path="/dashboard" element={<SecDashBoard />} />
