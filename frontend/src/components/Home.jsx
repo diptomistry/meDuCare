@@ -7,6 +7,7 @@ import Marquee from "react-fast-marquee";
 
 const Home = () => {
   const [photos, setPhotos] = useState([]);
+  const [notices, setNotices] = useState([]);
   const [slides, setSlides] = useState([
     { url: 'https://tds-images.thedailystar.net/sites/default/files/images/2021/10/03/du_medical_center.jpg' }
   ]);
@@ -17,14 +18,29 @@ const Home = () => {
       try {
         console.log('fetching photos');
         const response = await axios.get(apiUrl);
-        const fetchedPhotos = response.data.photos; // Assuming 'photos' is the key in the response data
-        setSlides((prevSlides) => [...prevSlides, ...fetchedPhotos.map((photo) => ({ url: photo.Image }))]); // Combine default and fetched images
+        const fetchedPhotos = response.data.photos;
+        console.log('fetched photos:', fetchedPhotos);
+        setSlides(fetchedPhotos.map((photo) => ({ url: photo.Image }))); // Combine default and fetched images
+        console.log('slides:', slides);
       } catch (error) {
         console.error('Error fetching photos:', error);
       }
     };
+    const fetchNotices = async () => {
+      try {
+        console.log('fetching notices');
+        const response = await axios.get('http://localhost:8000/api/get-notices');
+        const fetchedNotices = response.data.data;
+        console.log('fetched notices:', fetchedNotices);
+        setNotices(fetchedNotices);
+      } catch (error) {
+        console.error('Error fetching notices:', error);
+      }
+    };
     fetchPhotos();
+    fetchNotices();
   }, []); 
+
 
   const breakingNewsText = "Breaking News: Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
@@ -111,7 +127,16 @@ const Home = () => {
       {/* Main content */}
       <div className="flex-grow">
         <Marquee speed={100}>
-          {breakingNewsText }
+        {notices
+              .filter((notice) => notice.MainPage) // Filter notices based on isMainpage property
+              .map((notice) => (
+                <div key={notice.NoticeID} className="px-2 ">
+                  <span className="text-white flex">
+                    <div className="rounded-full bg-black h-5 w-5 mt-2 mr-1 "></div>
+                    {notice.Title}
+                  </span>
+                </div>
+              ))}
         </Marquee>
       </div>
     </div>
