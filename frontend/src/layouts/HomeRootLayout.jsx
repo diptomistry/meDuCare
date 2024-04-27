@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react'
 import Navbar from '../components/Navbar'
 import Home from '../components/Home'
@@ -7,6 +8,7 @@ import Doctors from '../components/Doctors'
 import Blogs from '../components/Blogs'
 import Footer from '../components/Footer'
 import ShortNote from '../components/ShortNote'
+import DoctorsSchedule from '../components/DoctorsSchedule'
 
 
 const HomeRootLayout = () => {
@@ -30,6 +32,9 @@ const HomeRootLayout = () => {
         <div id="services">
           <Services />
         </div>
+        <div id='doctor-schedule'>
+          <DoctorsSchedule />
+        </div>
 
         <div id="doctors">
           <Doctors />
@@ -43,7 +48,9 @@ const HomeRootLayout = () => {
         </div>
       </main>
 
-      <Footer />
+      <div id='footer'>
+        <Footer />
+      </div>
     </div>
     </div>
   )

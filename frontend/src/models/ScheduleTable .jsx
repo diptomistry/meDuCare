@@ -2,7 +2,7 @@ import React from 'react';
 
 const ScheduleTable = ({ scheduleData }) => {
   return (
-    <div className="bg-backgroundColor/50 p-6 rounded-lg shadow-md">
+    <div className="bg-backgroundColor/50 p-6 rounded-lg shadow-md "style={{ marginTop: '8rem' }}>
       <h2 className="text-2xl font-bold text-green-800 mb-4">DU HEALTHCARE SCHEDULE</h2>
       <div className="flex flex-col">
         <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">

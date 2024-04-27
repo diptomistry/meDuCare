@@ -1,201 +1,58 @@
-/*
+import React from "react";
+import { Link } from "react-scroll";
+import Logo from "../assets/logo.png";
 
-  @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800&family=Play:wght@700&display=swap");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --black-gradient: linear-gradient(
-    144.39deg,
-    #ffffff -278.56%,
-    #6d6d6d -78.47%,
-    #11101d 91.61%
+const DutyRosterNav = () => {
+  return (
+    <div className="fixed w-full z-10 " >
+      <nav className="bg-backgroundColor border-gray-200">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src={Logo} className="h-12 w-12  mr-4" alt="DU" />
+            <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">DU HEALTHCARE</span>
+          </a>
+          <button
+            data-collapse-toggle="navbar-default"
+            type="button"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+            aria-controls="navbar-default"
+            aria-expanded="false"
+          >
+            <span className="sr-only">Open main menu</span>
+            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />
+            </svg>
+          </button>
+          <div className="w-full md:block md:w-auto" id="navbar-default">
+            <ul className="font-medium flex flex-col p-4 md:p-2 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
+              <li>
+                <Link
+                  to="doctor-schedule"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                  className="block cursor-pointer py-2 px-3 rounded text-brightColor hover:bg-hoverColor md:hover:bg-transparent md:border-0 md:hover:text-hoverColor md:p-0"
+                >
+                  Doctor Schedule
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="namaz-schedule"
+                  spy={true}
+                  smooth={true}
+                  duration={500}
+                  className="block cursor-pointer py-2 px-3 text-brightColor rounded hover:bg-hoverColor md:hover:bg-transparent md:border-0 md:hover:text-hoverColor md:p-0"
+                >
+                  Namaz Schedule
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
   );
-  --card-shadow: 0px 20px 100px -10px rgba(66, 71, 91, 0.1);
-}
+};
 
-* {
-  scroll-behavior: smooth;
-}
-
-.text-gradient {
-  background: radial-gradient(
-    64.18% 64.18% at 71.16% 35.69%,
-    #def9fa 0.89%,
-    #bef3f5 17.23%,
-    #9dedf0 42.04%,
-    #7de7eb 55.12%,
-    #5ce1e6 71.54%,
-    #33bbcf 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-}
-
-.bg-blue-gradient {
-  background: linear-gradient(
-    157.81deg,
-    #def9fa -43.27%,
-    #bef3f5 -21.24%,
-    #9dedf0 12.19%,
-    #7de7eb 29.82%,
-    #5ce1e6 51.94%,
-    #33bbcf 90.29%
-  );
-}
-
-.bg-black-gradient {
-  background: linear-gradient(
-    144.39deg,
-    #ffffff -278.56%,
-    #6d6d6d -78.47%,
-    #11101d 91.61%
-  );
-}
-
-.bg-black-gradient-2 {
-  background: linear-gradient(
-    -168.39deg,
-    #ffffff -278.56%,
-    #6d6d6d -78.47%,
-    #11101d 91.61%
-  );
-}
-
-.bg-gray-gradient {
-  background: linear-gradient(
-    153.47deg,
-    rgba(255, 255, 255, 0) -341.94%,
-    #14101d 95.11%
-  );
-}
-
-.bg-discount-gradient {
-  background: linear-gradient(125.17deg, #272727 0%, #11101d 100%);
-}
-.bg-orange-gradient {
-  background: linear-gradient(
-    144.39deg,
-    #FFA500,
-    #FF6347, 
-    #FFD700
-  );
-}
-
-
-.box-shadow {
-  box-shadow: 0px 20px 100px -10px rgba(66, 71, 91, 0.1);
-}
-
-
-.sidebar {
-  -webkit-animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-  animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
-
-@-webkit-keyframes slide-top {
-  0% {
-    -webkit-transform: translateY(100px);
-    transform: translateY(100px);
-  }
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-top {
-  0% {
-    -webkit-transform: translateY(100px);
-    transform: translateY(100px);
-  }
-  100% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-}
-
-.feature-card:hover {
-  background: var(--black-gradient);
-  box-shadow: var(--card-shadow);
-}
-
-.feedback-container .feedback-card:last-child {
-  margin-right: 0px;
-}
-
-.feedback-card {
-  background: transparent;
-}
-
-.feedback-card:hover {
-  background: var(--black-gradient);
-}
-
-.blue__gradient {
-  background: linear-gradient(180deg, rgba(188, 165, 255, 0) 0%, #214d76 100%);
-  filter: blur(123px);
-}
-
-.pink__gradient {
-  background: linear-gradient(90deg, #f4c4f3 0%, #fc67fa 100%);
-  filter: blur(900px);
-}
-
-.white__gradient {
-  background: rgba(255, 255, 255, 0.6);
-  filter: blur(750px);
-}
-
-
-body {
-
-  background: linear-gradient(90deg, #FFE4B5 0%, hsl(35, 100%, 90%) 100%);
-
-}
-
-input:focus {
-  outline: none; 
-  border-color: #FFB37E;
-  background-color: #fdefe5;
-  
-  
-}
-input[type='checkbox'] {
-  accent-color: #F4802E;
-
-  
-}
-button {
- 
-
-
-  background-color: #F4802E; 
-  color: #ffffff; 
-  border: none; 
-  
-}
-
-
-@layer base {
-  html {
-    @apply font-Montserrat;
-  }
-
-  h1 {
-    @apply text-xl font-medium capitalize;
-  }
-}
-.link {
-  @apply p-2.5 flex rounded-md gap-6 items-center md:cursor-pointer cursor-default duration-300 font-medium;
-}
-
-.active {
-  @apply bg-blue-100 text-blue-600;
-}
-
-*/
+export default DutyRosterNav;
