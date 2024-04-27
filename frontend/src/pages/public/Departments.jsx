@@ -108,7 +108,7 @@ const [editingDepartmentId, setEditingDepartmentId] = useState(null);
   const executeDelete = async () => {
     if (pendingDelete) {
       try {
-        const response = await axios.delete(`<span class="math-inline">\{apiUrl\}/</span>{pendingDelete}`);
+        const response = await axios.delete(`http://localhost:8000/api/admin/delete-department/${pendingDelete}`);
 
         if (response.data.success) {
           setDepartments(departments.filter(department => department.DepartmentID !== pendingDelete)); // Assuming the data structure includes 'DepartmentID' property

@@ -55,6 +55,7 @@ import HomeRootLayout from "./layouts/HomeRootLayout";
 import AppointmentData from "./pages/AppointmentData.jsx";
 import DutyRosterNav from "./models/DutyRosterNav.jsx";
 import RegistartionForm from "./models/RegistrationForm.jsx";
+import NoticeManagement from "./pages/public/Notice.jsx";
 
 
 
@@ -79,6 +80,7 @@ function App() {
                <Route path="public-info/gallery" element={<PhotoUpload />} />
                <Route path="analytics/:aID" element={<Analytics />} />
              <  Route path="public-info/department" element={<DepartmentManage />} />
+              <Route path="public-info/notice" element={<NoticeManagement />} />
              </Route>
            </Routes>
            

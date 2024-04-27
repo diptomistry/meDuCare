@@ -123,6 +123,8 @@ CREATE TABLE Notices (
     Title VARCHAR(100) NOT NULL,
     Description TEXT,
     Image VARCHAR(200),
+    MainPage BOOLEAN,
+    isAdmin BOOLEAN,
     Date DATE,
     Link VARCHAR(200)
 );
