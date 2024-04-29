@@ -45,6 +45,7 @@ router.post('/create-department', upload.single('file'), async (req, res) => {
 router.get('/get-departments', async (req, res) => {
     try {
         const departments = await pool.query('SELECT * FROM Department');
+        console.log(departments[0])
         res.status(200).json({success:true, data: departments[0] });
     } catch (error) {
         res.status(200).json({ success:false,message: error.message });

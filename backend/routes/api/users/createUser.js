@@ -23,12 +23,16 @@ const __dirname = path.dirname(__filename);
 
 // POST /api/users/create-user
 router.post('/create-user', upload.single('file'), async (req, res) => {
-  const {  password, email, dob, name, sex, user_type, department_id, department, session, registration_no } = req.body;
+  const {  password,confirm_pass, email, dob, name, gender, user_type, department_id, department, session, registration_no,registered_from } = req.body;
 
-  if ( !password || !email || !dob || !name || !sex || !user_type) {
-    return res.status(400).json({ success: false, message: 'All required parameters must be provided' });
+  if ( !password || !email || !dob || !name || !gender || !user_type) {
+    return res.status(200).json({ success: false, message: 'All required parameters must be provided' });
   }
-
+  console.log(password,confirm_pass);
+  if(password!==confirm_pass)
+  {
+    return res.status(200).json({ success: false, message: 'Password does not match' });
+  }
   try {
     var filePath;
     if (req.file) {
@@ -60,12 +64,13 @@ router.post('/create-user', upload.single('file'), async (req, res) => {
     status='Approved';
 
     // Insert user into Users table
-    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )';
+    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status ,RegisteredFrom) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
     const roleID = getUserRoleId(user_type);
-    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, sex, roleID, filePath,token,status ]);
+    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, gender, roleID, filePath,token,status ,registered_from]);
 
     // Insert additional data based on user type
     if (user_type === 'doctor') {
+      console.log(department_id);
       if (!department_id) {
         //delete user
         const deleteUserQuery = 'DELETE FROM Users WHERE UserID = ?';
@@ -251,7 +256,7 @@ router.get('/', async (req, res) => {
       //   dob: user.DOB,
       // role: getRoleById(user.RoleID),
       // name: user.Name,
-      // sex: user.Sex
+      // gender: user.Sex
       user
 
 
@@ -267,6 +272,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred while getting users' });
   }
 });
+
 
 
 router.post('/send-otp',  async (req, res) => {
@@ -401,7 +407,7 @@ router.post('/login', async (req, res) => {
           user_id: user.UserID,
           email: user.Email,
           status: user.Status,
-          sex:user.Sex,
+          gender:user.Sex,
           image: user.Image,
            dob: user.DOB, 
            role: role, 

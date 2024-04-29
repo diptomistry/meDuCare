@@ -57,7 +57,7 @@ import AppointmentData from "./pages/AppointmentData.jsx";
 import RegistartionForm from "./models/RegistrationForm.jsx";
 import NoticeManagement from "./pages/public/Notice.jsx";
 
-import SecDashBoard from "./section_officer_dashboard/sec_o_dashboard";
+
 
 import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
@@ -70,7 +70,7 @@ function App() {
 
         <Route path="/get-started" element={<GetStartedPage />} />
         <Route path="/create-account" element={<RegistartionForm />} />
-        <Route path="/dashboard" element={<SecDashBoard />} />
+      
         <Route path="/admin" element={<AdminRootLayout />} >
           <Route path="Users/Approve" element={<ApproveUser />} />
           </Route>

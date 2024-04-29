@@ -1,29 +1,55 @@
 import express from 'express';
 import pool from '../../database.js'; // Ensure correct import path
+import fs from 'fs';
+import { promisify } from 'util';
+import multer from 'multer';
+import path from 'path';
+
+
+const unlinkAsync = promisify(fs.unlink); // Convert fs.unlink to a promise-based function
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+});
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 
 // Create notice
-router.post('/create-notice', async (req, res) => {
-    const { title, description, image, mainPage, isAdmin, date, link } = req.body;
+router.post('/create-notice', upload.single('file'), async (req, res) => {
+    const { title, description, mainPage, isAdmin, date, link } = req.body;
+    var filePath;
+    if(req.file){
+        const host = req.hostname;
+        const protocol = req.protocol;
+        // Ensure that this path matches how you serve static files
+        filePath = `${protocol}://${host}:8000/${req.file.path}`;
+        console.log(filePath);
+    }
     //today date
     var today = new Date();
     // Prepare the notice data according to your table structure
-    const noticeData = {
+    var noticeData = {
         Title: title,
         Description: description,
-        Image: image,
+        Image: filePath,
         MainPage: mainPage,
-        IsAdmin: isAdmin,
+        isAdmin: isAdmin,
         Date: today,
         Link: link
     };
+   
+
     try {
         const result = await pool.query('INSERT INTO Notices SET ?', noticeData);
         res.status(201).json({ success: true, message: 'Notice created successfully', noticeId: result.insertId });
     } catch (error) {
         console.error('Failed to create notice:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(200).json({ success: false, message: error.message });
     }
 });
 
@@ -38,23 +64,44 @@ router.get('/get-notices', async (req, res) => {
 });
 
 // Update notice
-router.post('/update-notice', async (req, res) => {
-    const { notice_id, title, description, image, mainPage, isAdmin, link } = req.body;
+router.post('/update-notice',upload.single('file'), async (req, res) => {
+    var { notice_id, title, description, image, mainPage, isAdmin, link } = req.body;
+    // console.log(req.body);
     if (!notice_id) {
         return res.status(200).json({ success: false, message: 'Notice ID is required' });
     }
-    const noticeUpdate = {
+    var filePath;
+    if(req.file){
+        const host = req.hostname;
+        const protocol = req.protocol;
+        // Ensure that this path matches how you serve static files
+        filePath = `${protocol}://${host}:8000/${req.file.path}`;
+        console.log(image);
+    }
+    if(link){
+        if(!link.startsWith('http://') && !link.startsWith('https://')){
+            link = 'http://' + link;
+            console.log(link);
+        }
+    }
+   
+    console.log(mainPage, isAdmin);
+    var noticeUpdate = {
         Title: title,
         Description: description,
-        Image: image,
+        Image: filePath,
         MainPage: mainPage,
-        IsAdmin: isAdmin,
+        isAdmin: isAdmin,
         Link: link
     };
+    if(!filePath){
+        delete noticeUpdate.Image;
+    }
     try {
         const result = await pool.query('UPDATE Notices SET ? WHERE NoticeID = ?', [noticeUpdate, notice_id]);
         res.status(200).json({ success: true, message: 'Notice updated successfully' });
     } catch (error) {
+        console.error('Failed to update notice:', error);
         res.status(200).json({ success: false, message: error.message });
     }
 });

@@ -2,11 +2,7 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
-// console.log(process.env.DB_PORT);
-// console.log(process.env.DB_HOST);
-// console.log(process.env.DB_USER);
-// console.log(process.env.DB_PASS);
-// console.log(process.env.MYSQL_DB);
+
 const pool = mysql.createPool({
   // port: process.env.DB_PORT,
    host: process.env.DB_HOST,

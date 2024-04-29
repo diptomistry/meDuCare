@@ -19,6 +19,8 @@ import { NavLink, useLocation, useRoutes } from "react-router-dom";
 
 const Sidebar = () => {
   let isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
+  const role = localStorage.getItem("role");
+  console.log(role);
   //It checks whether the screen width is less than or equal to 768 pixels, indicating a tablet or smaller device
   const [open, setOpen] = useState(isTabletMid ? false : true); //// it is set to true for larger screens and false for tablet-sized screens or smaller
 
@@ -120,21 +122,25 @@ const Sidebar = () => {
 
         <div className="flex flex-col  h-full">
           <ul className="whitespace-pre px-2.5 text-[0.9rem] py-5 flex flex-col gap-1  font-medium overflow-x-hidden scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100   md:h-[68%] h-[70%]">
-            <li>
+           {role==='doctor'? <li>
               <NavLink to={"/get-started/doctor/allApps"} className="link">
                 <AiOutlineAppstore size={23} className="min-w-max" />
-                All Apps
+                Prescription
               </NavLink>
-            </li>
-            <li>
+            </li>:null}
+            {
+              role==='admin'?<li>
               <NavLink
                 to={"/get-started/doctor/authentication"}
                 className="link"
               >
                 <BsPerson size={23} className="min-w-max" />
-                Authentication
+                Users
               </NavLink>
             </li>
+            :null
+            }
+            
             <li>
               <NavLink to={"/get-started/doctor/stroage"} className="link">
                 <HiOutlineDatabase size={23} className="min-w-max" />

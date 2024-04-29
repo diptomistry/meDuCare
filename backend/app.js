@@ -10,6 +10,7 @@ import path from 'path';
 import galleryRouter from "./routes/api/public/photoGallery.js";
 import doctorsRouter from "./routes/api/doctors/doctors.js";
 import noticeRouter from "./routes/api/public/mainNotice.js";
+import bcryptjs from 'bcryptjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -49,3 +50,7 @@ app.listen(process.env.APP_PORT, () => {
   console.log("Server has started on port:", process.env.APP_PORT);
 });
 
+// const hashedPassword = await bcryptjs.hash('admin1234', 10);
+// console.log(hashedPassword);
+// const token = await bcryptjs.hash('admin@gmail.com', 10);
+// console.log(token);

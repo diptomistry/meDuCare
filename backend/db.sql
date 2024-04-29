@@ -31,6 +31,7 @@ CREATE TABLE Users (
     Status VARCHAR(20) DEFAULT 'Pending',
     Token VARCHAR(100),
     otp VARCHAR(100),
+    RegisteredFrom VARCHAR(100),
     FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
 );
 
@@ -42,7 +43,7 @@ CREATE TABLE Department (
 );
 
 CREATE TABLE Student (
-    RegistrationNo INT PRIMARY KEY,
+    RegistrationNo VARCHAR(200) PRIMARY KEY,
     UserID INT UNIQUE,
     Department VARCHAR(100) NOT NULL,
     Session VARCHAR(100) NOT NULL,
@@ -156,3 +157,5 @@ CREATE TABLE PhotoGallery (
     Date DATE,
     Title VARCHAR(100)
 );
+
+INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status,RegisteredFrom) VALUES ('$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'admin@gmail.com', '1998-01-01', 'Admin','male', 1, 'https://localhost:8000/public/avatar.jpeg', '$2a$10$dTB5zKRMDDpilQizJINYF.iJhMBxVAWf6IzZxaY4gVBrDNa9lTFIm','Approved','Web');

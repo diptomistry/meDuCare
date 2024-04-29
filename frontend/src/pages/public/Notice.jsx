@@ -1,16 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {FaEdit, FaTrashAlt} from 'react-icons/fa';
 
 const NoticeManagement = () => {
     const [notices, setNotices] = useState([]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState(null);
     const [mainPage, setMainPage] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [date, setDate] = useState('');
     const [link, setLink] = useState('');
     const [noticeId, setNoticeId] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [noticesPerPage] = useState(2);
+    const indexOfLastNotice = currentPage * noticesPerPage;
+const indexOfFirstNotice = indexOfLastNotice - noticesPerPage;
+const currentNotices = notices.slice(indexOfFirstNotice, indexOfLastNotice);
+const paginate = pageNumber => setCurrentPage(pageNumber);
+
+const pageNumbers = [];
+for (let i = 1; i <= Math.ceil(notices.length / noticesPerPage); i++) {
+    pageNumbers.push(i);
+}
+
+const renderPageNumbers = pageNumbers.map(number => (
+    <button key={number} onClick={() => paginate(number)} className="bg-backgroundColor text-white px-4 py-2 border rounded-full mr-2">
+        {number}
+    </button>
+));
+
+  
     const [isLoading, setIsLoading] = useState(false);
 
     // Fetch notices on component mount
@@ -29,32 +49,53 @@ const NoticeManagement = () => {
     };
 
     const handleCreateOrUpdateNotice = async (event) => {
-        event.preventDefault();
-        const method = noticeId ? 'post' : 'post'; // Consider using 'put' for updates
-        const url = noticeId ? `http://localhost:8000/api/update-notice` : `http://localhost:8000/api/create-notice`;
-        const payload = { notice_id: noticeId, title, description, image, mainPage, isAdmin, date, link };
+      event.preventDefault();
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('mainPage', mainPage? 1 : 0);
+      formData.append('isAdmin', isAdmin? 1 : 0);
+      formData.append('date', date); // You might want to add date input field back
+      formData.append('link', link);
 
-        try {
-            setIsLoading(true);
-            const response = await axios[method](url, payload);
-            setIsLoading(false);
-            alert(response.data.message);
-            fetchNotices();
-            // Reset form
-            setTitle('');
-            setDescription('');
-            setImage('');
-            setMainPage(false);
-            setIsAdmin(false);
-            setDate('');
-            setLink('');
-            setNoticeId(null);
-        } catch (error) {
-            setIsLoading(false);
-            console.error('Failed to process notice:', error);
-            alert('Failed to process notice: ' + error.message);
-        }
-    };
+      if (image) formData.append('file', image);
+      if(noticeId) formData.append('notice_id', noticeId  );
+  
+      const method = noticeId ? 'post' : 'post';  // Changed to 'put' for updates
+      const url = noticeId ? `http://localhost:8000/api/update-notice/` : `http://localhost:8000/api/create-notice`;
+  
+      try {
+          setIsLoading(true);
+          const response = await axios({
+              method: method,
+              url: url,
+              data: formData,
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          });
+          setIsLoading(false);
+          alert(response.data.message);
+          fetchNotices();
+          resetForm();
+      } catch (error) {
+          setIsLoading(false);
+          console.error('Failed to process notice:', error);
+          alert('Failed to process notice: ' + error.message);
+      }
+  };
+  
+  const resetForm = () => {
+      setTitle('');
+      setDescription('');
+      setImage(null);
+      setMainPage(false);
+      setIsAdmin(false);
+      setDate('');
+      setLink('');
+      setNoticeId(null);
+  };
+  
 
     const handleDeleteNotice = async (id) => {
         if (!window.confirm('Are you sure you want to delete this notice?')) return;
@@ -75,7 +116,7 @@ const NoticeManagement = () => {
         setDescription(notice.Description);
         setImage(notice.Image);
         setMainPage(notice.MainPage);
-        setIsAdmin(notice.IsAdmin);
+        setIsAdmin(notice.isAdmin);
         setDate(notice.Date);
         setLink(notice.Link);
     };
@@ -98,15 +139,14 @@ const NoticeManagement = () => {
   onChange={(e) => setDescription(e.target.value)}
   placeholder="Description"
   required
-  className={`textarea  bordered w-full mb-4 rounded-md p-2`}
+  className={`textarea  border w-full mb-4 rounded-md p-2`}
 />
 <input
-  type="text"
-  value={image}
-  onChange={(e) => setImage(e.target.value)}
-  placeholder="Image URL"
-  className={`mt-1 p-2 border rounded-md w-full`}
+  type="file"
+  onChange={(e) => setImage(e.target.files[0])}
+  className="mt-1 p-2 border rounded-md w-full"
 />
+
 <input
   type="text"
   value={link}
@@ -136,24 +176,39 @@ const NoticeManagement = () => {
             </button>
           </form>
         </div>
-      
-        <div class="w-full lg:w-1/2 px-4 pb-4">
-          {notices.length > 0 ? (
-            notices.map((notice) => (
-              <div key={notice.NoticeID} class="p-4 rounded shadow-md bg-gray-100 text-gray-800 mb-3 border-b border-gray-200">
-                <h3 class="text-xl font-semibold">{notice.Title}</h3>
-                <p class="text-gray-600">{notice.Description}</p>
-                <div class="flex mt-4">
-                  <button onClick={() => handleEditClick(notice)} class="btn btn-sm btn-info mr-2">Edit</button>
-                  <button onClick={() => handleDeleteNotice(notice.NoticeID)} class="btn btn-sm btn-error">Delete</button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p class="text-gray-500">No notices available.</p>
-          )}
+        <div className="w-full lg:w-1/2 px-4 pb-4">
+            {currentNotices.length > 0 ? (
+                currentNotices.map((notice) => (
+                    <div key={notice.NoticeID} className="flex items-center p-4 bg-gray-100 text-gray-800 mb-3 border-b border-gray-200">
+                        <img src={notice.Image} alt="Notice" className="w-24 h-24 object-cover rounded-md mr-4" />
+                        <div className="flex-grow">
+                            <div className='flex items-center mr-2'>
+                            <h3 className="text-xl font-semibold  mr-2 text-backgroundColor">{notice.Title}</h3>
+                                {notice.isAdmin===0 && notice.MainPage===1 && <span className="bg-red-500 text-white px-2 py-1 rounded-md text-sm mr-3">Urgent</span>}
+                                {notice.isAdmin===1 && notice.MainPage===0 && <span className="bg-blue-500 text-white px-2 py-1 rounded-md text-sm">Cheif Medical Officer</span>}
+                                {notice.isAdmin===0 && notice.MainPage===0 && <span className="bg-green-500 text-white px-2 py-1 rounded-md text-sm">Health Tips</span>}
+                               
+                            </div>
+                            <p className="text-gray-600">{notice.Description}</p>
+                            <div className="flex items-center justify-between mt-4">
+                                {notice.Link && <a href={notice.Link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">Link</a>}
+                                <div className='flex items-center'>
+                                    <FaEdit onClick={() => handleEditClick(notice)} className="p-2 text-blue-500 hover:text-blue-700 ml-2" size="2em" />
+                                    <FaTrashAlt onClick={() => handleDeleteNotice(notice.NoticeID)} className="p-2 text-red-500 hover:text-red-700" size="2em" />
+                                </div>
+                                <span className="text-sm text-gray-500">{new Date(notice.Date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <p className="text-gray-500">No notices available.</p>
+            )}
+            <div className="flex justify-center mt-4">
+                {renderPageNumbers}
+            </div>
         </div>
-      </div>
+    </div>
       
     );
 };
