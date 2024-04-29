@@ -1,8 +1,11 @@
 import React from 'react';
+import { useState,useEffect } from 'react';
 
 const UpperSideBar = () => {
+  
+  
   return (
-    <div className="flex items-center justify-between h-16 bg-slate-200 px-4">
+    <div className="flex items-center justify-between h-16 bg-backgroundColor px-4">
       <div className="flex items-center">
         <span className="text-lg font-semibold mr-4">Welcome to Dashboard</span>
         {/* Replace with your profile picture component or image */}

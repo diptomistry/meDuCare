@@ -74,7 +74,7 @@ const GetStartedPage = () => {
         ></div>
       </div>
       <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-      <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0  shadow-lg">
+      <div className="w-full bg-white rounded-lg  border md:mt-0 sm:max-w-md xl:p-0  shadow-lg">
             <div className="p-4 space-y-2 md:space-y-4 sm:p-6">
               <h1 className="text-xl font-semibold text-center text-backgroundColor    md:text-2xl ">
                 Sign in to your account

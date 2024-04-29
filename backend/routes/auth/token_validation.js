@@ -1,26 +1,41 @@
-import { verify } from 'jsonwebtoken';
+import pool from '../database.js';
 
-const checkToken = (req, res, next) => {
-    let token = req.get("authorization");
+async function verifyToken(req, res, next) {
+  try {
+    // 1. Get and validate authorization header
+    const authHeader = req.headers.authorization;
+ //   console.log(authHeader);
 
-    if (token) {
-        token = token.slice(7);
-        verify(token, process.env.SECRET_KEY, (err, decoded) => {
-            if (err) {
-                res.json({
-                    success: 0,
-                    message: "Invalid Token"
-                });
-            } else {
-                next();
-            }
-        });
-    } else {
-        res.json({
-            success: 0,
-            message: "Access Denied! Unauthorized User"
-        });
+    if (!authHeader || !authHeader.startsWith('Bearer')) {
+      return res.status(200).json({ message: 'Unauthorized: Missing or invalid token' });
     }
-};
 
-export { checkToken };
+    // 2. Extract token
+    const token = authHeader.split(' ')[1];
+   // console.log(token);
+
+    // 3. Verify token with single query
+    const [rows] = await pool.execute('SELECT * FROM Users WHERE Token = ?', [token]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    }
+
+    // 4. Check for session expiry
+    const now = Date.now();
+    if (rows[0].expiry < now) {
+      return res.status(401).json({ message: 'Unauthorized: Session expired' });
+    }
+
+    // 5. Attach user ID to request object
+    req.userId = rows[0].UserID;
+
+    // 6. Proceed to next middleware
+    next();
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export default verifyToken;
