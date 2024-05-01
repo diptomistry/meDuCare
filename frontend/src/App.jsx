@@ -61,11 +61,15 @@ import SecDashBoard from "./section_officer_dashboard/sec_o_dashboard";
 import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
 
+
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
+       
+    
 
         <Route path="/get-started" element={<GetStartedPage />} />
         <Route path="/create-account" element={<RegistartionForm />} />
