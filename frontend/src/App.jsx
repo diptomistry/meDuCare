@@ -61,17 +61,24 @@ import NoticeManagement from "./pages/public/Notice.jsx";
 
 import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
+import DoctorRootLayout from "./doctorDashLayout/DoctorRootLayout.jsx";
+
+
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
+       
+    
 
         <Route path="/get-started" element={<GetStartedPage />} />
         <Route path="/create-account" element={<RegistartionForm />} />
       
         <Route path="/admin" element={<AdminRootLayout />} >
+         
           <Route path="Users/Approve" element={<ApproveUser />} />
           </Route>
 

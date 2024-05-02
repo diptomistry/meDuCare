@@ -119,7 +119,7 @@ const Home = () => {
     </div>
     
    
-    <div className="mt-2 bg-backgroundColor md:text-2xl text-red-700 py-2 px-1 flex items-center rounded-md relative">
+    <div className="mt-2 bg-backgroundColor text-md md:text-xl text-red-700 py-3 px-1 flex items-center rounded-md relative">
       {/* Left border */}
       <div className="absolute inset-y-0 left-0 w-2  bg-gray-700 rounded-lg"></div>
       {/* Right border */}
