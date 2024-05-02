@@ -55,8 +55,9 @@ import HomeRootLayout from "./layouts/HomeRootLayout";
 import AppointmentData from "./pages/AppointmentData.jsx";
 
 import RegistartionForm from "./models/RegistrationForm.jsx";
+import NoticeManagement from "./pages/public/Notice.jsx";
 
-import SecDashBoard from "./section_officer_dashboard/sec_o_dashboard";
+
 
 import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
@@ -75,8 +76,7 @@ function App() {
 
         <Route path="/get-started" element={<GetStartedPage />} />
         <Route path="/create-account" element={<RegistartionForm />} />
-        <Route path="/dashboard" element={<SecDashBoard />} />
-        <Route path="/doctor" element={<DoctorRootLayout/>} />
+      
         <Route path="/admin" element={<AdminRootLayout />} >
          
           <Route path="Users/Approve" element={<ApproveUser />} />
@@ -90,6 +90,7 @@ function App() {
           <Route path="public-info/gallery" element={<PhotoUpload />} />
           <Route path="analytics/:aID" element={<Analytics />} />
           <Route path="public-info/department" element={<DepartmentManage />} />
+              <Route path="public-info/notice" element={<NoticeManagement />} />
         </Route>
       </Routes>
     </BrowserRouter>

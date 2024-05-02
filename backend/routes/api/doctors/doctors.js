@@ -45,6 +45,7 @@ router.post('/create-department', upload.single('file'), async (req, res) => {
 router.get('/get-departments', async (req, res) => {
     try {
         const departments = await pool.query('SELECT * FROM Department');
+        console.log(departments[0])
         res.status(200).json({success:true, data: departments[0] });
     } catch (error) {
         res.status(200).json({ success:false,message: error.message });
@@ -91,4 +92,31 @@ router.post('/update-department', upload.single('file'), async (req, res) => {
     }
 }
 );
+
+//delete department
+router.delete('/delete-department/:department_id', async (req, res) => {
+    const department_id = req.params.department_id;
+    if(!department_id){
+        return res.status(200).json({success:false, message: 'Department ID is required' });
+    }
+    const department = await pool.query('SELECT * FROM Department WHERE departmentId = ?', department_id);
+    if(department[0].length === 0){
+        return res.status(200).json({success:false, message: 'Department not found' });
+    }
+    try {
+        const result = await pool.query('DELETE FROM Department WHERE departmentId = ?', department_id);
+        if(result.affectedRows === 0){
+            return res.status(404).json({success:false, message: 'Department not found' });
+        }
+        res.status(200).json({success:true, message: 'Department deleted successfully' });
+    } catch (error) {
+        res.status(200).json({ success:false,message: error.message });
+    }
+}
+);
+
+// doctors duty roster
+
+
+// doctors duty roster
 export default router;

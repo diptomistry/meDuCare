@@ -3,6 +3,7 @@ import pool from '../../database.js'; // Import your database connection pool
 import multer from 'multer';
 import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
+import  verifyToken  from '../../auth/token_validation.js';
 import nodemailer from "nodemailer"; // Optional: Use Nodemailer for sending emails
 
 const storage = multer.diskStorage({
@@ -23,12 +24,16 @@ const __dirname = path.dirname(__filename);
 
 // POST /api/users/create-user
 router.post('/create-user', upload.single('file'), async (req, res) => {
-  const {  password, email, dob, name, sex, user_type, department_id, department, session, registration_no } = req.body;
+  const {  password,confirm_pass, email, dob, name, gender, user_type, department_id, department, session, registration_no,registered_from } = req.body;
 
-  if ( !password || !email || !dob || !name || !sex || !user_type) {
-    return res.status(400).json({ success: false, message: 'All required parameters must be provided' });
+  if ( !password || !email || !dob || !name || !gender || !user_type) {
+    return res.status(200).json({ success: false, message: 'All required parameters must be provided' });
   }
-
+  console.log(password,confirm_pass);
+  if(password!==confirm_pass)
+  {
+    return res.status(200).json({ success: false, message: 'Password does not match' });
+  }
   try {
     var filePath;
     if (req.file) {
@@ -60,12 +65,13 @@ router.post('/create-user', upload.single('file'), async (req, res) => {
     status='Approved';
 
     // Insert user into Users table
-    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? )';
+    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status ,RegisteredFrom) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
     const roleID = getUserRoleId(user_type);
-    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, sex, roleID, filePath,token,status ]);
+    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, gender, roleID, filePath,token,status ,registered_from]);
 
     // Insert additional data based on user type
     if (user_type === 'doctor') {
+      console.log(department_id);
       if (!department_id) {
         //delete user
         const deleteUserQuery = 'DELETE FROM Users WHERE UserID = ?';
@@ -238,35 +244,74 @@ const getUserRoleId = (userType) => {
 };
 
 //user/get
-router.get('/', async (req, res) => {
+router.post('/', verifyToken,async (req, res,next) => {
+  // console.log('token');
+  // var token = req.get('authorization');
+  var user_id = req.userId;
+  console.log(user_id);
   try {
-    const users = await pool.query('SELECT * FROM Users');
-    // console.log(users.RowDataPacket.toString);
-    
-    const to_return=users[0].map((user)=>{
-    //  console.log(user);
-      return {
-      //  user_name: user.Username,
-      //   email: user.Email,
-      //   dob: user.DOB,
-      // role: getRoleById(user.RoleID),
-      // name: user.Name,
-      // sex: user.Sex
-      user
-
-
-        
-      };
+    const [users] = await pool.query('SELECT * FROM Users WHERE  UserID = ?', [user_id]);
+    if (users.length === 0) {
+      return res.status(200).json({ success: false, message: 'User does not exists.' });
     }
-    );
-   // console.log(to_return);
+    const user = users[0];
+    // console.log(user);
+    // Check if password is correct
+    // const isPasswordValid = await bcryptjs.compare(password, user.Password);
+    // if (!isPasswordValid) {
+    //   return res.status(200).json({ success: false, message: 'Invalid username or password' });
+    // }
+    // Get user role
+    const role = await getRoleById(user.RoleID);
+    var registration_no='';
+    var department='';
+    var session='';
+    var doctorDepartment;
 
-    res.json({success:true, users: users[0]});
-  } catch (error) { 
-    console.error('Error getting users:', error);
-    res.status(500).json({ success: false, message: 'An error occurred while getting users' });
+    if(role==='student')
+    {
+      const [student] = await pool.query('SELECT * FROM Student WHERE UserID = ?', [user.UserID]);
+      registration_no=student[0].RegistrationNo;
+      department=student[0].Department;
+      session=student[0].Session;
+    }
+    if(role==='doctor')
+    {
+      const [doctor] = await pool.query('SELECT * FROM Doctors WHERE UserID = ?', [user.UserID]);
+      const [departmentName] = await pool.query('SELECT * FROM Department WHERE DepartmentID = ?', [doctor[0].DepartmentID]);
+      doctorDepartment=departmentName[0];
+    }
+    const to_return={
+      success: true, 
+      message: 'Fetched',
+      user: {
+          user_id: user.UserID,
+          email: user.Email,
+          status: user.Status,
+          gender:user.Sex,
+          image: user.Image,
+           dob: user.DOB, 
+           role: role, 
+           token: user.Token,
+           name: user.Name,
+           role_id: user.RoleID,
+           otp: user.otp,
+           registration_no: registration_no,
+            department: department,
+              session: session,
+              doctor_department: doctorDepartment
+
+           
+    }
+  };
+    res.json(to_return);
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while logging in' });
   }
+
 });
+
 
 
 router.post('/send-otp',  async (req, res) => {
@@ -401,7 +446,7 @@ router.post('/login', async (req, res) => {
           user_id: user.UserID,
           email: user.Email,
           status: user.Status,
-          sex:user.Sex,
+          gender:user.Sex,
           image: user.Image,
            dob: user.DOB, 
            role: role, 

@@ -8,12 +8,14 @@ const router = express.Router();
 // get all roles and permission to each role
 
 router.get('/get-roles', async (req, res) => {
+    console.log('get roles');
     try {
         const [roles] = await pool.query('SELECT * FROM Roles');
-        return res.status(200).json({ success: true, roles });
+        console.log(roles);
+        return res.status(200).json({ success: true,roles: roles});
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        return res.status(200).json({ success: false, message: 'Internal server error' });
     }
 }
 );
