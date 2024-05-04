@@ -81,7 +81,7 @@ const SlidingLoginSignup = () => {
                   <div className="flex justify-center flex-row gap-4">
                     <a
                       href="#"
-                      className=" transition-colors duration-300 hover:text-blue-500 hover:border-blue-500"
+                      className="  "
                     >
                         <div className="flex  w-40 h-12 sm:w-48 sm:h-14 bg-black text-white rounded-lg items-center justify-center">
               <div className="mr-3">
@@ -116,7 +116,7 @@ const SlidingLoginSignup = () => {
                   
                     <a
                       href="#"
-                      className=" transition-colors duration-300 hover:text-blue-500 hover:border-blue-500"
+                      className="  "
                     >
                       <div className="flex   w-40 h-12 sm:w-48 sm:h-14 bg-black text-white rounded-xl items-center justify-center">
               <div className="mr-3">
@@ -276,8 +276,7 @@ const SlidingLoginSignup = () => {
                 New here ?
               </h3>
               <p class="  text-[0.7rem] lg:text-[0.95rem] px-0 py-2 lg:py-[0.7rem]">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                Debitis, ex ratione. Aliquid!
+                Sign up and discover the digital platform of Dhaka University Medical Center
               </p>
               <button
                 className="bg-transparent w-[110px] h-[35px] text-gray-700 text-[0.7rem] lg:w-[130px] lg:h-[41px] lg:text-[0.8rem]  font-semibold   border-2 border-white rounded-full transition-colors duration-300 hover:bg-white hover:text-gray-700"
@@ -313,8 +312,7 @@ const SlidingLoginSignup = () => {
                 One of us ?
               </h3>
               <p class=" py-2 text-[0.7rem] lg:text-[0.95rem] px-0 py-2 lg:py-[0.7rem]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-                laboriosam ad deleniti.
+                Sign in to your account to have hastle free experience 
               </p>
               <button
                 className=" text-gray-700 bg-transparent w-[110px] h-[35px]  text-[0.7rem] lg:w-[130px] lg:h-[41px] lg:text-[0.8rem]  font-semibold   border-2 border-white rounded-full transition-colors duration-300 hover:bg-white hover:text-gray-700"
