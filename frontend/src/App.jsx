@@ -23,6 +23,8 @@ import NoticeManagement from "./pages/public/Notice.jsx";
 import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
 import DoctorRootLayout from "./doctorDashLayout/DoctorRootLayout.jsx";
+import SlidingLoginSignup from "./LoginSignupPage/Root.jsx";
+
 
 import RequireAuth from "./auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
@@ -34,6 +36,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
+        <Route path="/login" element={<SlidingLoginSignup />} />
+        
        
     
 

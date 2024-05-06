@@ -42,8 +42,10 @@ const GetStartedPage = () => {
 
             localStorage.setItem("token", data.user.token);
             localStorage.setItem("role", data.user.role);
-            if(data.user.status === "Pending"){
-              alert("Your account is not approved yet. Please wait for approval.");
+            if (data.user.status === "Pending") {
+              alert(
+                "Your account is not approved yet. Please wait for approval."
+              );
               return;
             }
 
@@ -71,22 +73,25 @@ const GetStartedPage = () => {
   };
   return (
     <div className="h-[100vh] items-center flex justify-center px-5 lg:px-0">
-    <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
-      <div className="flex-1 bg-brightColor text-center hidden md:flex">
-        <div
-          className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${login})`,
-          }}
-        ></div>
-      </div>
-      <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-      <div className="w-full bg-white rounded-lg  border md:mt-0 sm:max-w-md xl:p-0  shadow-lg">
+      <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
+        <div className="flex-1 bg-brightColor text-center hidden md:flex">
+          <div
+            className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${login})`,
+            }}
+          ></div>
+        </div>
+        <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+          <div className="w-full bg-white rounded-lg  border md:mt-0 sm:max-w-md xl:p-0  shadow-lg">
             <div className="p-4 space-y-2 md:space-y-4 sm:p-6">
               <h1 className="text-xl font-semibold text-center text-backgroundColor    md:text-2xl ">
                 Sign in to your account
               </h1>
-              <form className="w-80 md:w-96 space-y-4 bg-white p-5 rounded-xl md:space-y-6" action="#">
+              <form
+                className="w-80 md:w-96 space-y-4 bg-white p-5 rounded-xl md:space-y-6"
+                action="#"
+              >
                 <div>
                   <label
                     htmlFor="email"
@@ -131,7 +136,6 @@ const GetStartedPage = () => {
                         aria-describedby="remember"
                         type="checkbox"
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300  "
-                        required
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -154,11 +158,8 @@ const GetStartedPage = () => {
                 >
                   Sign in
                 </button>
-               
-           
 
                 <p
-                 
                   // onClick={handleLogin}
                   className="text-sm font-light text-gray-500 "
                 >
@@ -171,16 +172,12 @@ const GetStartedPage = () => {
                     Sign up
                   </a>
                 </p>
-
-                
               </form>
             </div>
           </div>
+        </div>
       </div>
     </div>
-  </div>
   );
-
 };
 export default GetStartedPage;
-

@@ -5,12 +5,22 @@ import register from "../assets/img/signup.svg";
 
 import EmailRecovery from "./EmailRecovery";
 import EmailRecoveryOTP from "./EmailRecoveryOTP";
+import axios from "axios";
+
 
 const SlidingLoginSignup = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const [userType, setUserType] = useState("");
+  const [userType, setUserType] = useState([]);
   const [emailRecovery, setEmailRecovery] = useState(false);
   const [emailRecoveryOTP, setEmailRecoveryOTP] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [fromSignIn,setFromSignIn]=useState(true);
+
+  const handleEmailVerification = (isVerified) => {
+    setEmailVerified(isVerified);
+    // You can perform any other actions based on the verification status here
+  };
   const openForm = () => {
     setEmailRecovery(true);
   };
@@ -21,12 +31,138 @@ const SlidingLoginSignup = () => {
 
   const toggleSignUpMode = () => {
     setIsSignUpMode(!isSignUpMode);
+    setFromSignIn(!fromSignIn);
   };
-  const handleUserTypeChange = (e) => {
-    setUserType(e.target.value);
-    if (e.target.value !== "doctor") {
-      setDepartment("");
+  console.log(":parent");
+ console.log(fromSignIn)
+//   const handleUserTypeChange = (e) => {
+//     setUserType(e.target.value);
+//     if (e.target.value !== "doctor") {
+//       setDepartment("");
+//     }
+//   };
+const handleUserTypeChange = (e) => {
+    setFormData({ ...formData, user_type: e.target.value });
+   //setUserType(e.target.value);
+   console.log("type changed");
+   console.log(e.target.value); 
+
+  };
+  const handleDepartmentChange = (e) => {
+    setFormData({ ...formData, department: e.target.value });
+  };
+  const handlePasswordChange = (e) => {
+    setFormData({ ...formData, password: e.target.value });
+  };
+  const handleConfirmPasswordChange = (e) => {
+    setFormData({ ...formData, confirm_pass: e.target.value });
+  };
+  const handleDateChange = (e) => {
+    setFormData({ ...formData, dob: e.target.value });
+  };
+
+  const handlePhoneChange = (e) => {
+    setFormData({ ...formData, phone: e.target.value });
+  };
+  const handleNameChange = (e) => {
+    setFormData({ ...formData, name: e.target.value });
+  };
+  const hanndleDesignationChange = (e) => {
+    console.log(e.target.value);
+    setFormData({ ...formData, department_id: e.target.value });
+  };
+  const genderChange = (e) => {
+    setFormData({ ...formData,gender: e.target.value });
+  };
+const handleEmailChange = (e) => {
+  setFormData({ ...formData, email: e.target.value });
+};
+const handleRegistrationNoChange = (e) => {
+  setFormData({ ...formData, registration_no: e.target.value });
+};
+const handleSessionChange = (e) => {
+  setFormData({ ...formData, session: e.target.value });
+};
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    user_type: '',
+    gender: '',
+    department_id: '',
+    dob: '',
+    password: '',
+    confirm_pass: '',
+    department: '',
+    session: '',
+    registration_no: '',
+    
+  });
+  useEffect(() => {
+    const getDepartments = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/admin/get-departments');
+        setDepartments(response.data.data);
+        console.log('Departments:', response.data.data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+       // alert('Failed to fetch departments: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
+      }
+    };
+    const getRoles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/roles/get-roles');
+        console.log(response.data);
+        setUserType(response.data.roles);
+        console.log('Roles:', response.data.roles);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+        //alert('Failed to fetch roles: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
+      }
+    };
+    getRoles();
+
+    getDepartments( );
+  } , []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (formData.password !== formData.confirm_pass) {
+      alert('Passwords do not match!');
+      return;
     }
+
+   
+
+    const { confirmPassword, ...userData } = formData; // Exclude confirmPassword from data sent to server
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/users/create-user', userData);
+      alert(response.data.message);
+      if(response.data.message==='User created successfully') resetForm();
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert('Failed to create user: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
+    }
+  };
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      user_type: '',
+      department_id: '',
+      dob: '',
+      password: '',
+      confirm_pass: '',
+      department: '',
+      session: '',
+      registration_no: '',
+      registered_from:'web'
+    });
   };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,7 +220,8 @@ const SlidingLoginSignup = () => {
     console.log("Login clicked");
   };
   
-  
+ // const fromSignIn = false;
+
 
   return (
     <div>
@@ -95,7 +232,11 @@ const SlidingLoginSignup = () => {
             : ""
         }`}
       >
-        {emailRecovery && <EmailRecovery closeForm={closeForm} />}
+        {emailRecovery && fromSignIn &&  <EmailRecovery closeForm={closeForm} handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn } />
+
+}
+{!fromSignIn && emailRecovery && <EmailRecoveryOTP handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn } /> }
+
         <div className="absolute w-full h-full top-0 left-0">
           <div
             className={` absolute top-[95%] lg:top-1/2 left-1/2 grid grid-cols-[1fr] z-[5] -translate-x-1/2  -translate-y-full lg:-translate-y-1/2 lg:w-1/2 w-full  transition-[1s]  duration-[0.8s] lg:duration-[0.7s] ease-[ease-in-out] "  ${
@@ -280,66 +421,72 @@ const SlidingLoginSignup = () => {
                         <select
                           id="user_type"
                           class="bg-[#d5f2ec] border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                          value={userType}
-                          onChange={handleUserTypeChange}
+                          value={formData.user_type}
+                    onChange={handleUserTypeChange}
                         >
                           <option selected>Account Type</option>
-                          <option value="doctor">Doctor</option>
-                          <option value="student">Student</option>
-                          <option value="admin">Admin</option>
+                          {userType.map((role) => (
+                    <option value={role.RoleName}>{role.RoleName}</option>
+                  ))
+                  }
                         </select>
 
-                        {userType !== "student" && (
+                        {formData.user_type  !== "student" && (
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg"
                             type="text"
                             placeholder="Enter your name"
-                            onChange={""}
+                            value={formData.name}
+              onChange={handleNameChange}
                           />
                         )}
-                        {userType === "student" && (
+                        {formData.user_type  === "student" && (
                           <div className="flex gap-2">
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="text"
                               placeholder=" Your name"
-                              onChange={""}
+                              value={formData.name}
+              onChange={handleNameChange}
                             />
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="text"
                               placeholder="Dept name"
-                              onChange={""}
+                              onChange={handleDepartmentChange}
                             />
                           </div>
                         )}
 
-                        {(userType === "doctor" || userType === "student") && (
+                        {(formData.user_type  === "doctor" || formData.user_type  === "student") && (
                           <div className="flex gap-2 ">
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="email"
                               placeholder="Enter your email"
-                              onChange={""}
+                              value={formData.email}
+                              onChange={handleEmailChange}
                             />
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="tel"
                               placeholder="Enter your phone"
-                              onChange={""}
+                              value={formData.phone}
+                              onChange={handlePhoneChange}
                             />
                           </div>
                         )}
 
-                        {userType !== "doctor" && userType !== "student" && (
+                        {formData.user_type  !== "doctor" && formData.user_type  !== "student" && (
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
                             type="email"
                             placeholder="Enter your email"
-                            onChange={""}
+                            value={formData.email}
+                              onChange={handleEmailChange}
                           />
                         )}
-                        {userType !== "doctor" && userType !== "student" && (
+                        {formData.user_type  !== "doctor" && formData.user_type  !== "student" && (
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
                             type="tel"
@@ -347,33 +494,36 @@ const SlidingLoginSignup = () => {
                             onChange={""}
                           />
                         )}
-                        {userType === "doctor" && (
+                        {formData.user_type  === "doctor" && (
                           <select
                             id="department"
                             class="bg-[#d5f2ec] border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                            value={""}
-                            onChange={""}
+                            value={formData.department_id}
+                            onChange={hanndleDesignationChange}
                           >
                             <option selected>Department</option>
-                            <option value="medicine">Medicine</option>
-                            <option value="surgery">Surgery</option>
-                            <option value="gynae">Gynae</option>
-                            <option value="orthopedic">Orthopedic</option>
+                            {
+                      departments.map(department => (
+                        <option value={department.DepartmentID}>{department.Name}</option>
+                      ))
+                   }
                           </select>
                         )}
-                        {userType === "student" && (
+                        {formData.user_type  === "student" && (
                           <div className="flex gap-2">
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="number"
-                              placeholder="Reg. Number"
-                              onChange={""}
+                              placeholder="Reg. no"
+                              value={formData.registration_no}
+                              onChange={handleRegistrationNoChange}
                             />
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="text"
                               placeholder="Session"
-                              onChange={""}
+                              value={formData.session}
+                              onChange={handleSessionChange}
                             />
                           </div>
                         )}
@@ -384,14 +534,15 @@ const SlidingLoginSignup = () => {
                             type="text"
                             onFocus={(e) => (e.currentTarget.type = "date")}
                             onBlur={(e) => (e.currentTarget.type = "text")}
-                            onChange={""}
+                            value={formData.dob}
+                            onChange={handleDateChange}
                             placeholder="DOB"
                           ></input>
                           <select
                             id="gender"
                             className="bg-[#d5f2ec] border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5 "
-                            value={""}
-                            onChange={""}
+                            value={formData.gender}
+                            onChange={genderChange}
                             class="bg-[#d5f2ec] border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5 "
                           >
                             <option selected value="">
@@ -407,13 +558,15 @@ const SlidingLoginSignup = () => {
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                             type="password"
-                            onChange={""}
+                            onChange={handlePasswordChange}
+                  value={formData.password}
                             placeholder="Password"
                           />
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                             type="password"
-                            onChange={""}
+                            value={formData.confirm_pass}
+                  onChange={handleConfirmPasswordChange}
                             placeholder="Confirm Pass..."
                           />
                         </div>
@@ -421,6 +574,7 @@ const SlidingLoginSignup = () => {
                         <button
                           className="mt-5 tracking-wide font-semibold bg-brightColor text-gray-100 w-full py-4 rounded-lg hover:bg-hoverColor transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                           onClick={() => setEmailRecoveryOTP(true)}
+                          
                         >
                           <svg
                             className="w-6 h-6 -ml-2"
