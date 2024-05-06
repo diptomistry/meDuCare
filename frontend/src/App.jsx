@@ -63,7 +63,7 @@ import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
 import DoctorRootLayout from "./doctorDashLayout/DoctorRootLayout.jsx";
 import SlidingLoginSignup from "./LoginSignupPage/Root.jsx";
-import Signup from "./LoginSignupPage/Signup.jsx";
+
 
 
 
@@ -74,7 +74,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
         <Route path="/login" element={<SlidingLoginSignup />} />
-        <Route path="/signup" element={<Signup />} />
+        
        
     
 
