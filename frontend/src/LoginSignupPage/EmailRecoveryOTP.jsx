@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import ChangePassword from "./ChangePassword";
 
-const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn }) => {
-    console.log(fromSignIn);
-    console.log(handleEmailVerification);
+const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
+    // console.log(fromSignIn);
+    // console.log(handleEmailVerification);
    
 
     const handleEmailVerified = () => {
-        setShowChangePassword(true);
+        //if fromsignin is true then set showchange password to true
+       if(fromSignIn){
+              setShowChangePassword(true);
+  
+         }
+        
+        
         // Simulate email verification process
         const emailVerified = true;
         handleEmailVerification(emailVerified); // Send the boolean information back to the parent
@@ -113,15 +119,39 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn }) => {
 
   return (
     <div>
-      {showChangePassword && fromSignIn && <ChangePassword />}
+      {showChangePassword  && <ChangePassword />}
       {!showChangePassword && (
         <div className="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow mt-2">
+            {!fromSignIn && (
+                <div className="flex justify-end">
+                <button
+                      
+                      onClick={closeForm}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-brightColor hover:text-hoverColor"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                    </div>
+                    )}
           <header className="mb-8">
             <h1 className="text-2xl font-bold mb-1">Email Verification</h1>
             <p className="text-[15px] text-slate-500">
               Enter the 4-digit verification code that was sent to your email.
             </p>
           </header>
+          
           <form id="otp-form">
             <div className="max-w-[260px] mx-auto mt-4">
               <a className="w-full mb-4 inline-flex justify-center whitespace-nowrap rounded-lg bg-blue-100 px-3.5 py-2.5 text-sm font-medium text-gray-700 shadow-sm shadow-indigo-950/10 ">
@@ -191,9 +221,13 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn }) => {
                 </a>
               </div>
             )}
+            
           </div>
+          
         </div>
+        
       )}
+      
     </div>
   );
 };

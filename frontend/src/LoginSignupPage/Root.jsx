@@ -16,25 +16,68 @@ const SlidingLoginSignup = () => {
   const [departments, setDepartments] = useState([]);
   const [emailVerified, setEmailVerified] = useState(false);
   const [fromSignIn,setFromSignIn]=useState(true);
+  
 
-  const handleEmailVerification = (isVerified) => {
+  const handleEmailVerification =async  (isVerified) => {
     setEmailVerified(isVerified);
+    console.log("Email verified:", emailVerified);
+    const { confirmPassword, ...userData } = formData;
+    console.log("data", userData);
+    if (formData.password !== formData.confirm_pass || !emailVerified) {
+        alert('Passwords do not match!');
+        return;
+      }
+      try {
+        const response = await axios.post('http://localhost:8000/api/users/create-user', userData);
+        alert(response.data.message);
+        if(response.data.message==='User created successfully') resetForm();
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error creating user:', error);
+        alert('Failed to create user: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
+      }
+      
+
+   
+   
+
     // You can perform any other actions based on the verification status here
   };
+
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      user_type: '',
+      department_id: '',
+      dob: '',
+      password: '',
+      confirm_pass: '',
+      department: '',
+      session: '',
+      registration_no: '',
+      registered_from:'web'
+    });
+  };
+
   const openForm = () => {
     setEmailRecovery(true);
+    
   };
 
   const closeForm = () => {
     setEmailRecovery(false);
+    setEmailRecoveryOTP(false);
   };
 
   const toggleSignUpMode = () => {
     setIsSignUpMode(!isSignUpMode);
     setFromSignIn(!fromSignIn);
   };
-  console.log(":parent");
- console.log(fromSignIn)
+//   console.log(":parent");
+//  console.log(fromSignIn)
 //   const handleUserTypeChange = (e) => {
 //     setUserType(e.target.value);
 //     if (e.target.value !== "doctor") {
@@ -125,95 +168,58 @@ const handleSessionChange = (e) => {
 
     getDepartments( );
   } , []);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Basic validation
-    if (formData.password !== formData.confirm_pass) {
-      alert('Passwords do not match!');
-      return;
-    }
-
-   
-
-    const { confirmPassword, ...userData } = formData; // Exclude confirmPassword from data sent to server
-
-    try {
-      const response = await axios.post('http://localhost:8000/api/users/create-user', userData);
-      alert(response.data.message);
-      if(response.data.message==='User created successfully') resetForm();
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error creating user:', error);
-      alert('Failed to create user: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
-    }
-  };
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      user_type: '',
-      department_id: '',
-      dob: '',
-      password: '',
-      confirm_pass: '',
-      department: '',
-      session: '',
-      registration_no: '',
-      registered_from:'web'
-    });
-  };
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = (e) => {
-    const formData = {
+    const loginFormData = {
       email: email,
       password: password,
     };
 
-    console.log(formData);
+    console.log(loginFormData);
     try {
-      fetch("http://localhost:8000/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-
-          if (data.success) {
-            //save token to local storage
-
-            localStorage.setItem("token", data.user.token);
-            localStorage.setItem("role", data.user.role);
-            if (data.user.status === "Pending") {
-              alert(
-                "Your account is not approved yet. Please wait for approval."
-              );
-              return;
-            }
-
-            //  localStorage.setItem("user", JSON.stringify(data.user));
-            if (data.user.role === "admin") {
-              window.location.href = "/get-started/doctor";
-            } else {
+        fetch("http://localhost:8000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginFormData),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+  
+            if (data.success) {
+              //save token to local storage
+  
+              localStorage.setItem("token", data.user.token);
+              localStorage.setItem("role", data.user.role);
+              if (data.user.status === "Pending") {
+                alert(
+                  "Your account is not approved yet. Please wait for approval."
+                );
+                return;
+              }
+  
+              //  localStorage.setItem("user", JSON.stringify(data.user));
+              if (data.user.role === "admin") {
+                window.location.href = "/dashboard/admin";
+              } else {
+                // window.location.href = "/get-started/doctor";
+              }
+  
+              console.log("Login successful");
               // window.location.href = "/get-started/doctor";
+            } else {
+              console.log("Login failed");
+              alert(data.message);
             }
-
-            console.log("Login successful");
-            // window.location.href = "/get-started/doctor";
-          } else {
-            console.log("Login failed");
-            alert(data.message);
-          }
-        });
-    } catch (error) {
-      console.log(error);
-    }
+          });
+      } catch (error) {
+        console.log(error);
+      }
+   
 
     // e.preventDefault();
     // window.location.href = "/dashboard";
@@ -235,7 +241,6 @@ const handleSessionChange = (e) => {
         {emailRecovery && fromSignIn &&  <EmailRecovery closeForm={closeForm} handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn } />
 
 }
-{!fromSignIn && emailRecovery && <EmailRecoveryOTP handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn } /> }
 
         <div className="absolute w-full h-full top-0 left-0">
           <div
@@ -382,28 +387,8 @@ const handleSessionChange = (e) => {
                 isSignUpMode ? "opacity-100 z-20 " : "  "
               }`}
             >
-              {emailRecoveryOTP && <EmailRecoveryOTP />}
-              {emailRecoveryOTP && (
-                <button
-                  className="relative top-2 right-2"
-                  onClick={() => setEmailRecoveryOTP(false)}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-brightColor hover:text-hoverColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              )}
+              {emailRecoveryOTP && <EmailRecoveryOTP closeForm={closeForm} handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn }  />}
+             
               {!emailRecoveryOTP && (
                 <form action="#">
                   <div className=" flex flex-col items-center">
@@ -453,6 +438,8 @@ const handleSessionChange = (e) => {
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="text"
                               placeholder="Dept name"
+                              
+                              value={formData.department}
                               onChange={handleDepartmentChange}
                             />
                           </div>
@@ -491,7 +478,8 @@ const handleSessionChange = (e) => {
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
                             type="tel"
                             placeholder="Enter your phone"
-                            onChange={""}
+                            value={formData.phone}
+                            onChange={handlePhoneChange}
                           />
                         )}
                         {formData.user_type  === "doctor" && (
@@ -571,7 +559,7 @@ const handleSessionChange = (e) => {
                           />
                         </div>
 
-                        <button
+                         {<button
                           className="mt-5 tracking-wide font-semibold bg-brightColor text-gray-100 w-full py-4 rounded-lg hover:bg-hoverColor transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                           onClick={() => setEmailRecoveryOTP(true)}
                           
@@ -589,7 +577,7 @@ const handleSessionChange = (e) => {
                             <path d="M20 8v6M23 11h-6" />
                           </svg>
                           <span className="ml-3">Sign Up</span>
-                        </button>
+                        </button>} 
                       </div>
                     </div>
                   </div>

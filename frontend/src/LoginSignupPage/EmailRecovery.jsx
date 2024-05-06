@@ -5,8 +5,10 @@ import EmailRecoveryOTP from './EmailRecoveryOTP';
 
 const EmailRecovery = ({ closeForm ,fromSignIn, handleEmailVerification }) => {
   const [showOTP, setShowOTP] = useState(false);
-  console.log("child:")
-  console.log(fromSignIn)
+
+//   console.log("child:")
+//   console.log(fromSignIn)
+  
 
 
   
