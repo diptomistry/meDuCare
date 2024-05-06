@@ -3,6 +3,7 @@ import pool from '../../database.js'; // Import your database connection pool
 import multer from 'multer';
 import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
+
 import  verifyToken  from '../../auth/token_validation.js';
 import nodemailer from "nodemailer"; // Optional: Use Nodemailer for sending emails
 
@@ -315,7 +316,7 @@ router.post('/', verifyToken,async (req, res,next) => {
 
 
 router.post('/send-otp',  async (req, res) => {
-  const {  password ,email} = req.body;
+  const {  email} = req.body;
  console.log(req.body);
 
 
@@ -329,10 +330,9 @@ router.post('/send-otp',  async (req, res) => {
     }
 
     const user = results[0];
-    // console.log(user);
+   
 
-    // 2. Hash the new password
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    
     const randomBytes = crypto.randomBytes(2); // 2 bytes will give us a range up to 65535
 
     // Convert bytes to an integer
@@ -363,12 +363,50 @@ router.post('/send-otp',  async (req, res) => {
     };
 
   await transporter.sendMail(mailOptions);
-    res.json({ success: true, message: 'OTP sent successfully' });
+    res.json({ success: true, message: 'OTP sent successfully' ,otp:otp});
   } catch (error) {
     console.error('Error sending OTP:', error);
     res.status(200).json({ success: false, message: 'An error occurred while sending OTP' });
   }
 });
+
+router.post('/verify-email', async (req, res) => {
+  const { email } = req.body;
+  try{
+  const randomBytes = crypto.randomBytes(2); // 2 bytes will give us a range up to 65535
+
+  // Convert bytes to an integer
+  const randomNumber = randomBytes[0] << 8 | randomBytes[1];
+  
+  // Ensure the random number is in the range of 1000 to 9999
+  const min = 1000;
+  const max = 9999;
+  const otp = min + Math.floor(randomNumber / 65535 * (max - min + 1));
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "2003raselhossen@gmail.com",
+      pass: "bxwt tify omgd tvsy",
+    },
+  });
+  const mailOptions = {
+    from: "2003raselhossen@gmail.com", // Replace with your sender email
+    to: email,
+    subject: "Password Reset Request",
+    text: `Use this token to reset your password: ${otp}`, // or include reset link with token
+  };
+
+await transporter.sendMail(mailOptions);
+  res.json({ success: true, message: 'OTP sent successfully' ,otp:otp});
+}
+catch (error) {
+  console.error('Error sending OTP:', error);
+  res.status(200).json({ success: false, message: 'An error occurred while sending OTP' });
+}
+
+  
+});
+
 // reset password
 router.post('/reset-password', async (req, res) => {
   const { email, current_pass,confirm_pass } = req.body;
@@ -439,6 +477,11 @@ router.post('/login', async (req, res) => {
       const [departmentName] = await pool.query('SELECT * FROM Department WHERE DepartmentID = ?', [doctor[0].DepartmentID]);
       doctorDepartment=departmentName[0];
     }
+    res.cookie('token', user.Token, {
+      httpOnly: true, // Important: This makes the cookie inaccessible to client-side scripts
+      secure: true, // Recommended: Send the cookie only over HTTPS
+      sameSite: 'strict', // Prevents the browser from sending this cookie along with cross-site requests
+  });
     const to_return={
       success: true, 
       message: 'Login successful',
@@ -477,5 +520,72 @@ const getRoleById = async (role_id) => {
   console.log(role[0][0].RoleName);
   return role[0][0].RoleName;
 };
+
+//get doctors 
+
+router.get('/get-doctors', async (req, res) => {
+  try {
+    const [doctors1] = await pool.query(`
+    SELECT 
+        d.DoctorID,
+        u.Name AS DoctorName,
+        dept.Name AS DepartmentName,
+        u.Email
+    FROM Users u 
+    JOIN Doctors d ON d.UserID = u.UserID
+    JOIN Department dept ON d.DepartmentID = dept.DepartmentID
+    ORDER BY d.DoctorID;
+`);
+console.log(doctors1);
+
+    
+    const [doctors] = await pool.query(`
+    SELECT 
+    d.DoctorID,
+    u.Name AS DoctorName,
+    u.Email,
+    dept.Name AS DepartmentName,
+    dr.DutyID,
+    s.SlotID,
+    s.StartTime,
+    s.EndTime
+FROM Doctors d
+JOIN Users u ON d.UserID = u.UserID
+JOIN Department dept ON d.DepartmentID = dept.DepartmentID
+LEFT JOIN DutyRoster dr ON d.DoctorID = dr.DoctorID
+LEFT JOIN DoctorSlot ds ON dr.DutyID = ds.DutyID
+LEFT JOIN Slot s ON ds.SlotID = s.SlotID
+ORDER BY d.DoctorID, s.StartTime;
+
+  
+    `);
+    // Process the result to format the doctors data with their duties
+    const formattedDoctors = doctors.reduce((acc, doc) => {
+      if (!acc[doc.DoctorID]) {
+        acc[doc.DoctorID] = {
+          DoctorID: doc.DoctorID,
+          Name: doc.Name,
+          Email: doc.Email,
+          DepartmentName: doc.DepartmentName,
+          Duties: []
+        };
+      }
+      if (doc.DutyID) {
+        acc[doc.DoctorID].Duties.push({
+          DutyID: doc.DutyID,
+          SlotID: doc.SlotID,
+          StartTime: doc.StartTime,
+          EndTime: doc.EndTime
+        });
+      }
+      return acc;
+    }, {});
+    res.json({ success: true, data: Object.values(formattedDoctors) });
+  } catch (error) {
+    console.error('Failed to fetch doctors:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 
 export default router;

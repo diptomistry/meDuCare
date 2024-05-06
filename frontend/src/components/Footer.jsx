@@ -181,7 +181,7 @@ Create Account
       </div>
       <div className="py-4">
       <RouterLink
-              to="/get-started"
+              to="/login"
               type="button"
               class="inline-block  text-sm px-6 py-2 leading-none border rounded text-white border-white   hover:bg-brightColor  "
             >

@@ -1,41 +1,14 @@
 import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import meduCareLogo from "../assets/meducareLogin.png";
+import { useAuth } from "../auth/AuthContext";
 
 const Nav = () => {
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "/get-started";
-    }
-    const getLoggedInUser = async () => {
-      // console.log(token);
-      try{
-        console.log(token);
-       var response =await axios.post("http://localhost:8000/api/users",{}, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
-        });
-        console.log('token1');
-        console.log(response.data);
-        // const data = await response.data;
-        // console.log(data);
-        setUser(response.data.user);
-      }
-      catch (error) {
-        console.log(user);
-        console.log(error);
-      }
-    }
-     getLoggedInUser();
-    
-  }, []);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  
+  const { user, logout } = useAuth();
   console.log(user);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+ 
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -74,7 +47,7 @@ const Nav = () => {
             aria-expanded={dropdownOpen}
             onClick={toggleDropdown}
         >
-            <span className="sr-only">Open user menu</span>
+            {/* <span className="sr-only">Open user menu</span> */}
             {/* <img
                 className="w-10 h-10 rounded "
                 src={user.image}
@@ -84,10 +57,10 @@ const Nav = () => {
         </button>
        
 <div class="flex items-center gap-4 mr-2">
-    <img class="w-10 h-10 rounded-full" src="/docs/images/people/profile-picture-5.jpg" alt=""/>
+    <img class="w-10 h-10 rounded-full" src={user.image} alt=""/>
     <div class="font-medium dark:text-backgroundColor">
-        <div>Jese Leos</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400">Joined in August 2014</div>
+        <div>{user.name}</div>
+        <div class="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
     </div>
 </div>
 

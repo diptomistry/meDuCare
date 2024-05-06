@@ -5,12 +5,19 @@ import mobileApp from "./assets/mobileApp.png";
 import styles from "./style";
 import Popup from "./getStarted/clickHere";
 import Button from "./layouts/Button";
+import { useAuth } from "./auth/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const GetStartedPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-    const handleLogin = (e) => {
+  const { login ,user} = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+    const handleLogin = async () => {
       const formData = {
        email:email,
        password: password,
@@ -27,9 +34,10 @@ const GetStartedPage = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
+          // console.log(data);
         
           if (data.success) {
+            login(data.user);
             //save token to local storage
 
             localStorage.setItem("token", data.user.token);
@@ -41,13 +49,13 @@ const GetStartedPage = () => {
 
           //  localStorage.setItem("user", JSON.stringify(data.user));
           if(data.user.role === "admin"){
-            window.location.href = "/get-started/doctor";
+            window.location.href = "/dashboard/admin";
           }else{
-            // window.location.href = "/get-started/doctor";
+            // window.location.href = "/dashboard/admin";
           }
 
             console.log("Login successful");
-         // window.location.href = "/get-started/doctor";
+         // window.location.href = "/dashboard/admin";
           } else {
             console.log("Login failed");
             alert(data.message);
@@ -58,8 +66,7 @@ const GetStartedPage = () => {
     }
 
       
-    // e.preventDefault();
-    // window.location.href = "/dashboard";
+    
     console.log("Login clicked");
   };
   return (
@@ -142,7 +149,7 @@ const GetStartedPage = () => {
                 </div>
                 <button
                 onClick={handleLogin}
-                  // href="/get-started/doctor"
+                  // href="/dashboard/admin"
                   className="block w-full text-center text-white bg-brightColor hover:bg-hoverColor focus:ring-4 focus:outline-none focus:ring-primary-700   font-medium rounded-lg text-sm px-5 py-2.5  "
                 >
                   Sign in

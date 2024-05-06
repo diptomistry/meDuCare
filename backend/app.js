@@ -11,6 +11,8 @@ import galleryRouter from "./routes/api/public/photoGallery.js";
 import doctorsRouter from "./routes/api/doctors/doctors.js";
 import noticeRouter from "./routes/api/public/mainNotice.js";
 import bcryptjs from 'bcryptjs';
+import cookieParser from 'cookie-parser';
+import dutySlotRouter from "./routes/api/public/DutyRoster.js"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -32,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use(morgan('dev'));
+app.use(cookieParser());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 
@@ -42,6 +45,7 @@ app.use("/api/users", usersRouter);
 app.use("/api", noticeRouter);
 app.use("/api/roles", rolesRouter);
 app.use("/api/public", galleryRouter);
+app.use("/api/public/duty",dutySlotRouter);
 app.use("/api/admin", doctorsRouter);
 
 

@@ -297,7 +297,7 @@ const handleDepartmentChange = (e) => {
                 </button>
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Already have an account?{" "}
-                  <a href="/get-started">
+                  <a href="/login">
                     <span className="text-brightColor font-semibold">
                       Sign in
                     </span>

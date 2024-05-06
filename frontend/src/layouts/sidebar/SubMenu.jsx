@@ -36,7 +36,7 @@ const SubMenu = ({ data }) => {
           <li key={menu}>
             {/* className="hover:text-blue-600 hover:font-medium" */}
             <NavLink
-              to={`/get-started/doctor/${data.name.toLowerCase().replace(/\s+/g, '-')}/${menu.toLowerCase().replace(/\s+/g, '-')}`}
+              to={`/dashboard/admin/${data.name.toLowerCase().replace(/\s+/g, '-')}/${menu.toLowerCase().replace(/\s+/g, '-')}`}
               className="link !bg-transparent capitalize"
             >
               {menu}
