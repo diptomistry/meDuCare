@@ -5,9 +5,9 @@ import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
 import { RxDotFilled } from 'react-icons/rx';
 import Marquee from "react-fast-marquee";
 
-const Home = () => {
+const PhotoGallery = () => {
   const [photos, setPhotos] = useState([]);
-  const [notices, setNotices] = useState([]);
+ 
   const [slides, setSlides] = useState([
     { url: 'https://tds-images.thedailystar.net/sites/default/files/images/2021/10/03/du_medical_center.jpg' }
   ]);
@@ -26,23 +26,13 @@ const Home = () => {
         console.error('Error fetching photos:', error);
       }
     };
-    const fetchNotices = async () => {
-      try {
-        console.log('fetching notices');
-        const response = await axios.get('http://localhost:8000/api/get-notices');
-        const fetchedNotices = response.data.data;
-        console.log('fetched notices:', fetchedNotices);
-        setNotices(fetchedNotices);
-      } catch (error) {
-        console.error('Error fetching notices:', error);
-      }
-    };
+  
     fetchPhotos();
-    fetchNotices();
+   
   }, []); 
 
 
-  const breakingNewsText = "Breaking News: Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+  
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -83,17 +73,7 @@ const Home = () => {
                 {error && <p>Error: {error.message}</p>}
               </div>
             ) : (
-              <div className="w-full lg:w-4/5 space-y-5 mt-10 text-center">
-                <TypeAnimation
-                  sequence={[
-                    "Welcome to Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre",
-                    1000,
-                    ''
-                  ]}
-                  className="text-4xl md:text-6xl text-white  "
-                  cursor={false} // Keep the cursor visible during animation
-                />
-              </div>
+              null
             )}
           </div>
     {/* Left Arrow */}
@@ -119,28 +99,8 @@ const Home = () => {
     </div>
     
    
-    <div className="mt-2 bg-backgroundColor text-md md:text-xl text-red-700 py-3 px-1 flex items-center rounded-md relative">
-      {/* Left border */}
-      <div className="absolute inset-y-0 left-0 w-2  bg-gray-700 rounded-lg"></div>
-      {/* Right border */}
-      <div className="absolute inset-y-0 right-0 w-2  bg-gray-700 rounded-lg"></div>
-      {/* Main content */}
-      <div className="flex-grow">
-        <Marquee speed={100}>
-        {notices
-              .filter((notice) => notice.MainPage) // Filter notices based on isMainpage property
-              .map((notice) => (
-                <div key={notice.NoticeID} className="px-2 ">
-                  <span className="text-white flex">
-                    <div className="rounded-full bg-black h-5 w-5 mt-2 mr-1 "></div>
-                    {notice.Title}
-                  </span>
-                </div>
-              ))}
-        </Marquee>
-      </div>
-    </div>
+    
   </div>
 );
 }
-export default Home;
+export default PhotoGallery;
