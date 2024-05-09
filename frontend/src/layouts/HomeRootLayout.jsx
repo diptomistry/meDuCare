@@ -9,6 +9,7 @@ import Blogs from '../components/Blogs'
 import Footer from '../components/Footer'
 import ShortNote from '../components/ShortNote'
 import DoctorsSchedule from '../components/DoctorsSchedule'
+import PhotoGallery from '../models/PhotoGallery'
 
 
 const HomeRootLayout = () => {
@@ -20,6 +21,9 @@ const HomeRootLayout = () => {
       <main>
         <div id="home">
           <Home />
+        </div>
+        <div id='photo-gallery'>
+          <PhotoGallery />
         </div>
        
 

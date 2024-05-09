@@ -5,12 +5,19 @@ import mobileApp from "./assets/mobileApp.png";
 import styles from "./style";
 import Popup from "./getStarted/clickHere";
 import Button from "./layouts/Button";
+import { useAuth } from "./auth/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const GetStartedPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-    const handleLogin = (e) => {
+  const { login ,user} = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+    const handleLogin = async () => {
       const formData = {
        email:email,
        password: password,
@@ -27,27 +34,30 @@ const GetStartedPage = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
+          // console.log(data);
         
           if (data.success) {
+            login(data.user);
             //save token to local storage
 
             localStorage.setItem("token", data.user.token);
             localStorage.setItem("role", data.user.role);
-            if(data.user.status === "Pending"){
-              alert("Your account is not approved yet. Please wait for approval.");
+            if (data.user.status === "Pending") {
+              alert(
+                "Your account is not approved yet. Please wait for approval."
+              );
               return;
             }
 
           //  localStorage.setItem("user", JSON.stringify(data.user));
           if(data.user.role === "admin"){
-            window.location.href = "/get-started/doctor";
+            window.location.href = "/dashboard/admin";
           }else{
-            // window.location.href = "/get-started/doctor";
+            // window.location.href = "/dashboard/admin";
           }
 
             console.log("Login successful");
-         // window.location.href = "/get-started/doctor";
+         // window.location.href = "/dashboard/admin";
           } else {
             console.log("Login failed");
             alert(data.message);
@@ -58,28 +68,30 @@ const GetStartedPage = () => {
     }
 
       
-    // e.preventDefault();
-    // window.location.href = "/dashboard";
+    
     console.log("Login clicked");
   };
   return (
     <div className="h-[100vh] items-center flex justify-center px-5 lg:px-0">
-    <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
-      <div className="flex-1 bg-brightColor text-center hidden md:flex">
-        <div
-          className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${login})`,
-          }}
-        ></div>
-      </div>
-      <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-      <div className="w-full bg-white rounded-lg  border md:mt-0 sm:max-w-md xl:p-0  shadow-lg">
+      <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
+        <div className="flex-1 bg-brightColor text-center hidden md:flex">
+          <div
+            className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${login})`,
+            }}
+          ></div>
+        </div>
+        <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+          <div className="w-full bg-white rounded-lg  border md:mt-0 sm:max-w-md xl:p-0  shadow-lg">
             <div className="p-4 space-y-2 md:space-y-4 sm:p-6">
               <h1 className="text-xl font-semibold text-center text-backgroundColor    md:text-2xl ">
                 Sign in to your account
               </h1>
-              <form className="w-80 md:w-96 space-y-4 bg-white p-5 rounded-xl md:space-y-6" action="#">
+              <form
+                className="w-80 md:w-96 space-y-4 bg-white p-5 rounded-xl md:space-y-6"
+                action="#"
+              >
                 <div>
                   <label
                     htmlFor="email"
@@ -124,7 +136,6 @@ const GetStartedPage = () => {
                         aria-describedby="remember"
                         type="checkbox"
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300  "
-                        required
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -142,16 +153,13 @@ const GetStartedPage = () => {
                 </div>
                 <button
                 onClick={handleLogin}
-                  // href="/get-started/doctor"
+                  // href="/dashboard/admin"
                   className="block w-full text-center text-white bg-brightColor hover:bg-hoverColor focus:ring-4 focus:outline-none focus:ring-primary-700   font-medium rounded-lg text-sm px-5 py-2.5  "
                 >
                   Sign in
                 </button>
-               
-           
 
                 <p
-                 
                   // onClick={handleLogin}
                   className="text-sm font-light text-gray-500 "
                 >
@@ -164,16 +172,12 @@ const GetStartedPage = () => {
                     Sign up
                   </a>
                 </p>
-
-                
               </form>
             </div>
           </div>
+        </div>
       </div>
     </div>
-  </div>
   );
-
 };
 export default GetStartedPage;
-

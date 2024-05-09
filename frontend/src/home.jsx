@@ -175,7 +175,7 @@
 //           </div>
 //           <div>
 //             <Link
-//               to="/get-started"
+//               to="/login"
 //               type="button"
 //               class="inline-block ml-4 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-gray-700  hover:bg-bgOrangeDark mt-4 lg:mt-0"
 //             >

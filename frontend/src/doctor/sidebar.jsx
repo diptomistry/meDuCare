@@ -23,7 +23,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <h2 className="text-lg font-bold mb-4">Dashboard</h2>
         <ul className="space-y-2">
           <li>
-            <a href="/get-started/doctor/prescribe" className="block p-2 hover:bg-gray-700">Prescribe</a>
+            <a href="/dashboard/admin/prescribe" className="block p-2 hover:bg-gray-700">Prescribe</a>
           </li>
           <li>
             <a href="#" className="block p-2 hover:bg-gray-700">Add Account</a>

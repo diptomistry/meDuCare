@@ -133,8 +133,6 @@ CREATE TABLE Notices (
 CREATE TABLE DutyRoster (
     DutyID INT AUTO_INCREMENT PRIMARY KEY,
     DoctorID INT,
-    CreatedDate DATE,
-    ModifiedDate DATE,  
     FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
 );
 
@@ -142,6 +140,12 @@ CREATE TABLE Slot (
     SlotID INT AUTO_INCREMENT PRIMARY KEY,
     StartTime TIME,
     EndTime TIME
+);
+
+CREATE TABLE SlotDay (
+    SlotID INT,
+    Day VARCHAR(20),
+    FOREIGN KEY (SlotID) REFERENCES Slot(SlotID)
 );
 
 CREATE TABLE DoctorSlot (

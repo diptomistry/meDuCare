@@ -1,42 +1,3 @@
-// import Home from "./home";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import GetStartedPage from "./GetStartedPage";
-// import Doctor from "./doctor.jsx";
-// import Prescribe from "./doctor/prescribe";
-// import Dash from "./dashboard.jsx";
-// import RootLayout from "./layouts/RootLayout";
-// import AllApps from "./pages/AllApps";
-// import Analytics from "./pages/Analytics";
-// import Authentication from "./pages/Authentication";
-// import Build from "./pages/Build";
-// import Settings from "./pages/Settings";
-// import Stroage from "./pages/Stroage";
-
-// import SecDashBoard from "./section_officer_dashboard/sec_o_dashboard";
-
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/get-started" element={<GetStartedPage />} />
-//         <Route path="/dashboard" element={<SecDashBoard />} />
-
-//         <Route path="/get-started/doctor" element={<RootLayout />}>
-//           <Route path="allApps" element={<AllApps />} />
-//           <Route path="authentication" element={<Authentication />} />
-//           <Route path="stroage" element={<Stroage />} />
-//           <Route path="settings" element={<Settings />} />
-//           <Route path="build/:bID" element={<Build />} />
-//           <Route path="analytics/:aID" element={<Analytics />} />
-//         </Route>
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GetStartedPage from "./GetStartedPage";
@@ -61,23 +22,39 @@ import NoticeManagement from "./pages/public/Notice.jsx";
 
 import AdminRootLayout from "./adminDashLayout/AdminRootLayout.jsx";
 import ApproveUser from "./adminDashLayout/pages/ApproveUser.jsx";
+import DoctorRootLayout from "./doctorDashLayout/DoctorRootLayout.jsx";
+import SlidingLoginSignup from "./LoginSignupPage/Root.jsx";
 
+
+import RequireAuth from "./auth/ProtectedRoute.jsx";
+import { AuthProvider } from "./auth/AuthContext.jsx";
+import CreateSlot from "./pages/public/DutyRoster/CreateSlot.jsx";
+import AssignSlots from "./pages/public/DutyRoster/AssignDuty.jsx";
 function App() {
   return (
+  
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
+        <Route path="/login" element={<SlidingLoginSignup />} />
+        
+       
+    
 
-        <Route path="/get-started" element={<GetStartedPage />} />
+        <Route path="/login" element={<GetStartedPage />} />
         <Route path="/create-account" element={<RegistartionForm />} />
       
-        <Route path="/admin" element={<AdminRootLayout />} >
+        <Route path="/admin" element={<RequireAuth><AdminRootLayout /></RequireAuth>} >
+         
           <Route path="Users/Approve" element={<ApproveUser />} />
+          
           </Route>
 
-        <Route path="/get-started/doctor" element={<RootLayout />}>
+        <Route path="/dashboard/admin" element={<RequireAuth><RootLayout /></RequireAuth>}>
           <Route path="allApps" element={<Prescribe />} />
           <Route path="authentication" element={<AppointmentData />} />
+          <Route path="duty-roster/slots" element={<CreateSlot />} />
+          <Route path="duty-roster/assign-slot" element={<AssignSlots />} />
           <Route path="stroage" element={<Stroage />} />
           <Route path="settings" element={<Settings />} />
           <Route path="public-info/gallery" element={<PhotoUpload />} />
@@ -86,7 +63,9 @@ function App() {
               <Route path="public-info/notice" element={<NoticeManagement />} />
         </Route>
       </Routes>
+     
     </BrowserRouter>
+   
   );
 }
 
