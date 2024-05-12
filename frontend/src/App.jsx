@@ -30,9 +30,10 @@ import RequireAuth from "./auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
 import CreateSlot from "./pages/public/DutyRoster/CreateSlot.jsx";
 import AssignSlots from "./pages/public/DutyRoster/AssignDuty.jsx";
-import PrescriptionForm from "./pages/PrescriptionForm.jsx";
+
 import Eprescription from "./Eprescription.jsx";
 import Root from "./pages/Prescription/Root.jsx";
+import MedicineEntry from "./pages/MedicineEntry.jsx";
 function App() {
   return (
   
@@ -40,8 +41,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
         <Route path="/login" element={<SlidingLoginSignup />} />
-        <Route path="/prescription" element={<PrescriptionForm />} />
+     
         <Route path="/eprescription" element={<Root />} />
+        <Route path="/medicine" element={<MedicineEntry />} />
         
        
     

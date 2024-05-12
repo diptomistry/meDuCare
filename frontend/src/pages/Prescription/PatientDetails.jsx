@@ -10,7 +10,7 @@ const PatientDetails = () => {
         <Button title='View Previous History' />
      </button>
      </div>
-       <div className='flex justify-between px-[100px] mr-10'>
+       <div className='flex justify-between md:px-[100px] mr-10'>
        <div className="mb-4 ">
           <label className="block font-medium">Name</label>
           <p className="text-gray-700">Dipto Mistry</p>
