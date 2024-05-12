@@ -31,6 +31,10 @@ import RequireAuth from "./auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
 import CreateSlot from "./pages/public/DutyRoster/CreateSlot.jsx";
 import AssignSlots from "./pages/public/DutyRoster/AssignDuty.jsx";
+
+import Eprescription from "./Eprescription.jsx";
+import Root from "./pages/Prescription/Root.jsx";
+import MedicineEntry from "./pages/MedicineEntry.jsx";
 import AddMedicine from "./role-based-access/senior-officer/AddMedicine.jsx";
 import ShowMedicines from "./role-based-access/senior-officer/AllMedicines.jsx";
 import RequestMedicine from "./role-based-access/dispensary/RequestMedicine.jsx";
@@ -42,6 +46,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeRootLayout />} />
         <Route path="/login" element={<SlidingLoginSignup />} />
+     
+        <Route path="/eprescription" element={<Root />} />
+        <Route path="/medicine" element={<MedicineEntry />} />
         
        
     
