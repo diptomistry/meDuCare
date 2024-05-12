@@ -1,3 +1,4 @@
+USE meducare;
 INSERT INTO Roles (RoleName) VALUES
 ('admin');
 INSERT INTO Roles (RoleName) VALUES

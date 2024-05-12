@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app/appointment/BookingInfoScreen.dart';
+import 'package:mobile_app/endpoints.dart';
 
 class AppointmentScreen extends StatefulWidget {
   @override
@@ -27,7 +30,21 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Appointment'),
+        elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: primaryColor,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarColor: primaryColor
+        ),
+        backgroundColor: primaryColor,
+        title: Text('Appointment',
+        //   style: GoogleFonts.poppins(
+        //   color: Colors.black,
+        //   fontWeight: FontWeight.w600,
+        //   fontSize: 15,
+        //
+        // ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
