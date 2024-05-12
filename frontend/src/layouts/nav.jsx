@@ -6,7 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 const Nav = () => {
   
   const { user, logout } = useAuth();
-  console.log(user);
+  
   const [dropdownOpen, setDropdownOpen] = useState(false);
  
 
@@ -47,12 +47,7 @@ const Nav = () => {
             aria-expanded={dropdownOpen}
             onClick={toggleDropdown}
         >
-            {/* <span className="sr-only">Open user menu</span> */}
-            {/* <img
-                className="w-10 h-10 rounded "
-                src={user.image}
-                alt="user photo"
-            /> */}
+           
             
         </button>
        

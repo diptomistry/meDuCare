@@ -1,11 +1,13 @@
 import React, { useState,useEffect } from "react";
 
-import log from "../assets/img/signin3.svg";
-import register from "../assets/img/signup.svg";
+import log from "../../assets/img/signin3.svg";
+import register from "../../assets/img/signup.svg";
+import { useNavigate } from "react-router-dom";
 
 import EmailRecovery from "./EmailRecovery";
 import EmailRecoveryOTP from "./EmailRecoveryOTP";
 import axios from "axios";
+import { useAuth } from "../../auth/AuthContext";
 
 
 const SlidingLoginSignup = () => {
@@ -16,21 +18,26 @@ const SlidingLoginSignup = () => {
   const [departments, setDepartments] = useState([]);
   const [emailVerified, setEmailVerified] = useState(false);
   const [fromSignIn,setFromSignIn]=useState(true);
+  const { login ,user} = useAuth();
+  const navigate = useNavigate();
+
   
 
   const handleEmailVerification =async  (isVerified) => {
     setEmailVerified(isVerified);
     console.log("Email verified:", emailVerified);
     const { confirmPassword, ...userData } = formData;
+    const [showDialog, setShowDialog] = useState(false);
+    //add debug to formData
+   
     console.log("data", userData);
-    if (formData.password !== formData.confirm_pass || !emailVerified) {
-        alert('Passwords do not match!');
-        return;
-      }
+    
       try {
         const response = await axios.post('http://localhost:8000/api/users/create-user', userData);
         alert(response.data.message);
         if(response.data.message==='User created successfully') resetForm();
+        alert(response.data.message);
+
         console.log(response.data);
       } catch (error) {
         console.error('Error creating user:', error);
@@ -76,14 +83,7 @@ const SlidingLoginSignup = () => {
     setIsSignUpMode(!isSignUpMode);
     setFromSignIn(!fromSignIn);
   };
-//   console.log(":parent");
-//  console.log(fromSignIn)
-//   const handleUserTypeChange = (e) => {
-//     setUserType(e.target.value);
-//     if (e.target.value !== "doctor") {
-//       setDepartment("");
-//     }
-//   };
+
 const handleUserTypeChange = (e) => {
     setFormData({ ...formData, user_type: e.target.value });
    //setUserType(e.target.value);
@@ -140,12 +140,15 @@ const handleSessionChange = (e) => {
     department: '',
     session: '',
     registration_no: '',
+    registered_from:'Web',
+    debug:true
+  
     
   });
   useEffect(() => {
     const getDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/admin/get-departments');
+        const response = await axios.get('http://localhost:8000/api/doctors/get-departments');
         setDepartments(response.data.data);
         console.log('Departments:', response.data.data);
       } catch (error) {
@@ -172,6 +175,8 @@ const handleSessionChange = (e) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = (e) => {
+    e.preventDefault();
+    
     const loginFormData = {
       email: email,
       password: password,
@@ -191,23 +196,32 @@ const handleSessionChange = (e) => {
             console.log(data);
   
             if (data.success) {
-              //save token to local storage
-  
+             
               localStorage.setItem("token", data.user.token);
-              localStorage.setItem("role", data.user.role);
+             
+              login(data.user);
+
+
+             
+              
+              
+  
+             
               if (data.user.status === "Pending") {
                 alert(
                   "Your account is not approved yet. Please wait for approval."
                 );
                 return;
               }
+              navigate('/dashboard');
   
               //  localStorage.setItem("user", JSON.stringify(data.user));
-              if (data.user.role === "admin") {
-                window.location.href = "/dashboard/admin";
-              } else {
-                // window.location.href = "/get-started/doctor";
-              }
+              // if (data.user.role === "admin") {
+                console.log("admin");
+                // window.location.href = "/dashboard/admin";
+              // } else {
+              //   // window.location.href = "/get-started/doctor";
+              // }
   
               console.log("Login successful");
               // window.location.href = "/get-started/doctor";
@@ -231,6 +245,7 @@ const handleSessionChange = (e) => {
 
   return (
     <div>
+      
       <div
         className={`relative w-full bg-white min-h-[800px] lg:min-h-screen overflow-hidden   before:content-[''] before:absolute before:w-[1500px] before:h-[1500px] lg:before:h-[2000px] lg:before:w-[2000px] lg:before:top-[-10%]  before:top-[initial] lg:before:right-[48%] before:right-[initial]  max-lg:before:left-[30%] max-sm:bottom-[72%]   max-md:before:left-1/2  max-lg:before:bottom-[68%]  before:z-[6] before:rounded-[50%]    max-md:p-6     lg:before:-translate-y-1/2  max-lg:before:-translate-x-1/2  before:bg-backgroundColor before:transition-all before:duration-[2s] lg:before:duration-[1.8s]  ${
           isSignUpMode
@@ -251,6 +266,7 @@ const handleSessionChange = (e) => {
             } `}
           >
             <form
+            method="POST"
               action="#"
               className={` flex items-center justify-center flex-col   transition-all duration-[0.2s] delay-[0.7s] overflow-hidden col-[1_/_2] row-[1_/_2] px-20 py-0  z-20 max-md:px-6 max-md:py-0 ${
                 isSignUpMode ? " opacity-0 z-10 " : " "

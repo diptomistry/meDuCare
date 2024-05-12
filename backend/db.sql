@@ -26,6 +26,7 @@ CREATE TABLE Users (
     DOB DATE,
     Name VARCHAR(100) NOT NULL,
     Sex VARCHAR(10),
+    Phone VARCHAR(20),
     Image VARCHAR(200),
     RoleID INT,
     Status VARCHAR(20) DEFAULT 'Pending',
@@ -89,15 +90,19 @@ CREATE TABLE Medicines (
     EntryDate DATE,
     ExpiryDate DATE,
     Description TEXT,
+    Price DECIMAL(10, 2),
+    AddedBy INT,
+    FOREIGN KEY (AddedBy) REFERENCES Users(UserID),
     StockQuantity INT NOT NULL
 );
+
 
 CREATE TABLE PharmacyStock (
     StockID INT AUTO_INCREMENT PRIMARY KEY,
     MedicineID INT,
     Quantity INT NOT NULL,
     StockDate DATE,
-    Status VARCHAR(20) DEFAULT 'pending',
+    Status VARCHAR(20) DEFAULT 'Pending',
     FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID)
 );
 
@@ -162,4 +167,4 @@ CREATE TABLE PhotoGallery (
     Title VARCHAR(100)
 );
 
-INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status,RegisteredFrom) VALUES ('$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'admin@gmail.com', '1998-01-01', 'Admin','male', 1, 'https://localhost:8000/public/avatar.jpeg', '$2a$10$dTB5zKRMDDpilQizJINYF.iJhMBxVAWf6IzZxaY4gVBrDNa9lTFIm','Approved','Web');
+

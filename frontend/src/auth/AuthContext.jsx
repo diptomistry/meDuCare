@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     },[]);
   
     const fetchUserData = async (token) => {
-        console.log("i am here");
+       
         try {
             const response = await axios.post('http://localhost:8000/api/users', {}, {
                 headers: {
@@ -41,11 +41,12 @@ export const AuthProvider = ({ children }) => {
     };
     useEffect(() => {
         // This code runs after `user` is updated
-        // console.log(user);
+        console.log(user);
     }, [user]); // 
 
-    const login = (userData, token) => {
-        localStorage.setItem('token', token);
+    const login = (userData) => {
+        console.log('login called');
+        
         setUser(userData);
     };
 
@@ -54,9 +55,13 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         // Optionally redirect to login
     };
+    const updateUser = (isUpdate) => {
+        console.log('update user called');
+       fetchUserData(localStorage.getItem('token'));
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout,updateUser }}>
             {children}
         </AuthContext.Provider>
     );

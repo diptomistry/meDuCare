@@ -115,6 +115,37 @@ router.delete('/delete-department/:department_id', async (req, res) => {
 }
 );
 
+//get all doctors and their names by department
+
+router.get('/get-doctors', async (req, res) => {
+    try{
+   const result= await pool.query(`
+   SELECT 
+   d.DoctorID,
+   u.Name,
+   u.Email,
+   u.DOB,
+   u.Sex,
+   u.Image,
+   dp.Name AS DepartmentName,
+   dp.Description AS DepartmentDescription
+FROM Doctors d
+JOIN Users u ON d.UserID = u.UserID
+JOIN Department dp ON d.DepartmentID = dp.DepartmentID
+WHERE u.Status != 'Pending'
+    `);
+    console.log(result[0]);
+    res.status(200).json({success:true, data: result[0] });
+}catch(error){
+    res.status(200).json({ success:false,message: error.message });
+
+}
+});
+
+
+
+
+
 // doctors duty roster
 
 

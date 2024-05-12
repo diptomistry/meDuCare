@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import Button from '../layouts/Button';
+import Button from '../../layouts/Button';
 import EmailRecoveryOTP from './EmailRecoveryOTP';
-
+import axios from 'axios';
 
 const EmailRecovery = ({ closeForm ,fromSignIn, handleEmailVerification }) => {
   const [showOTP, setShowOTP] = useState(false);
+  const [otp, setOtp] = useState('');
 
 //   console.log("child:")
 //   console.log(fromSignIn)
@@ -13,7 +14,21 @@ const EmailRecovery = ({ closeForm ,fromSignIn, handleEmailVerification }) => {
 
   
 
-  const handleSendCode = () => {
+  const handleSendCode = async() => {
+    console.log('Sending code');
+    try {
+      const userEmail = document.getElementById('userEmail').value;
+     const response=await axios.post('http://localhost:5000/api/users/send-otp', {
+        email: userEmail,
+        debug: true,
+      });
+      setOtp(response.data.otp);
+      console.log(response);
+
+    } catch (error) {
+      alert('Error sending code');
+      console.log(error);
+    }
     // Logic to send code
     setShowOTP(true);
   };
