@@ -3,7 +3,7 @@ import IncrementDecrementBtn from "./IncrementDecrementBtn";
 import Button from "../../layouts/Button";
 import { SearchResultsList } from "./MedicineSearch/SearchResultsList";
 
-import { FaTrashAlt } from "react-icons/fa";
+
 
 const DrugPrescription = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,20 +25,23 @@ const DrugPrescription = () => {
   const [results, setResults] = useState([]);
 
   const fetchData = (value) => {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch("http://localhost:8000/api/get-medicines")
       .then((response) => response.json())
       .then((json) => {
-        const results = json.filter((user) => {
-          return (
-            value &&
-            user &&
-            user.name &&
-            user.name.toLowerCase().includes(value)
-          );
-        });
+        const medicineNames = json.data.map((medicine) => medicine.Name);
+        console.log("medicineNames:",medicineNames);
+       
+        const results = medicineNames.filter((medicine) =>
+          medicine.toLowerCase().includes(value.toLowerCase())
+        );
         setResults(results);
+        console.log("sdf:",results);
+      })
+      .catch((error) => {
+        console.error('Error fetching medicines:', error);
       });
   };
+  
 
   const handleChange = (value) => {
     setInput(value);
