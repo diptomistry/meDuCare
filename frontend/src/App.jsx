@@ -78,6 +78,7 @@ function App() {
           <Route path="dispensary/request-medicine" element={<RequestMedicine/>}></Route>
           <Route path="dispensary/stocks" element={<ViewStocks/>}></Route>
           <Route path="profile" element={<Profile/>}></Route>
+          <Route path="doctor/prescription" element={<Root/>}></Route>
           
         </Route>
       </Routes>

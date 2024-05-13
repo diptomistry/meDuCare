@@ -473,7 +473,7 @@ router.post('/login', async (req, res) => {
       return res.status(200).json({ success: false, message: 'User does not exists.' });
     }
     const user = users[0];
-    console.log(user);
+    //console.log(user);
     // Check if password is correct
     const isPasswordValid = await bcryptjs.compare(password, user.Password);
     if (!isPasswordValid) {
@@ -495,7 +495,9 @@ router.post('/login', async (req, res) => {
     }
     if(role==='doctor')
     {
+     console.log(user.UserID);
       const [doctor] = await pool.query('SELECT * FROM Doctors WHERE UserID = ?', [user.UserID]);
+      console.log(doctor);
       const [departmentName] = await pool.query('SELECT * FROM Department WHERE DepartmentID = ?', [doctor[0].DepartmentID]);
       doctorDepartment=departmentName[0];
     }
