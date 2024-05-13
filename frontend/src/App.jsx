@@ -39,6 +39,7 @@ import AddMedicine from "./role-based-access/senior-officer/AddMedicine.jsx";
 import ShowMedicines from "./role-based-access/senior-officer/AllMedicines.jsx";
 import RequestMedicine from "./role-based-access/dispensary/RequestMedicine.jsx";
 import ViewStocks from "./role-based-access/dispensary/DIspensaryStocks.jsx";
+import AppointmentTable from "./pages/Appointment.jsx";
 function App() {
   return (
   
@@ -79,6 +80,7 @@ function App() {
           <Route path="dispensary/stocks" element={<ViewStocks/>}></Route>
           <Route path="profile" element={<Profile/>}></Route>
           <Route path="doctor/prescription" element={<Root/>}></Route>
+          <Route path="doctor/appointment" element={<AppointmentTable/>}></Route>
           
         </Route>
       </Routes>
