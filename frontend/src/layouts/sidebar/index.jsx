@@ -98,7 +98,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div>
+    <div className="">
       {/*viewport with a semi-transparent black layer to close the sidebar menu by clicking outside the menu area on small screens */}
       <div
         onClick={() => setOpen(false)}

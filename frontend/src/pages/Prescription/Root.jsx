@@ -6,7 +6,7 @@ import Button from "../../layouts/Button";
 
 const Root = () => {
   return (
-    <div className="container flex flex-col mx-auto p-4 bg-backgroundColor/50 mt-5 shadow-lg rounded-md">
+    <div className="container flex flex-col mx-auto p-4 bg-backgroundColor/50 mt-5 shadow-lg rounded-md ml-5">
       <PatientDetails />
       <DrugPrescription />
       <AddInstructions />

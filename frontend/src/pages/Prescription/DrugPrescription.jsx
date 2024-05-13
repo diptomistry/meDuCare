@@ -11,7 +11,7 @@ const DrugPrescription = () => {
   const [beforeFood, setBeforeFood] = useState(false);
   const [afterFood, setAfterFood] = useState(false);
 
-  const options = ["Days", "Weeks", "Months", "Till Next Review"];
+  const options = ["Days", "Weeks", "Months", "Years"];
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -24,24 +24,41 @@ const DrugPrescription = () => {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
 
+  // const fetchData = (value) => {
+  //   fetch("http://localhost:8000/api/get-medicines")
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       const medicineNames = json.data.map((medicine) => medicine.Name);
+  //      // console.log("medicineNames:",medicineNames);
+       
+  //       const results = medicineNames.filter((medicine) =>
+  //          medicine.toLowerCase().includes(value.toLowerCase())
+  //       );
+  //       setResults(results);
+  //       console.log("sdf:",results);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching medicines:', error);
+  //     });
+  // };
+  
+
   const fetchData = (value) => {
     fetch("http://localhost:8000/api/get-medicines")
       .then((response) => response.json())
       .then((json) => {
-        const medicineNames = json.data.map((medicine) => medicine.Name);
-        console.log("medicineNames:",medicineNames);
-       
-        const results = medicineNames.filter((medicine) =>
-          medicine.toLowerCase().includes(value.toLowerCase())
-        );
+        const results = json.data.filter((medicine) => {
+          return (
+            value &&
+            medicine &&
+            medicine.Name &&
+            medicine.Name.toLowerCase().includes(value.toLowerCase())
+          );
+        });
         setResults(results);
-        console.log("sdf:",results);
-      })
-      .catch((error) => {
-        console.error('Error fetching medicines:', error);
+        console.log(results);
       });
   };
-  
 
   const handleChange = (value) => {
     setInput(value);

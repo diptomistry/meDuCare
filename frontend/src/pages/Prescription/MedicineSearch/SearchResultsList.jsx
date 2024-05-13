@@ -7,9 +7,9 @@ export const SearchResultsList = ({ results, onItemSelect   }) => {
       {results.map((result, id) => {
         return (
           <SearchResult
-            result={result.name}
+            result={result.Name}
             key={id}
-            onSelect={() => onItemSelect(result.name)}
+            onSelect={() => onItemSelect(result.Name)}
           />
         );
       })}

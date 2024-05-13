@@ -2,6 +2,7 @@ import React, { useState ,useEffect} from "react";
 import axios from "axios";
 import meduCareLogo from "../assets/meducareLogin.png";
 import { useAuth } from "../auth/AuthContext";
+import { Link } from "react-router-dom";
 
 const Nav = () => {
   
@@ -15,16 +16,18 @@ const Nav = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row items-center bg-slate-200 py-2 px-4">
-    {/* Conditional rendering based on user role */}
-    {user.role === 'admin' && (
+    <nav className="bg-gray-200  ">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+            {user.role === 'admin' && (
         <a href="#" className="text-lg  mr-4 mb-2 md:mb-0 hover:text-blue-500">
             Dashboard
         </a>
     )}
-
-    {/* Search button */}
-    <div className="flex flex-grow items-center mb-2 md:mb-0">
+            </div>
+            <div className="flex flex-grow items-center mb-2 md:mb-0">
         <input
             type="text"
             placeholder="Search..."
@@ -37,9 +40,8 @@ const Nav = () => {
             Search
         </button>
     </div>
-
-    {/* Profile section */}
-    <div className="ml-auto flex items-center">
+          </div>
+          <div className="ml-auto flex items-center">
         <button
             type="button"
             className={`flex items-center text-sm bg-gray-100 rounded-full focus:ring-2 ${dropdownOpen ? "focus:ring-hoverColor" : ""}`}
@@ -62,7 +64,9 @@ const Nav = () => {
 
 
     </div>
-</div>
+        </div>
+      </div>
+    </nav>
 
   );
 };
