@@ -5,7 +5,7 @@ import bcryptjs from 'bcryptjs';
 import crypto from 'crypto';
 
 import  verifyToken  from '../../auth/token_validation.js';
-import nodemailer from "nodemailer"; // Optional: Use Nodemailer for sending emails
+import nodemailer from "nodemailer"; 
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 // POST /api/users/create-user
 router.post('/create-user', upload.single('file'), async (req, res) => {
-  const {  password,confirm_pass, email, dob, name, gender, user_type, department_id, department, session, registration_no,registered_from } = req.body;
+  const {  password,confirm_pass, email, dob, name, gender, user_type, department_id, department, session, registration_no,registered_from,phone } = req.body;
 
   if ( !password || !email || !dob || !name || !gender || !user_type) {
     return res.status(200).json({ success: false, message: 'All required parameters must be provided' });
@@ -41,7 +41,7 @@ router.post('/create-user', upload.single('file'), async (req, res) => {
       const host = req.hostname;
       filePath = `${req.protocol}://${host}:8000/${req.file.path}`;
     } else {
-      filePath = `${req.protocol}://${req.get('host')}/public/avatar.jpg`;
+      filePath = `${req.protocol}://${req.get('host')}/public/avatar.jpeg`;
     }
 
 
@@ -66,9 +66,9 @@ router.post('/create-user', upload.single('file'), async (req, res) => {
     status='Approved';
 
     // Insert user into Users table
-    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status ,RegisteredFrom) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? ,?)';
+    const userInsertQuery = 'INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status ,RegisteredFrom ,Phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?)';
     const roleID = getUserRoleId(user_type);
-    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, gender, roleID, filePath,token,status ,registered_from]);
+    const [result] = await pool.query(userInsertQuery, [hashedPassword, email, dob, name, gender, roleID, filePath,token,status ,registered_from,phone]);
 
     // Insert additional data based on user type
     if (user_type === 'doctor') {
@@ -98,7 +98,8 @@ router.post('/create-user', upload.single('file'), async (req, res) => {
 
 router.post('/update-user', upload.single('file'), async (req, res) => {
 
-  const { user_id, password, email, dob, name,department, session, registration_no} = req.body;
+  const { user_id, password, email, dob, name,department, session, registration_no,phone} = req.body;
+  console.log(req.body);
   try{
   if (!user_id) {
     return res.status(200).json({ success: false, message: 'User ID must be provided' });
@@ -128,6 +129,11 @@ router.post('/update-user', upload.single('file'), async (req, res) => {
     //update name
     const updateNameQuery = 'UPDATE Users SET Name = ? WHERE UserID = ?';
     await pool.query(updateNameQuery, [name, user_id]);
+  }
+  if(phone){
+    //update phone
+    const updatePhoneQuery = 'UPDATE Users SET Phone = ? WHERE UserID = ?';
+    await pool.query(updatePhoneQuery, [phone, user_id]);
   }
   if(department){
     //update department
@@ -165,19 +171,32 @@ router.post('/delete-user', async (req, res) => {
   if (!user_id) {
     return res.status(200).json({ success: false, message: 'User ID must be provided' });
   }
+  // Start transaction
+  const connection = await pool.getConnection();
   try {
-    const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [user_id]);
-    if (user.length === 0) {
-      return res.status(200).json({ success: false, message: 'User does not exist' });
-    }
-    const deleteUserQuery = 'DELETE FROM Users WHERE UserID = ?';
-    await pool.query(deleteUserQuery, [user_id]);
-    res.json({ success: true, message: 'User deleted successfully' });
+    await connection.beginTransaction();
+
+    // Assuming the tables are linked via UserID and must be deleted in proper order
+    await connection.query('DELETE FROM Dispensation WHERE AppointmentID IN (SELECT AppointmentID FROM Appointments WHERE UserID = ?)', [user_id]);
+    await connection.query('DELETE FROM Prescriptions WHERE AppointmentID IN (SELECT AppointmentID FROM Appointments WHERE UserID = ?)', [user_id]);
+    await connection.query('DELETE FROM appoinment_doctors WHERE DoctorID IN (SELECT DoctorID FROM Doctors WHERE UserID = ?)', [user_id]);
+    await connection.query('DELETE FROM Appointments WHERE UserID = ?', [user_id]);
+    await connection.query('DELETE FROM DutyRoster WHERE DoctorID IN (SELECT DoctorID FROM Doctors WHERE UserID = ?)', [user_id]);
+    await connection.query('DELETE FROM Doctors WHERE UserID = ?', [user_id]);
+    await connection.query('DELETE FROM Student WHERE UserID = ?', [user_id]);
+    await connection.query('DELETE FROM Users WHERE UserID = ?', [user_id]);
+
+    await connection.commit();
+    res.json({ success: true, message: 'User and all related records deleted successfully' });
   } catch (error) {
+    await connection.rollback();
     console.error('Error deleting user:', error);
-    res.status(200).json({ success: false, message: 'An error occurred while deleting the user' });
+    res.status(500).json({ success: false, message: 'An error occurred while deleting the user' });
+  } finally {
+    connection.release();
   }
 });
+
 
 
 // POST /api/users/update-status
@@ -297,6 +316,7 @@ router.post('/', verifyToken,async (req, res,next) => {
            name: user.Name,
            role_id: user.RoleID,
            otp: user.otp,
+           phone: user.Phone,
            registration_no: registration_no,
             department: department,
               session: session,
@@ -316,10 +336,10 @@ router.post('/', verifyToken,async (req, res,next) => {
 
 
 router.post('/send-otp',  async (req, res) => {
-  const {  email} = req.body;
+  const {  email,debug} = req.body;
  console.log(req.body);
-
-
+  
+  
   try {
     
     const [results] = await pool.execute('SELECT * FROM Users WHERE Email = ?', [email]);
@@ -342,6 +362,7 @@ router.post('/send-otp',  async (req, res) => {
     const min = 1000;
     const max = 9999;
     const otp = min + Math.floor(randomNumber / 65535 * (max - min + 1));
+    if(debug) otp=1234;
 
     const updateOtpQuery = 'UPDATE Users SET otp = ? WHERE Email = ?';
 
@@ -361,8 +382,9 @@ router.post('/send-otp',  async (req, res) => {
       subject: "Password Reset Request",
       text: `Use this token to reset your password: ${otp}`, // or include reset link with token
     };
-
+  if(!debug){
   await transporter.sendMail(mailOptions);
+}
     res.json({ success: true, message: 'OTP sent successfully' ,otp:otp});
   } catch (error) {
     console.error('Error sending OTP:', error);
@@ -451,7 +473,7 @@ router.post('/login', async (req, res) => {
       return res.status(200).json({ success: false, message: 'User does not exists.' });
     }
     const user = users[0];
-    console.log(user);
+    //console.log(user);
     // Check if password is correct
     const isPasswordValid = await bcryptjs.compare(password, user.Password);
     if (!isPasswordValid) {
@@ -473,7 +495,9 @@ router.post('/login', async (req, res) => {
     }
     if(role==='doctor')
     {
+     console.log(user.UserID);
       const [doctor] = await pool.query('SELECT * FROM Doctors WHERE UserID = ?', [user.UserID]);
+      console.log(doctor);
       const [departmentName] = await pool.query('SELECT * FROM Department WHERE DepartmentID = ?', [doctor[0].DepartmentID]);
       doctorDepartment=departmentName[0];
     }
@@ -586,6 +610,59 @@ ORDER BY d.DoctorID, s.StartTime;
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+//get all users
+
+router.get('/get-users', async (req, res) => {
+  try {
+    const [users] = await pool.query(`
+    SELECT 
+    u.UserID,
+    u.Email,
+    u.Name,
+    u.DOB,
+    u.Sex,
+    u.Image,
+    u.Status,
+    r.RoleName
+FROM Users u
+JOIN Roles r ON u.RoleID = r.RoleID;
+`);
+    res.json({ success: true, data: users });
+
+    
+  }
+  catch (error) {
+    console.error('Failed to fetch users:', error);
+    res.status(200).json({ success: false, message: error.message });
+  }
+});
+
+
+//approve user 
+
+router.post('/approve-user', async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id) {
+    return res.status(200).json({ success: false, message: 'User ID must be provided' });
+  }
+  try {
+    const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [user_id]);
+    if (user.length === 0) {
+      return res.status(200).json({ success: false, message: 'User does not exist' });
+    }
+    const updateStatusQuery = 'UPDATE Users SET Status = ? WHERE UserID = ?';
+    await pool.query(updateStatusQuery, ['Approved', user_id]);
+    res.json({ success: true, message: 'User approved successfully' });
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(200).json({ success: false, message: 'An error occurred while approving the user' });
+  }
+}
+);
+
+
+
 
 
 export default router;

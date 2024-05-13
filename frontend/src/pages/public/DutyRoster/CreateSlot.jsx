@@ -42,18 +42,18 @@ function CreateSlot() {
 
 
   return (
-    <div className="flex flex-wrap md:flex-nowrap sm:flex-col">
+    <div className="flex flex-wrap md:flex-nowrap sm:flex-col ">
       {/* Slot Creation Form */}
       <div className="w-full md:w-1/2 p-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <h2 className="text-lg font-semibold">Create a New Slot</h2>
-          <div>
+          <div className=''>
             <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">Start Time</label>
-            <input type="time" id="startTime" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+            <input type="time" id="startTime" className="mt-1 block w-full  rounded-md border shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
           </div>
           <div>
             <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">End Time</label>
-            <input type="time" id="endTime" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" value={endTime} onChange={(e) => setEndTime(e.target.value)} required />
+            <input type="time" id="endTime" className="mt-1 block w-full rounded-md border shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" value={endTime} onChange={(e) => setEndTime(e.target.value)} required />
           </div>
           <div>
       <h2 className="text-lg font-semibold">Select Days</h2>
@@ -124,7 +124,7 @@ function CreateSlot() {
       </div>
       
     </div>
-          <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button type="submit" className="w-full bg-backgroundColor hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
             Create Slot
           </button>
         </form>

@@ -1,69 +1,154 @@
 
 import React from 'react';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useState ,useEffect} from 'react';
+import axios from 'axios';
+import { FaRegEdit, FaTrash } from 'react-icons/fa';
+import {FcApprove} from 'react-icons/fc';
+import { Dialog, DialogActions, DialogContent, DialogTitle,Button, Card,CardContent,Typography} from '@mui/material';
 
 const Stroage = () => {
-  const appointments = [
-    {
-      id: 1,
-      date: '27-02-2020',
-      time: '3:00 PM',
-      name: 'Karim Ahmed',
-      contact: '+01700000000',
-      prescription: 'View',
-      status: 'Pending'
-    },
-    {
-      id: 2,
-      date: '27-02-2020',
-      time: '3:00 PM',
-      name: 'Karim Ahmed',
-      contact: '+01700000000',
-      prescription: 'Not Added',
-      status: 'Pending'
-    },
-    {
-      id: 3,
-      date: '27-02-2020',
-      time: '3:00 PM',
-      name: 'Karim Ahmed',
-      contact: '+01700000000',
-      prescription: 'View',
-      status: 'Approved'
-    },
-    {
-      id: 4,
-      date: '27-02-2020',
-      time: '3:00 PM',
-      name: 'Karim Ahmed',
-      contact: '+01700000000',
-      prescription: 'View',
-      status: 'Pending'
-    },
-    {
-      id: 5,
-      date: '27-02-2020',
-      time: '3:00 PM',
-      name: 'Karim Ahmed',
-      contact: '+01700000000',
-      prescription: 'Not Added',
-      status: 'Cancelled'
-    },
-    {
-      id: 6,
-      date: '27-02-2020',
-      time: '3:00 PM',
-      name: 'Karim Ahmed',
-      contact: '+01700000000',
-      prescription: 'View',
-      status: 'Pending'
+
+
+
+  const [dialogClick,setDialogClick]=useState(false);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [totalPendingRequests,setTotalPendingRequests]=useState(0);
+  const [approve, setApproveUser] = useState(false);
+  const [delUser, setDelUser] = useState(false);
+  const [confirmDelete, setconfirmDelete] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+const [sortDirection, setSortDirection] = useState('asc'); // 'asc' or 'desc'
+const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const approveUser =async (e,userId,status)=>{
+    e.preventDefault();
+
+    console.log('clicked');
+    console.log(userId,status);
+
+    try{
+      const response= await axios.post('http://localhost:8000/api/users/update-status',{user_id:userId,status:status});
+      console.log(response.data);
+      fetchUsers();
     }
-  ];
+    catch {
+      console.log(e);
+    }
+
+
+  };
+  const deleteUser =async (e,userId)=>{
+    e.preventDefault();
+
+   
+
+    try{
+      const response= await axios.post('http://localhost:8000/api/users/delete-user',{user_id:userId});
+      console.log(response.data);
+      if(response.data.success)
+      fetchUsers();
+
+      setDelUser(false);
+      setDialogClick(false);
+      setconfirmDelete(false);
+    }
+    catch {
+      console.log(e);
+    }
+
+
+  };
+  const  fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/users/get-users');
+      let fetchedUsers = response.data.data;
+
+      // Filter users based on search term
+      if (searchTerm) {
+        fetchedUsers = fetchedUsers.filter(user =>
+            Object.values(user).some(value =>
+                String(value).toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+    }
+
+    if (sortConfig.key) {
+        fetchedUsers.sort((a, b) => {
+            if (a[sortConfig.key] < b[sortConfig.key]) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (a[sortConfig.key] > b[sortConfig.key]) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
+    }
+
+  
+      setUsers(fetchedUsers);
+      const activeUsers = response.data.data.filter(User => User.Status === 'Pending');
+        console.log(activeUsers); 
+        setTotalPendingRequests(activeUsers);
+    }
+    catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
+  const requestSort = key => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+        direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+};
+  useEffect(() => {
+    fetchUsers();
+}, [searchTerm, sortConfig]);
 
   return (
     <div className="p-6">
+      {dialogClick && <Dialog open={dialogClick} className='w-200 sm-w-50'>
+        <DialogTitle className='text-md'>{delUser ?"Delete this user?": "Aprrove this user?"}</DialogTitle>
+        <DialogContent>
+
+        </DialogContent>
+        <div className="flex flex-row justify-between p-2">
+            <Button 
+              onClick={()=>{
+                setApproveUser(true);
+                if(delUser){
+                  
+
+                setconfirmDelete(true);
+                console.log(confirmDelete);
+              }
+                setDialogClick(false);
+              }} 
+              className="bg-green-500 text-white rounded-lg m-2 px-10 py-1"
+            >
+              Ok
+            </Button>
+            <Button 
+              onClick={()=>{
+                setDelUser(false);
+                setDialogClick(false);
+              }} 
+              className="bg-red-500 text-white rounded-lg m-2 px-2 py-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </Dialog>}
       
 
-      <h2 className="text-xl font-semibold mb-4">Pending Requests</h2>
+      <h2 className="text-xl font-semibold mb-4">All Users</h2>
+      
       <div className="mb-4">
         <select className="py-2 px-4 border rounded-md">
           <option>Week</option>
@@ -72,59 +157,100 @@ const Stroage = () => {
         </select>
       </div>
 
+      <div className="mb-4">
+      <div className="flex justify-between mb-4">
+        {/* <div className="bg-pink-500 text-white rounded-md py-2 px-4">
+          <span className="font-bold">{totalPendingRequests}</span> Pending Requestes
+        </div> */}
+        <div className=" text-white rounded-md py-2 px-4">
+    <input
+        type="text"
+        placeholder="Search..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="py-2 px-4 border rounded-md"
+    />
+</div>
+        {/* <div className="bg-blue-500 text-white rounded-md py-2 px-4">
+          <span className="font-bold">19</span> Today's Appointments
+        </div>
+        <div className="bg-green-500 text-white rounded-md py-2 px-4">
+          <span className="font-bold">34</span> Total Appointments
+        </div>
+        <div className="bg-orange-500 text-white rounded-md py-2 px-4">
+          <span className="font-bold">78</span> Total Patients
+        </div> */}
+      
+      </div>
+   
+</div>
+
       <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="py-2 px-4 border">Name</th>
-            <th className="py-2 px-4 border">Email</th>
-            <th className="py-2 px-4 border">Phone Number</th>
-            <th className="py-2 px-4 border">Type</th>
-            <th className="py-2 px-4 border">Gender</th>
-            <th className="py-2 px-4 border">DOB</th>
-            <th className="py-2 px-4 border">Action</th>
-          </tr>
-        </thead>
+      <thead>
+        <tr className="bg-gray-200">
+            {['Name', 'Email', 'Phone Number', 'Type', 'Gender', 'Date of Birth', 'Status', 'Action'].map((key) => (
+                <th
+                    key={key}
+                    className="py-2 px-4 border text-sm cursor-pointer"
+                    onClick={() => requestSort(key.toLowerCase())}
+                >
+                    {key} {sortConfig.key === key.toLowerCase() && (sortConfig.direction === 'ascending' ? '🔼' : '🔽')}
+                </th>
+            ))}
+        </tr>
+    </thead>
         <tbody>
-          {appointments.map((appointment) => (
-            <tr key={appointment.id} className="border">
-              <td className="py-2 px-4 border">{appointment.id}</td>
-              <td className="py-2 px-4 border">{appointment.date}</td>
-              <td className="py-2 px-4 border">{appointment.time}</td>
-              <td className="py-2 px-4 border">{appointment.name}</td>
-              <td className="py-2 px-4 border">{appointment.contact}</td>
-              <td className="py-2 px-4 border">{appointment.prescription}</td>
-              <td className="py-2 px-4 border">
-                {appointment.prescription === 'View' && (
-                  <button className="bg-teal-500 text-white rounded-md py-1 px-2 mr-2">
-                    View
-                  </button>
-                )}
+          {users.map((User) => (
+            <tr key={User.id} className="border">
+              <td className="py-2 px-4 border">{User.Name}</td>
+              <td className="py-2 px-4 border">{User.Email}</td>
+              <td className="py-2 px-4 border">{User.Phone}</td>
+              <td className="py-2 px-4 border">{User.RoleName}</td>
+              <td className="py-2 px-4 border">{User.Sex}</td>
+              <td className="py-2 px-4 border">{User.DOB}</td>
+              <td className="py-2 px-2 border">
+             
+                <div className='flex flex-row items-center justify-center'>
                 <button
                   className={`rounded-md py-1 px-2 ${
-                    appointment.status === 'Pending'
-                      ? 'bg-blue-500 text-white'
-                      : appointment.status === 'Approved'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-red-500 text-white'
+                    User.Status === 'Pending'
+                      ? 'bg-blue-500 text-white text-sm'
+                      : User.Status === 'Approved'
+                      ? 'bg-green-500 text-white text-sm'
+                      : 'bg-red-500 text-white text-sm'
                   }`}
                 >
-                  {appointment.status}
+                  {User.Status}
                 </button>
-                <button className="bg-yellow-500 text-white rounded-md py-1 px-2 ml-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-4 h-4"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
+              
+              
+                </div>
               </td>
+              <td className="py-2 px-2 border">
+             
+             <div className='flex flex-row items-center justify-center'>
+             
+             <button  onClick={(e)=>{
+            
+              setDialogClick(true);
+              setDelUser(true);
+              if(confirmDelete){
+                console.log('deleting');
+                deleteUser(e,User.UserID);
+              }
+             }} className="bg-red-500 text-white rounded-md py-1 px-2 mr-2">
+             <FaTrash/>
+             </button>
+             { User.Status=='Pending' && <button onClick={(e)=>{
+              setDialogClick(true);
+              if(approve){
+                approveUser(e,User.UserID,'Approved');
+              }
+             }} className="bg-green-500 text-white rounded-md py-1 px-2  ">
+             <FcApprove/>
+             </button>}
+             </div>
+           </td>
             </tr>
           ))}
         </tbody>

@@ -7,7 +7,7 @@ import { FaClinicMedical } from "react-icons/fa";
 // * React icons
 
 import { IoIosArrowBack } from "react-icons/io";
-import { SlSettings } from "react-icons/sl";
+import { SlLogout, SlSettings } from "react-icons/sl";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineDatabase } from "react-icons/hi";
@@ -16,16 +16,17 @@ import { RiBuilding3Line } from "react-icons/ri";
 import { useMediaQuery } from "react-responsive";
 import { MdMenu } from "react-icons/md";
 import { NavLink, useLocation, useRoutes } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 
 const Sidebar = () => {
   let isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
-  const role = localStorage.getItem("role");
-  console.log(role);
+ 
   //It checks whether the screen width is less than or equal to 768 pixels, indicating a tablet or smaller device
   const [open, setOpen] = useState(isTabletMid ? false : true); //// it is set to true for larger screens and false for tablet-sized screens or smaller
 
   const sidebarRef = useRef(); //
   const { pathname } = useLocation();
+ 
   //If the screen size is a tablet or smaller, the sidebar menu is closed
   useEffect(() => {
     if (isTabletMid) {
@@ -34,6 +35,9 @@ const Sidebar = () => {
       setOpen(true);
     }
   }, [isTabletMid]);
+  const { user,logout } = useAuth();
+  const role = user.role;
+  console.log(role);
   //if the user navigates to a new page, and the sidebar is open on a tablet or smaller screen, it automatically closes
   useEffect(() => {
     isTabletMid && setOpen(false);
@@ -73,24 +77,25 @@ const Sidebar = () => {
         },
       };
 
-  const subMenusList = [
-    {
-      name: "Public Info",
-      icon: RiBuilding3Line,
-      menus: ["Gallery", "Department", "Notice"],
-    },
-    {
-      name: "analytics",
-      icon: TbReportAnalytics,
-      menus: ["dashboard", "realtime", "events"],
-    },
-    {
-      name: "Duty Roster",
-      icon: RiBuilding3Line,
-      menus: ["Slots", "Assign Slot"],
-    },
+  var subMenusList = [
+   
 
   ];
+  if(role==='admin'){
+    subMenusList = [
+      {
+        name: "Public Info",
+        icon: RiBuilding3Line,
+        menus: ["Gallery", "Department", "Notice"],
+      },
+      
+       {
+        name: "Duty Roster",
+        icon: RiBuilding3Line,
+        menus: ["Slots", "Assign Slot"],
+      },
+    ];
+  }
 
   return (
     <div>
@@ -128,31 +133,71 @@ const Sidebar = () => {
 
         <div className="flex flex-col  h-full">
           <ul className="whitespace-pre px-2.5 text-[0.9rem] py-5 flex flex-col gap-1  font-medium overflow-x-hidden scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100   md:h-[68%] h-[70%]">
-           {role==='doctor'? <li>
-              <NavLink to={"/dashboard/admin/allApps"} className="link">
+          
+            {role==='dispensary_officer'?<li>
+              <NavLink to={"/dashboard/dispensary/request-medicine"} className="link">
                 <AiOutlineAppstore size={23} className="min-w-max" />
-                Prescription
+                Request Medicine
+              </NavLink>
+            </li>:null}
+            {role==='dispensary_officer' || role ==='admin' ?<li>
+              <NavLink to={"/dashboard/dispensary/stocks"} className="link">
+                <HiOutlineDatabase size={23} className="min-w-max" />
+                Stocks
               </NavLink>
             </li>:null}
             {
-              role==='admin'?<li>
+              role==='doctor'?<li>
               <NavLink
-                to={"/dashboard/admin/authentication"}
+                to={"/dashboard/doctor/prescription"}
                 className="link"
               >
                 <BsPerson size={23} className="min-w-max" />
-                Users
+                Presctiptions
               </NavLink>
             </li>
             :null
             }
-            
             <li>
-              <NavLink to={"/dashboard/admin/stroage"} className="link">
-                <HiOutlineDatabase size={23} className="min-w-max" />
-                Stroage
+              <NavLink
+                to={"/dashboard/profile"}
+                className="link"
+              >
+                <BsPerson size={23} className="min-w-max" />
+                Profile
               </NavLink>
             </li>
+            {
+              role==='senior_officer'?<li>
+              <NavLink
+                to={"/dashboard/senior-officer/add-medicine"}
+                className="link"
+              >
+                <SlSettings size={23} className="min-w-max" />
+                Add Medicine
+              </NavLink>
+            </li>:null
+            }
+              {
+              <li>
+              <NavLink
+                to={"/dashboard/senior-officer/medicines"}
+                className="link"
+              >
+                <SlSettings size={23} className="min-w-max" />
+                Medicines
+              </NavLink>
+            </li>
+            }
+            {
+              role==='admin'?
+            <li>
+              <NavLink to={"/dashboard/admin/stroage"} className="link">
+                <BsPerson size={23} className="min-w-max" />
+                Users
+              </NavLink>
+            </li>:null
+}
 
             {(open || isTabletMid) && (
               <div className="border-y py-5 border-slate-300 ">
@@ -166,14 +211,26 @@ const Sidebar = () => {
                 ))}
               </div>
             )}
-            <li>
-              <NavLink to={"/dashboard/admin/settings"} className="link">
-                <SlSettings size={23} className="min-w-max" />
-                Settings
-              </NavLink>
-            </li>
+            <button onClick={
+              ()=>{
+              logout();
+                localStorage.removeItem("token");
+                window.location.href="/"
+              }
+            }>
+             <div className="flex  flex-row  text-sm z-50  max-h-48 my-auto  whitespace-pre   w-full  font-medium rounded-lg bg-white px-3 py-2 items-center justify-center ">
+             
+              
+                <SlLogout size={23} className="min-w-max  mr-2" />
+                <p className="hidden sm:inline-block">Logout</p>
+             
+           
+            </div>
+            </button>
+
+            
           </ul>
-          {open && (
+          {/* {open && (
             <div className="flex-1 text-sm z-50  max-h-48 my-auto  whitespace-pre   w-full  font-medium  ">
               <div className="flex border-y border-slate-300 p-4 items-center justify-between">
                 <div>
@@ -185,7 +242,7 @@ const Sidebar = () => {
                 </p>
               </div>
             </div>
-          )}
+          )} */}
         </div>
         <motion.div
           onClick={() => {

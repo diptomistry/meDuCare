@@ -1,4 +1,5 @@
 CREATE DATABASE IF NOT EXISTS meducare;
+
 USE meducare;
 
 CREATE TABLE Roles (
@@ -15,8 +16,8 @@ CREATE TABLE RolePermissions (
     RolePermissionID INT AUTO_INCREMENT PRIMARY KEY,
     RoleID INT,
     PermissionID INT,
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID),
-    FOREIGN KEY (PermissionID) REFERENCES Permissions(PermissionID)
+    FOREIGN KEY (RoleID) REFERENCES Roles (RoleID),
+    FOREIGN KEY (PermissionID) REFERENCES Permissions (PermissionID)
 );
 
 CREATE TABLE Users (
@@ -26,13 +27,14 @@ CREATE TABLE Users (
     DOB DATE,
     Name VARCHAR(100) NOT NULL,
     Sex VARCHAR(10),
+    Phone VARCHAR(20),
     Image VARCHAR(200),
     RoleID INT,
     Status VARCHAR(20) DEFAULT 'Pending',
     Token VARCHAR(100),
     otp VARCHAR(100),
     RegisteredFrom VARCHAR(100),
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+    FOREIGN KEY (RoleID) REFERENCES Roles (RoleID)
 );
 
 CREATE TABLE Department (
@@ -47,40 +49,15 @@ CREATE TABLE Student (
     UserID INT UNIQUE,
     Department VARCHAR(100) NOT NULL,
     Session VARCHAR(100) NOT NULL,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    FOREIGN KEY (UserID) REFERENCES Users (UserID)
 );
 
 CREATE TABLE Doctors (
     DoctorID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT UNIQUE,
     DepartmentID INT,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID)
-);
-
-CREATE TABLE Appointments (
-    AppointmentID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT,
-    AppointmentDateTime DATETIME,
-    Concern TEXT,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
-);
-
-CREATE TABLE appoinment_doctors (
-    AppointmentID INT,
-    DoctorID INT,
-    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID),
-    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
-);
-
-CREATE TABLE Prescriptions (
-    PrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
-    AppointmentID INT,
-    medication TEXT,
-    dosage TEXT,
-    instructions TEXT,
-    tests TEXT,
-    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+    FOREIGN KEY (UserID) REFERENCES Users (UserID),
+    FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID)
 );
 
 CREATE TABLE Medicines (
@@ -89,6 +66,9 @@ CREATE TABLE Medicines (
     EntryDate DATE,
     ExpiryDate DATE,
     Description TEXT,
+    Price DECIMAL(10, 2),
+    AddedBy INT,
+    FOREIGN KEY (AddedBy) REFERENCES Users (UserID),
     StockQuantity INT NOT NULL
 );
 
@@ -97,8 +77,17 @@ CREATE TABLE PharmacyStock (
     MedicineID INT,
     Quantity INT NOT NULL,
     StockDate DATE,
-    Status VARCHAR(20) DEFAULT 'pending',
-    FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID)
+    Status VARCHAR(20) DEFAULT 'Pending',
+    FOREIGN KEY (MedicineID) REFERENCES Medicines (MedicineID)
+);
+
+CREATE TABLE Appointments (
+    AppointmentID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT,
+    AppointmentDateTime DATETIME,
+    Concern TEXT,
+    Status VARCHAR(20) DEFAULT 'Pending',
+    FOREIGN KEY (UserID) REFERENCES Users (UserID)
 );
 
 CREATE TABLE Dispensation (
@@ -107,8 +96,33 @@ CREATE TABLE Dispensation (
     DispensedQuantity INT NOT NULL,
     DispensedDateTime DATETIME,
     StockID INT,
-    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID),
-    FOREIGN KEY (StockID) REFERENCES PharmacyStock(StockID)
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments (AppointmentID),
+    FOREIGN KEY (StockID) REFERENCES PharmacyStock (StockID)
+);
+
+CREATE TABLE appoinment_doctors (
+    PrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
+    AppointmentID INT,
+    DoctorID INT,
+    Intructions TEXT,
+    Tests VARCHAR(200),
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments (AppointmentID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors (DoctorID),
+    UNIQUE KEY (AppointmentID, DoctorID)
+);
+
+CREATE TABLE Prescriptions (
+    PrescriptionID INT,
+    MedicinePrescriptionID INT
+);
+
+CREATE TABLE MedicinePresription (
+    MedicinePrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
+    MedicineID INT,
+    Quantity VARCHAR(100),
+    Duration VARCHAR(100),
+    AfterBefore VARCHAR(20),
+    FOREIGN KEY (MedicineID) REFERENCES Medicines (MedicineID)
 );
 
 CREATE TABLE Services (
@@ -133,7 +147,7 @@ CREATE TABLE Notices (
 CREATE TABLE DutyRoster (
     DutyID INT AUTO_INCREMENT PRIMARY KEY,
     DoctorID INT,
-    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+    FOREIGN KEY (DoctorID) REFERENCES Doctors (DoctorID)
 );
 
 CREATE TABLE Slot (
@@ -145,14 +159,14 @@ CREATE TABLE Slot (
 CREATE TABLE SlotDay (
     SlotID INT,
     Day VARCHAR(20),
-    FOREIGN KEY (SlotID) REFERENCES Slot(SlotID)
+    FOREIGN KEY (SlotID) REFERENCES Slot (SlotID)
 );
 
 CREATE TABLE DoctorSlot (
     DutyID INT,
     SlotID INT,
-    FOREIGN KEY (DutyID) REFERENCES DutyRoster(DutyID),
-    FOREIGN KEY (SlotID) REFERENCES Slot(SlotID)
+    FOREIGN KEY (DutyID) REFERENCES DutyRoster (DutyID),
+    FOREIGN KEY (SlotID) REFERENCES Slot (SlotID)
 );
 
 CREATE TABLE PhotoGallery (
@@ -161,5 +175,3 @@ CREATE TABLE PhotoGallery (
     Date DATE,
     Title VARCHAR(100)
 );
-
-INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status,RegisteredFrom) VALUES ('$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'admin@gmail.com', '1998-01-01', 'Admin','male', 1, 'https://localhost:8000/public/avatar.jpeg', '$2a$10$dTB5zKRMDDpilQizJINYF.iJhMBxVAWf6IzZxaY4gVBrDNa9lTFIm','Approved','Web');

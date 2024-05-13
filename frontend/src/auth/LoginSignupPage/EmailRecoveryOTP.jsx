@@ -9,6 +9,7 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
     const handleEmailVerified = () => {
         //if fromsignin is true then set showchange password to true
        if(fromSignIn){
+        console.log("fromSignIn")
               setShowChangePassword(true);
   
          }
@@ -16,7 +17,9 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
         
         // Simulate email verification process
         const emailVerified = true;
-        handleEmailVerification(emailVerified); // Send the boolean information back to the parent
+
+        handleEmailVerification(emailVerified); 
+        console.log("Email Verified");
       };
   useEffect(() => {
     const handleKeyDown = (e) => {

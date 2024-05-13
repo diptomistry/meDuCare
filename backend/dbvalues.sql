@@ -97,3 +97,27 @@ VALUES ('Nursing', 'Department comprising skilled nurses who provide patient car
 
 INSERT INTO Department (Name, Description, Image) 
 VALUES ('ICU', 'Intensive Care Unit department specializing in providing critical care to patients with life-threatening illnesses or injuries.', 'icu_image.jpg');
+
+INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image ,Token ,Status,RegisteredFrom) VALUES (
+    '$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'admin@gmail.com', '1998-01-01', 'Admin','male', 1, 'https://localhost:8000/public/avatar.jpeg', '$2a$10$dTB5zKRMDDpilQizJINYF.iJhMBxVAWf6IzZxaY4gVBrDNa9lTFIm',
+    'Approved','Web');
+
+
+-- Insert an Admin
+
+-- Insert a Doctor
+INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image, Token, Status, RegisteredFrom) 
+VALUES ( '$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'doc@gmail.com', '1985-05-05', 'Doctor User', 'female', 2, 'https://localhost:8000/public/doctor_avatar.jpeg', '$2a$10$ULQJaAFiCDVozHpmi2VZTOztqSY0IJqzGQx5USuP3v5e7J8ajKGES', 'Approved', 'Web');
+
+INSERT INTO Doctors (UserID, DepartmentID) VALUES (2, 1); -- Doctor User is assigned to the Pathology department
+
+INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image, Token, Status, RegisteredFrom) 
+VALUES ( '$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'sec@gmail.com', '1985-05-05', 'Section Officer Kuddus', 'female', 8, 'https://localhost:8000/public/avatar.jpeg','$2a$10$TtFMyWC4/zqVgx8Bzoncvu6ta44rSO5msEFlKbcnKSjZIcnCWnzZm', 'Approved', 'Web');
+
+
+INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image, Token, Status, RegisteredFrom) 
+VALUES ( '$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'senior@gmail.com', '1985-05-05', 'Senior Officer Kuddus', 'male', 7, 'https://localhost:8000/public/avatar.jpeg','$2a$10$R9eSbeMMtHnPn9xLj6CThOzN8LY0WblOTZo4cy3q3gH2LWUJP3gy2', 'Approved', 'Web');
+
+
+INSERT INTO Users (Password, Email, DOB, Name, Sex, RoleID, Image, Token, Status, RegisteredFrom) 
+VALUES ( '$2a$10$B15mFmQkK5ZjzVq0ZFV6QOYi.b7508bBvu.bGgAzVnQdr7bxtrlki', 'pharma@gmail.com', '1985-05-05', 'Dispendary OFficer Rafiq', 'male', 6, 'https://localhost:8000/public/avatar.jpeg','$2a$10$6FD7UAi3NNUB6BAurorr2OPCXOBSP2frEP0e/lQW/xCtxy/TZfOGG', 'Approved', 'Web');
