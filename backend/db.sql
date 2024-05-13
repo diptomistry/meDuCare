@@ -90,7 +90,7 @@ CREATE TABLE MedicinePresription(
     Duration VARCHAR(100),
     AfterBefore VARCHAR(20),
     FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID)
-)
+);
 
 CREATE TABLE Medicines (
     MedicineID INT AUTO_INCREMENT PRIMARY KEY,

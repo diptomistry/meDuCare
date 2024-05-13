@@ -96,16 +96,113 @@ router.post('/book-appointment', async (req, res) => {
 });
 router.get('/get-appointments', async (req, res) => {
     try {
-        const [appointments] = await pool.query('SELECT * FROM Appointments');
+        const [appointments] = await pool.query(`
+            SELECT Appointments.*, appoinment_doctors.PrescriptionID, Users.Name AS UserName, Users.Email AS UserEmail, Users.DOB AS UserDOB, Users.Sex AS UserSex, Users.Phone AS UserPhone, Users.Image AS UserImage
+            FROM Appointments
+            INNER JOIN Users ON Appointments.UserID = Users.UserID
+            LEFT JOIN appoinment_doctors ON Appointments.AppointmentID = appoinment_doctors.AppointmentID
+        `);
+        
         if (appointments.length === 0) {
             return res.status(404).json({ success: false, message: 'No appointments found' });
         }
+        
         res.status(200).json({ success: true, data: appointments });
     } catch (error) {
         console.error('Error retrieving appointments:', error);
         res.status(500).json({ success: false, message: 'Failed to retrieve appointments' });
     }
 });
+
+router.post('/accept-appointment', async (req, res) => {
+    const { appointmentId, doctorId } = req.body;
+
+    try {
+        // Check if the appointment exists and is pending
+        const [appointment] = await pool.query('SELECT * FROM Appointments WHERE AppointmentID = ? AND Status = ?', [appointmentId, 'Pending']);
+        if (appointment.length === 0) {
+            // console.log(appointment);
+            return res.status(404).json({ success: false, message: 'Appointment not found or already accepted',prescription_id:appointment[0].appointmentId });
+        }
+
+        // Check if the appointment is already accepted by another doctor
+        const [existingAppointment] = await pool.query('SELECT * FROM appoinment_doctors WHERE AppointmentID = ?', [appointmentId]);
+        if (existingAppointment.length > 0) {
+            return res.status(200).json({ success: false, message: 'Appointment already accepted by another doctor',prescription_id:existingAppointment[0].PrescriptionID });
+        }
+
+        // Update the appointment status to 'Accepted'
+        await pool.query('UPDATE Appointments SET Status = ? WHERE AppointmentID = ?', ['Accepted', appointmentId]);
+
+        // Insert the appointment into the appoinment_doctors table
+    const[resultE]=    await pool.query('INSERT INTO appoinment_doctors (AppointmentID, DoctorID) VALUES (?, ?)', [appointmentId, doctorId]);
+
+        res.status(200).json({ success: true, message: 'Appointment accepted successfully' ,prescription_id:resultE.insertId});
+    } catch (error) {
+        console.error('Failed to accept appointment:', error);
+        res.status(500).json({ success: false, message: 'Failed to accept appointment' });
+    }
+});
+router.post('/prescribe-medicines', async (req, res) => {
+    const { appointmentId, doctorId, medicines, instructions, tests,prescription_id } = req.body;
+
+    if (!appointmentId || !doctorId || !medicines || !instructions || !tests) {
+        return res.status(200).json({ success: false, message: 'All fields must be provided' });
+    }
+
+    try {
+       
+       
+
+        // Insert medicine prescriptions into MedicinePresription table
+        for (const medicine of medicines) {
+            const medicineResult = await pool.query('INSERT INTO MedicinePresription (MedicineID, Quantity, Duration, AfterBefore) VALUES (?, ?, ?, ?)', [medicine.medicineId, medicine.quantity, medicine.duration, medicine.afterBefore]);
+            const medicinePrescriptionId = medicineResult[0].insertId;
+            const prescriptionResult = await pool.query('INSERT INTO Prescriptions (PrescriptionID, MedicinePrescriptionID) VALUES (?, ?)', [prescription_id, medicinePrescriptionId]);
+            const prescriptionId = prescriptionResult[0].insertId;
+
+            // Insert entry into Prescriptions table
+          //  await pool.query('INSERT INT ob97gO Prescriptions (PrescriptionID, MedicinePrescriptionID) VALUES (?, ?)', [prescriptionId, medicinePrescriptionId]);
+        }
+
+        // Update the status of the appointment to 'Prescribed'
+        await pool.query('UPDATE Appointments SET Status = ? WHERE AppointmentID = ?', ['Prescribed', appointmentId]);
+        //insert tests,medicines and instructions into prescription table
+        await pool.query('UPDATE appoinment_doctors SET Tests = ?, Intructions = ? WHERE PrescriptionID = ?', [tests, instructions, prescription_id]); 
+               res.status(200).json({ success: true, message: 'Medicines prescribed successfully' });
+    } catch (error) {
+        console.error('Failed to prescribe medicines:', error);
+        res.status(500).json({ success: false, message: 'Failed to prescribe medicines' });
+    }
+});
+router.get('/get-prescriptions/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const [prescriptions] = await pool.query(`
+            SELECT Prescriptions.*, MedicinePrescription.*, Medicines.*
+            FROM Prescriptions
+            INNER JOIN appoinment_doctors ON Prescriptions.PrescriptionID = appoinment_doctors.PrescriptionID
+            INNER JOIN Doctors ON appoinment_doctors.DoctorID = Doctors.DoctorID
+            INNER JOIN Medicines ON MedicinePrescription.MedicineID = Medicines.MedicineID
+            INNER JOIN MedicinePrescription ON Prescriptions.MedicinePrescriptionID = MedicinePrescription.MedicinePrescriptionID
+            WHERE Doctors.UserID = ?
+        `, [userId]);
+        
+        if (prescriptions.length === 0) {
+            return res.status(404).json({ success: false, message: 'No prescriptions found for this user' });
+        }
+        
+        res.status(200).json({ success: true, data: prescriptions });
+    } catch (error) {
+        console.error('Error retrieving prescriptions:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve prescriptions' });
+    }
+});
+
+
+
+
 //get appointment for a specific user
 router.get('/get-appointments/:id', async (req, res) => {
     const { id } = req.params;
