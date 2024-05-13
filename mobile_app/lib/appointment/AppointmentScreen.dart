@@ -1,9 +1,53 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_app/appointment/BookingInfoScreen.dart';
+import 'package:mobile_app/auth/login_signup.dart';
 import 'package:mobile_app/endpoints.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class Appointment {
+  final bool success;
+  final String message;
+  final int appointmentId;
+  final int token;
+  final String status;
+
+  Appointment({
+    required this.success,
+    required this.message,
+    required this.appointmentId,
+    required this.token,
+    required this.status,
+  });
+
+  factory Appointment.fromJson(Map<String, dynamic> json) {
+    return Appointment(
+      success: json['success'],
+      message: json['message'],
+      appointmentId: json['appointmentId'],
+      token: json['token'],
+      status: json['status'],
+    );
+  }
+}
+
+final appointmentProvider = FutureProvider<Appointment>((ref) async {
+   // Replace this with your actual API URL
+  final response = await http.get(Uri.parse(apiUrl + '/book-appointment'));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = json.decode(response.body);
+    return Appointment.fromJson(data);
+  } else {
+    throw Exception('Failed to load appointment');
+  }
+});
 
 class AppointmentScreen extends StatefulWidget {
   @override
@@ -32,18 +76,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       appBar: AppBar(
         elevation: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: primaryColor,
-          statusBarBrightness: Brightness.dark,
-          systemNavigationBarColor: primaryColor
+            statusBarColor: primaryColor,
+            statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: primaryColor
         ),
         backgroundColor: primaryColor,
         title: Text('Appointment',
-        //   style: GoogleFonts.poppins(
-        //   color: Colors.black,
-        //   fontWeight: FontWeight.w600,
-        //   fontSize: 15,
-        //
-        // ),
+          //   style: GoogleFonts.poppins(
+          //   color: Colors.black,
+          //   fontWeight: FontWeight.w600,
+          //   fontSize: 15,
+          //
+          // ),
         ),
       ),
       body: SingleChildScrollView(
@@ -154,13 +198,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         selectedConcern != null &&
                         description != null &&
                         description!.isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BookingInfoScreen(selectedDate: this.selectedDate, selectedTime: this.selectedTime,)),
-                      );
                       // All fields are selected, proceed with booking
                       // Here you can implement the booking logic
-                      print('Appointment booked!');
+                      _fetchAppointment(context,selectedDate,selectedConcern!);
                     } else {
                       // Not all required fields are selected, show error message
                       showDialog(
@@ -203,6 +243,59 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
 
     return startingTime;
+  }
+
+  Future<void> _fetchAppointment(BuildContext context, DateTime appointmentDateTime, String concern) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+    // Replace this with your actual API URL
+    if (userId != null) {
+      final response = await http.post(
+        Uri.parse(apiUrl + '/book-appointment'),
+        body: {
+          "userId": userId.toString(),
+          "appointmentDateTime": appointmentDateTime.toIso8601String(),
+          "concern": concern,
+        },
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final appointment = Appointment.fromJson(data);
+        _showAppointmentDialog(context, appointment);
+      } else {
+        throw Exception('Failed to load appointment: ${response.statusCode}');
+      }
+    } else {
+      throw Exception('User not logged in');
+    }
+  }
+  void _showAppointmentDialog(BuildContext context, Appointment appointment) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Appointment Details'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Message: ${appointment.message}'),
+              Text('Appointment ID: ${appointment.appointmentId}'),
+              Text('Token: ${appointment.token}'),
+              Text('Status: ${appointment.status}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
