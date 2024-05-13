@@ -32,7 +32,7 @@ import { AuthProvider } from "./auth/AuthContext.jsx";
 import CreateSlot from "./pages/public/DutyRoster/CreateSlot.jsx";
 import AssignSlots from "./pages/public/DutyRoster/AssignDuty.jsx";
 
-import Eprescription from "./Eprescription.jsx";
+
 import Root from "./pages/Prescription/Root.jsx";
 import MedicineEntry from "./pages/MedicineEntry.jsx";
 import AddMedicine from "./role-based-access/senior-officer/AddMedicine.jsx";
