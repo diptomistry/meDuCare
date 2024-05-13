@@ -87,7 +87,7 @@ router.post('/book-appointment', async (req, res) => {
     try {
         const result = await pool.query('INSERT INTO Appointments (UserID, AppointmentDateTime, Concern) VALUES (?, ?, ?)', [userId, appointmentDateTime, concern]);
         console.log(result[0].insertId);
-        res.status(200).json({ success: true, message: `Appointment booked successfully.Your token is ${result[0].insertId}.Contact within 3 days.`, appointmentId: result[0].insertId });
+        res.status(200).json({ success: true, message: `Appointment booked successfully.Your token is ${result[0].insertId}.Contact within 3 days.`, appointmentId: result[0].insertId ,token:result[0].insertId,status:'Pending'});
 
     } catch (error) {
         console.error('Failed to book appointment:', error);
@@ -106,6 +106,40 @@ router.get('/get-appointments', async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to retrieve appointments' });
     }
 });
+//get appointment for a specific user
+router.get('/get-appointments/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [appointments] = await pool.query('SELECT * FROM Appointments WHERE UserID = ?', [id]);
+        if (appointments.length === 0) {
+            return res.status(404).json({ success: false, message: 'No appointments found' });
+        }
+        res.status(200).json({ success: true, data: appointments });
+    }
+    catch (error) {
+        console.error('Error retrieving appointments:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve appointments' });
+    }
+});
+
+//create prescription
+router.post('/create-prescription', async (req, res) => {
+    const { appointmentId, prescription, doctorId } = req.body;
+
+    if (!appointmentId || !prescription || !doctorId) {
+        return res.status(400).json({ success: false, message: 'All fields must be provided' });
+    }
+
+    try {
+        await pool.query('INSERT INTO Prescriptions (AppointmentID, Prescription, DoctorID) VALUES (?, ?, ?)', [appointmentId, prescription, doctorId]);
+        res.status(200).json({ success: true, message: 'Prescription created successfully' });
+    } catch (error) {
+        console.error('Failed to create prescription:', error);
+        res.status(500).json({ success: false, message: 'Failed to create prescription' });
+    }
+});
+
+
 router.get('/get-medicines', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;

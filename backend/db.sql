@@ -64,25 +64,33 @@ CREATE TABLE Appointments (
     UserID INT,
     AppointmentDateTime DATETIME,
     Concern TEXT,
+    Status VARCHAR(20) DEFAULT 'Pending',
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE appoinment_doctors (
+    PrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
     AppointmentID INT,
     DoctorID INT,
+    Intructions TEXT,
+    Tests VARCHAR(200),
     FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID),
-    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID),
+    UNIQUE KEY (AppointmentID, DoctorID)
 );
 
 CREATE TABLE Prescriptions (
-    PrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
-    AppointmentID INT,
-    medication TEXT,
-    dosage TEXT,
-    instructions TEXT,
-    tests TEXT,
-    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+    PrescriptionID INT,
+    MedicinePrescriptionID INT
 );
+CREATE TABLE MedicinePresription(
+    MedicinePrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
+    MedicineID INT,
+    Quantity VARCHAR(100),
+    Duration VARCHAR(100),
+    AfterBefore VARCHAR(20),
+    FOREIGN KEY (MedicineID) REFERENCES Medicines(MedicineID)
+)
 
 CREATE TABLE Medicines (
     MedicineID INT AUTO_INCREMENT PRIMARY KEY,
