@@ -84,11 +84,15 @@ router.get('/get-duty-roster', async (req, res) => {
 
 //assign slot 
 router.post('/assign-slot', async (req, res) => {
-    const { doctorId, slotId } = req.body;
-    console.log(doctorId, slotId);
+    const { doctorId, slotIds } = req.body;
+    console.log(doctorId, slotIds);
     try {
+    for(const slotId of slotIds){
+   
+    
         const [result] = await pool.query('INSERT INTO DoctorSlot (DoctorID, SlotID) VALUES (?, ?)', [doctorId, slotId]);
-        res.json({ message: 'Slot assigned successfully' });
+    }
+    res.status(200).json({ success: true, message: 'Slot assigned successfully' });
     } catch (error) {
         console.log('Failed to assign slot:', error);
         res.status(500).json({ success:false,message: 'An error occurred while assigning the slot' });

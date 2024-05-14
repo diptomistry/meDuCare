@@ -18,6 +18,7 @@ import { MdMenu } from "react-icons/md";
 import { NavLink, useLocation, useRoutes } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { RxColorWheel } from "react-icons/rx";
+import Nav from "../nav";
 
 const Sidebar = () => {
   let isTabletMid = useMediaQuery({ query: "(max-width: 768px)" });
@@ -90,11 +91,11 @@ const Sidebar = () => {
         menus: ["Gallery", "Department", "Notice"],
       },
       
-       {
-        name: "Duty Roster",
-        icon: RiBuilding3Line,
-        menus: ["Slots", "Assign Slot"],
-      },
+      //  {
+      //   name: "Duty Roster",
+      //   icon: RiBuilding3Line,
+      //   menus: ["Slots"]
+      // },
     ];
   }
 
@@ -141,6 +142,15 @@ const Sidebar = () => {
                 Request Medicine
               </NavLink>
             </li>:null}
+            {
+              role==='admin'?
+              <li>
+                <NavLink to={"/dashboard/admin/duty-roster/slots"} className="link">
+                  <TbReportAnalytics size={23} className="min-w-max" />
+                  Duty Roster
+                </NavLink>
+              </li>:null
+            }
             {role==='dispensary_officer' || role ==='admin' ?<li>
               <NavLink to={"/dashboard/dispensary/stocks"} className="link">
                 <HiOutlineDatabase size={23} className="min-w-max" />

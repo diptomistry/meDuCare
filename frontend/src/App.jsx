@@ -30,7 +30,7 @@ import Profile from "./role-based-access/Profile.jsx";
 import RequireAuth from "./auth/ProtectedRoute.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
 import CreateSlot from "./pages/public/DutyRoster/CreateSlot.jsx";
-import AssignSlots from "./pages/public/DutyRoster/AssignDuty.jsx";
+// import AssignSlots from "./pages/public/DutyRoster/AssignDuty.jsx";
 
 
 import Root from "./pages/Prescription/Root.jsx";
@@ -68,7 +68,7 @@ function App() {
           <Route path="allApps" element={<Prescribe />} />
           <Route path="authentication" element={<AppointmentData />} />
           <Route path="admin/duty-roster/slots" element={<CreateSlot />} />
-          <Route path="admin/duty-roster/assign-slot" element={<AssignSlots />} />
+          {/* <Route path="admin/duty-roster/assign-slot" element={<AssignSlots />} /> */}
           <Route path="admin/stroage" element={<Stroage />} />
           <Route path="settings" element={<Settings />} />
           <Route path="admin/public-info/gallery" element={<PhotoUpload />} />
