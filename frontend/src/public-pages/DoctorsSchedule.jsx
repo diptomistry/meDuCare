@@ -1,68 +1,43 @@
-import React from 'react'
-import ScheduleTable from '../models/ScheduleTable '
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import ScheduleTable from '../models/ScheduleTable .jsx';
 
 const DoctorsSchedule = () => {
-    const scheduleData = [
-      {
-        doctors: ['Dr. Evelyn Santos', 'Dr. Katrina Tan',],
-        designation:['Transplant Specialist', 'ad'],
-        day: 'MONDAY',
-        times: ['8 am - 12 nn', '1 pm - 3 pm']
-      },
-      {
-        doctors: ['Dr. Dinah Sia Tan', 'Dr. Rhea Salvador'],
-        designation:['ad'],
-        day: 'TUESDAY',
-        times: ['8 am - 12 nn', '1 pm - 3 pm']
-      },
-      {
-        doctors: ['Dr. Dinah Sia Tan', 'Dr. Rhea Salvador'],
-        designation:['ad'],
-        day: 'TUESDAY',
-        times: ['8 am - 12 nn', '1 pm - 3 pm']
-      },
-      // Add more schedule data objects as needed
-    ];
-  
-    return (
-      <div className="container mx-auto p-4 min-h-screen">
-        <ScheduleTable scheduleData={scheduleData} />
-      </div>
-    );
-      };
-  
+  // State to store schedule data
+  const [scheduleData, setScheduleData] = useState([]);
 
-export default DoctorsSchedule
-// import React from 'react'
-// import ScheduleTable from './ScheduleTable ';
+  // Fetch schedule data from the API on component mount
+  useEffect(() => {
+    fetchScheduleData();
+  }, []);
 
-// const DutyRoster = () => {
-//   const scheduleData = [
-//     {
-//       doctors: ['Dr. Evelyn Santos', 'Dr. Katrina Tan',],
-//       designation:['Transplant Specialist', 'ad'],
-//       day: 'MONDAY',
-//       times: ['8 am - 12 nn', '1 pm - 3 pm']
-//     },
-//     {
-//       doctors: ['Dr. Dinah Sia Tan', 'Dr. Rhea Salvador'],
-//       designation:['ad'],
-//       day: 'TUESDAY',
-//       times: ['8 am - 12 nn', '1 pm - 3 pm']
-//     },
-//     {
-//       doctors: ['Dr. Dinah Sia Tan', 'Dr. Rhea Salvador'],
-//       designation:['ad'],
-//       day: 'TUESDAY',
-//       times: ['8 am - 12 nn', '1 pm - 3 pm']
-//     },
-//     // Add more schedule data objects as needed
-//   ];
+  // Function to fetch schedule data from the API
+  const fetchScheduleData = async () => {
+    try {
+      // Fetch data from the API
+      const response = await axios.get('http://localhost:8000/api/public/duty/get-duty-roster');
 
-//   return (
-//     <div className="container mx-auto p-4 mt-10">
-//       <ScheduleTable scheduleData={scheduleData} />
-//     </div>
-//   );
-//     };
+      // Modify the structure of the API response
+      const modifiedData = response.data.dutyRoster.map(doctor => ({
+        doctors: [doctor.DoctorName], // Convert DoctorName to an array
+        designation: [doctor.DepartmentName], // Placeholder for designation
+        day: '', // Placeholder for day
+        times: doctor.Slots.map(slot => `${slot.StartTime} - ${slot.EndTime}`), // Format slot times
+      }));
+
+      // Update state with modified data
+      setScheduleData(modifiedData);
+    } catch (error) {
+      console.error('Failed to fetch schedule data:', error);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-4 min-h-screen">
+      {/* Pass scheduleData as a prop to the ScheduleTable component */}
+      <ScheduleTable scheduleData={scheduleData} />
+    </div>
+  );
+};
+
+export default DoctorsSchedule;

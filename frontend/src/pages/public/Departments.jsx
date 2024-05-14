@@ -14,9 +14,9 @@ const DepartmentsManage = () => {
 const [editingDepartmentId, setEditingDepartmentId] = useState(null);
 
   const [departments, setDepartments] = useState([]);
-  const apiUrl = 'http://localhost:8000/api/admin/get-departments';
-  const createDepartmentUrl = 'http://localhost:8000/api/admin/create-department';
-  const updateDepartmentUrl = 'http://localhost:8000/api/admin/update-department';
+  const apiUrl = 'http://localhost:8000/api/doctors/get-departments';
+  const createDepartmentUrl = 'http://localhost:8000/api/doctors/create-department';
+  const updateDepartmentUrl = 'http://localhost:8000/api/doctors/update-department';
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
 

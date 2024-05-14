@@ -26,58 +26,66 @@ router.post('/duty-roster', async (req, res) => {
 
 router.get('/get-duty-roster', async (req, res) => {
     try {
-      const [rows] = await pool.query(`
+        const [rows] = await pool.query(`
         SELECT
-          Doctors.DoctorID,
-          Users.Name AS DoctorName,
-          Slot.SlotID,
-          Slot.StartTime,
-          Slot.EndTime,
-          Department.Name AS DepartmentName,
-          DATE(Slot.StartTime) AS SlotDate
-        FROM DoctorSlot
-        JOIN Doctors ON DoctorSlot.DoctorID = Doctors.DoctorID
-        JOIN Users ON Doctors.UserID = Users.UserID
-        JOIN Slot ON DoctorSlot.SlotID = Slot.SlotID
-        JOIN Department ON Doctors.DepartmentID = Department.DepartmentID
-        WHERE DATE(Slot.StartTime) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 DAY)
-        ORDER BY Doctors.DoctorID ASC, SlotDate ASC;
-      `);
-  
-      const dutyRoster = rows.reduce((acc, row) => {
-        const doctorIndex = acc.findIndex(doctor => doctor.DoctorID === row.DoctorID);
-  
-        if (doctorIndex === -1) {
-          acc.push({
-            DoctorID: row.DoctorID,
-            DoctorName: row.DoctorName,
-            Slots: [
-              {
-                SlotID: row.SlotID,
-                StartTime: row.StartTime,
-                EndTime: row.EndTime,
-                DepartmentName: row.DepartmentName
-              }
-            ]
-          });
-        } else {
-          acc[doctorIndex].Slots.push({
-            SlotID: row.SlotID,
-            StartTime: row.StartTime,
-            EndTime: row.EndTime,
-            DepartmentName: row.DepartmentName
-          });
-        }
-  
-        return acc;
-      }, []);
-  
-      res.json({ success: true, dutyRoster });
+    Doctors.DoctorID,
+    Users.Name AS DoctorName,
+    Department.Name AS DepartmentName,
+    Slot.SlotID,
+    Slot.StartTime,
+    Slot.EndTime,
+    GROUP_CONCAT(DISTINCT DAYNAME(Slot.StartTime) ORDER BY DAYOFWEEK(Slot.StartTime)) AS Days
+FROM
+    DoctorSlot
+    JOIN Doctors ON DoctorSlot.DoctorID = Doctors.DoctorID
+    JOIN Users ON Doctors.UserID = Users.UserID
+    JOIN Slot ON DoctorSlot.SlotID = Slot.SlotID
+    JOIN Department ON Doctors.DepartmentID = Department.DepartmentID
+GROUP BY
+    Doctors.DoctorID, Slot.SlotID
+ORDER BY
+    Doctors.DoctorID ASC, Slot.StartTime ASC;
+
+
+    
+        `);
+
+        const dutyRoster = rows.reduce((acc, row) => {
+            const doctorIndex = acc.findIndex(doctor => doctor.DoctorID === row.DoctorID);
+
+            if (doctorIndex === -1) {
+                acc.push({
+                    DoctorID: row.DoctorID,
+                    DoctorName: row.DoctorName,
+                    DepartmentName: row.DepartmentName,
+                    Slots: [
+                        {
+                            SlotID: row.SlotID,
+                            StartTime: row.StartTime,
+                            EndTime: row.EndTime,
+                            Days: row.Days.split(',') // Split the days into an array
+                        }
+                    ]
+                });
+            } else {
+                acc[doctorIndex].Slots.push({
+                    SlotID: row.SlotID,
+                    StartTime: row.StartTime,
+                    EndTime: row.EndTime,
+                    Days: row.Days.split(',') // Split the days into an array
+                });
+            }
+
+            return acc;
+        }, []);
+
+        res.json({ success: true, dutyRoster });
     } catch (error) {
-      console.error('Failed to fetch duty roster:', error);
-      res.status(500).json({ success: false, message: error.message });
+        console.error('Failed to fetch duty roster:', error);
+        res.status(500).json({ success: false, message: error.message });
     }
-  });
+});
+
 
 
 
