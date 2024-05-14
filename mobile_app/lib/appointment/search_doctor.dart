@@ -1,8 +1,58 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/appointment/AppointmentScreen.dart';
+import 'package:mobile_app/endpoints.dart';
 import 'package:mobile_app/homepage/home.dart';
+import 'package:http/http.dart' as http;
 
+class Doctor {
+  final int doctorId;
+  final String name;
+  final String email;
+  final DateTime dob;
+  final String sex;
+  final String image;
+  final String departmentName;
+  final String departmentDescription;
+
+  Doctor({
+    required this.doctorId,
+    required this.name,
+    required this.email,
+    required this.dob,
+    required this.sex,
+    required this.image,
+    required this.departmentName,
+    required this.departmentDescription,
+  });
+
+  factory Doctor.fromJson(Map<String, dynamic> json) {
+    return Doctor(
+      doctorId: json['DoctorID'],
+      name: json['Name'],
+      email: json['Email'],
+      dob: DateTime.parse(json['DOB']),
+      sex: json['Sex'],
+      image: json['Image'],
+      departmentName: json['DepartmentName'],
+      departmentDescription: json['DepartmentDescription'],
+    );
+  }
+}
+// Define a provider to fetch the list of doctors from the API
+final doctorsProvider = FutureProvider<List<Doctor>>((ref) async {
+  final response = await http.get(Uri.parse(apiUrl + '/doctors/get-doctors'));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body)['data'];
+    return data.map((json) => Doctor.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load doctors');
+  }
+});
 
 class SearchDoctor extends StatelessWidget {
   @override
@@ -24,16 +74,32 @@ class DoctorSearchScreen extends StatefulWidget {
   _DoctorSearchScreenState createState() => _DoctorSearchScreenState();
 }
 
+
 class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
   String searchText = '';
   int _currentIndex = 0;
-  List<String> selectedSpecializations = []; // List to store selected doctor specializations for filtering
-  List<String> allSpecializations = ['Cardiologist', 'Dermatologist', 'Pediatrician']; // List of all doctor specializations
-  List<String> allDoctors = [
-    'Dr. John Doe - Cardiologist',
-    'Dr. Emily Smith - Pediatrician',
-    'Dr. Michael Johnson - Dermatologist'
-  ]; // List of all doctors, replace it with your actual list of doctors
+  List<String> selectedSpecializations = [];
+  List<String> doctors=[];
+  List<String> allSpecializations = ['Cardiologist', 'Dermatologist', 'Pediatrician'];
+
+  // API endpoint
+  //static const String apiUrl = 'YOUR_API_ENDPOINT';
+
+  // Method to fetch doctors from the API
+  Future<List<String>> fetchDoctors() async {
+    final response = await http.get(Uri.parse(apiUrl+'/doctors/get-doctors'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['data'];
+      List<String> doctors = [];
+      data.forEach((doctor) {
+        doctors.add('${doctor['Name']} - ${doctor['DepartmentName']}');
+      });
+      return doctors;
+    } else {
+      throw Exception('Failed to load doctors');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +108,7 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black54),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MyHomePage()),
-            );
-            // Add functionality to go back
+            Navigator.pop(context);
           },
         ),
         title: Text(
@@ -88,14 +150,25 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
             ),
             SizedBox(height: 16.0),
             Expanded(
-              child: ListView.builder(
-                itemCount: displayedDoctors.length,
-                itemBuilder: (context, index) {
-                  return DoctorDetailsContainer(
-                    doctorName: displayedDoctors[index].split(' - ')[0],
-                    specialization: displayedDoctors[index].split(' - ')[1],
-                    context: context, // Pass context here
-                  );
+              child: FutureBuilder<List<String>>(
+                future: fetchDoctors(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return DoctorDetailsContainer(
+                          doctorName: snapshot.data![index].split(' - ')[0],
+                          specialization: snapshot.data![index].split(' - ')[1],
+                          context: context,
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),
@@ -131,15 +204,16 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
     // Check if any specializations are selected
     if (selectedSpecializations.isNotEmpty) {
       for (String specialization in selectedSpecializations) {
-        for (String doctor in allDoctors) {
-          if (doctor.toLowerCase().contains(searchText.toLowerCase()) && doctor.toLowerCase().contains(specialization.toLowerCase())) {
+        for (String doctor in displayedDoctors) {
+          if (doctor.toLowerCase().contains(searchText.toLowerCase()) &&
+              doctor.toLowerCase().contains(specialization.toLowerCase())) {
             filteredDoctors.add(doctor);
           }
         }
       }
     } else {
       // If no specializations selected, filter only based on searchText
-      for (String doctor in allDoctors) {
+      for (String doctor in doctors) {
         if (doctor.toLowerCase().contains(searchText.toLowerCase())) {
           filteredDoctors.add(doctor);
         }
