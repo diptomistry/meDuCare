@@ -20,7 +20,7 @@ const EmailRecovery = ({ closeForm ,fromSignIn, handleEmailVerification }) => {
       const userEmail = document.getElementById('userEmail').value;
      const response=await axios.post('http://localhost:5000/api/users/send-otp', {
         email: userEmail,
-        debug: true,
+        // debug: true,
       });
       setOtp(response.data.otp);
       console.log(response);

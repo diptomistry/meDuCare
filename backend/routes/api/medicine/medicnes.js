@@ -276,6 +276,8 @@ router.post('/dispense-medicine', async (req, res) => {
         // Step 3: Update stock quantity
         const updatedStock = currentStock - quantity;
         await pool.query('UPDATE Medicines SET StockQuantity = ? WHERE MedicineID = ?', [updatedStock, medicineId]);
+        //update appoinment status to completed
+        await pool.query('UPDATE Appointments SET Status = ? WHERE AppointmentID = ?', ['Completed', medicineId]);
 
         return res.status(200).json({ success: true, message: 'Medicine dispensed successfully', updatedStock });
     } catch (error) {
