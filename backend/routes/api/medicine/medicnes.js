@@ -117,14 +117,15 @@ router.get('/get-appointments', async (req, res) => {
 router.post('/accept-appointment', async (req, res) => {
     var { appointmentId, doctorId } = req.body;
     
+    console.log(req.body);
 
-    console.log(appointmentId);
+    //console.log(appointmentId);
 
     try {
 //fund doctor id form user id by join on users table and get doctor id from doctors table
         //
         const [doctor] = await pool.query('SELECT * FROM Users JOIN Doctors ON Users.UserID = Doctors.UserID WHERE Users.UserID = ?', [doctorId]);
-        console.log(doctor);
+        //console.log(doctor);
         if (doctor.length === 0) {
             return res.status(200).json({ success: false, message: 'Doctor not found' });
         }
@@ -133,8 +134,9 @@ router.post('/accept-appointment', async (req, res) => {
 
         // Check if the appointment exists and is pending
         const [appointment] = await pool.query('SELECT * FROM Appointments WHERE AppointmentID = ? AND Status = ?', [appointmentId, 'Pending']);
+        
         if (appointment.length === 0) {
-            console.log(appointment);
+           // console.log(appointment);
             return res.status(200).json({ success: false, message: 'Appointment not found or already accepted' });
         }
 
@@ -149,8 +151,11 @@ router.post('/accept-appointment', async (req, res) => {
 
         // Insert the appointment into the appoinment_doctors table
     const[resultE]=    await pool.query('INSERT INTO appoinment_doctors (AppointmentID, DoctorID) VALUES (?, ?)', [appointmentId, doctorId]);
+    // return user infos 
+    const [user] = await pool.query('SELECT * FROM Users WHERE UserID = ?', [appointment[0].UserID]);
+    //console.log(user);
 
-        res.status(200).json({ success: true, message: 'Appointment accepted successfully' ,prescription_id:resultE.insertId});
+        res.status(200).json({ success: true, message: 'Appointment accepted successfully' ,prescription_id:resultE.insertId, user:user[0]});
     } catch (error) {
         console.error('Failed to accept appointment:', error);
         res.status(200).json({ success: false, message: 'Failed to accept appointment' });

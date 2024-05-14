@@ -26,6 +26,8 @@ const AppointmentTable = () => {
       });
       const data = await response.json();
       if (data.success) {
+        setOpen(false);
+        alert(data.message);
         console.log('Prescription accepted successfully');
       } else {
         console.error('Failed to accept appointment:', data.message);
