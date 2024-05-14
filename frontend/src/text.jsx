@@ -1,132 +1,123 @@
-import { TypeAnimation } from "react-type-animation";
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { BsChevronCompactLeft, BsChevronCompactRight } from 'react-icons/bs';
-import { RxDotFilled } from 'react-icons/rx';
-import Marquee from "react-fast-marquee";
-import homeImage from '../assets/img/homeImg.svg';
-import { Link } from "react-scroll";
-import Button from "../layouts/Button";
-import { Meteors } from "../animation/home/Meteors";
+import Pagination from '@mui/material/Pagination';
+import { format, subDays } from 'date-fns';
+import { useAuth } from '../../auth/AuthContext';
+import { Stack } from '@mui/material';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import StockPDFDocument from './StockPDFDocument';
 
-const Home = () => {
-  
-  const [notices, setNotices] = useState([]);
-  const [slides, setSlides] = useState([
-    { url: 'https://tds-images.thedailystar.net/sites/default/files/images/2021/10/03/du_medical_center.jpg' }
-  ]);
-  const apiUrl = 'http://localhost:8000/api/public/photo-gallery';
+function ViewStocks() {
+    const [stocks, setStocks] = useState([]);
+    const [startDate, setStartDate] = useState(format(subDays(new Date(), 3), 'yyyy-MM-dd'));
+    const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+    const { user } = useAuth();
+    const canApprove = user.role === 'admin' || user.role === 'senior-officer';
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+    const initialStocks = stocks.length;
 
-  useEffect(() => {
-  
-    const fetchNotices = async () => {
-      try {
-        console.log('fetching notices');
-        const response = await axios.get('http://localhost:8000/api/get-notices');
-        const fetchedNotices = response.data.data;
-        console.log('fetched notices:', fetchedNotices);
-        setNotices(fetchedNotices);
-      } catch (error) {
-        console.error('Error fetching notices:', error);
-      }
+    useEffect(() => {
+        fetchStocks();
+    }, [startDate, endDate]);
+
+    useEffect(() => {
+        if(currentPage === 1) fetchStocks();
+        setCurrentPage(1);
+    }, [currentPage]);
+
+    const fetchStocks = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/get-stocks?startDate=${startDate}&endDate=${endDate}`);
+            setStocks(response.data.data); // Assume response.data.data contains an array of stocks
+        } catch (error) {
+            console.error('Error fetching stocks:', error);
+        }
     };
 
-    fetchNotices();
-  }, []); 
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
 
+    const approveMedicine = async (stockId, status) => {
+        try {
+            const response = await axios.post('http://localhost:8000/api/approve-stock', { stockId, status });
+            alert(response.data.message);
+            fetchStocks(); // Refetch stocks to update the list
+        } catch (error) {
+            console.error('Error approving stock:', error);
+            alert('Failed to approve stock request');
+        }
+    };
 
-  const breakingNewsText = "Breaking News: Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = stocks.slice(indexOfFirstItem, indexOfLastItem);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const prevSlide = () => {
-    const newIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
-    setCurrentIndex(newIndex);
-  };
-
-  const nextSlide = () => {
-    const newIndex = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
-    setCurrentIndex(newIndex);
-  };
-
-  const goToSlide = (slideIndex) => {
-    setCurrentIndex(slideIndex);
-  };
-
-  // Handle potential errors and loading states
-  const isLoading = slides.length === 0; // Check if slides haven't been populated yet
-  const error = null; // Placeholder for potential error message
-
-  return (
-    <div className="min-h-screen flex flex-col justify-center lg:px-32 px-5 text-white">
-        
-      <div class="grid  max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-  
-        <div class=" lg:col-span-7 ">
-        
-          
-          <div className="relative shadow-xl bg-backgroundColor/50 border border-gray-800  px-4 py-8 h-full overflow-hidden rounded-2xl flex flex-col justify-end items-start">
-      
-
-          <h1 className="font-bold text-xl text-white mb-4 relative z-50">
-          Shahid Buddhijibe Dr. Muhammad Mortaza Medical Centre
-          </h1>
-
-          <p className="font-normal text-base text-slate-500 mb-4 relative z-50">
-          Excellent health service to students, teachers and staffs of the University of Dhaka and also family members of the teachers and staffs.
-          </p>
-
-          <Link
-              to="photo-gallery"
-              spy={true}
-              smooth={true}
-              duration={500}
-              className=" inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-brightColor hover:bg-hoverColor cursor-pointer"
-            >
-                Photo Gallery
-                <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-            </Link>
-          {/* Meaty part - Meteor effect */}
-          <Meteors number={20} />
+    return (
+        <div className="max-w-4xl mx-auto my-10 p-5 bg-white shadow-lg rounded">
+            <h1 className="text-lg font-bold mb-4">Stocks and Medicines</h1>
+            <div className="flex justify-between mb-4">
+                <input
+                    type="date"
+                    className="shadow border rounded py-2 px-3 text-gray-700"
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                />
+                <input
+                    type="date"
+                    className="shadow border rounded py-2 px-3 text-gray-700"
+                    value={endDate}
+                    onChange={e => setEndDate(e.target.value)}
+                />
+            </div>
+            <div className="overflow-x-auto">
+                <table className="min-w-full bg-white shadow rounded">
+                    <thead>
+                        <tr className="w-full bg-gray-200">
+                            <th className="text-left py-3 px-4 uppercase font-semibold text-sm">Name</th>
+                            <th className="text-left py-3 px-4 uppercase font-semibold text-sm">Stock Quantity</th>
+                            <th className="text-left py-3 px-4 uppercase font-semibold text-sm">Price</th>
+                            <th className="text-left py-3 px-4 uppercase font-semibold text-sm">Status</th>
+                            {canApprove && <th className="text-left py-3 px-4 uppercase font-semibold text-sm">Requested On</th>}
+                            {canApprove && <th className="text-left py-3 px -4 uppercase font-semibold text-sm">Actions</th>}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentItems.map((medicine, index) => (
+                            <tr key={medicine.MedicineID || index} className="text-gray-700">
+                                <td className="text-left py-2 px-4 border-b border-gray-200">{medicine.Name}</td>
+                                <td className="text-left py-2 px-4 border-b border-gray-200">{medicine.StockQuantity}</td>
+                                <td className="text-left py-2 px-4 border-b border-gray-200">${medicine.Price}</td>
+                                <td className="text-left py-2 px-4 border-b border-gray-200 text-green-500">{medicine.Status}</td>
+                                {canApprove && (
+                                    <td className="text-left py-2 px-4 border-b border-gray-200">{format(new Date(medicine.StockDate), 'yyyy-MM-dd')}</td>
+                                )}
+                                {canApprove && medicine.Status === 'Pending' && (
+                                    <td className="text-left py-2 px-4 border-b border-gray-200">
+                                        <button onClick={() => approveMedicine(medicine.StockID, 'Approved')}
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 text-sm">
+                                            Approve
+                                        </button>
+                                        <button onClick={() => approveMedicine(medicine.StockID, 'Rejected')}
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm">
+                                            Reject
+                                        </button>
+                                    </td>
+                                )}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <Stack spacing={2} className="mt-2 flex justify-center items-center">
+                    <Pagination count={Math.ceil(stocks.length / itemsPerPage)} page={currentPage} onChange={handlePageChange} hidePrevButton={true} />
+                    <PDFDownloadLink className='underline hover:text-hoverColor' document={<StockPDFDocument stocks={stocks} />} fileName="stocks.pdf">
+                        {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download PDF')}
+                    </PDFDownloadLink>
+                </Stack>
+            </div>
         </div>
-          
-            
-            
-           
-        </div>
-        
-      
-        <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-            <img className="" src={homeImage} alt="image"/>
-           
-        </div>   
-                  
-    </div>
-    <div className="mt-2 bg-backgroundColor text-md md:text-xl text-red-700 py-3 px-1 flex items-center rounded-md relative">
-      {/* Left border */}
-      <div className="absolute inset-y-0 left-0 w-2  bg-gray-700 rounded-lg"></div>
-      {/* Right border */}
-      <div className="absolute inset-y-0 right-0 w-2  bg-gray-700 rounded-lg"></div>
-      {/* Main content */}
-      <div className="flex-grow">
-        <Marquee speed={100}>
-        {notices
-              .filter((notice) => notice.MainPage) // Filter notices based on isMainpage property
-              .map((notice) => (
-                <div key={notice.NoticeID} className="px-2 ">
-                  <span className="text-white flex">
-                    <div className="rounded-full bg-black h-5 w-5 mt-2 mr-1 "></div>
-                    {notice.Title}
-                  </span>
-                </div>
-              ))}
-        </Marquee>
-      </div>
-    </div>
-   
-   
-   
-    </div>
-);
+    );
 }
-export default Home;
+
+export default ViewStocks;

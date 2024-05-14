@@ -1,7 +1,8 @@
 import React from 'react'
 import Button from '../../layouts/Button';
 
-const PatientDetails = () => {
+const PatientDetails = ({ name = 'Unknown', sex = 'Unknown' ,age='Unknown'}) => {
+  
     return (
       <div className='bg-blue-200 rounded-lg p-5'>
      <div className='flex justify-between'>
@@ -13,15 +14,15 @@ const PatientDetails = () => {
        <div className='flex justify-between md:px-[100px] mr-10'>
        <div className="mb-4 ">
           <label className="block font-medium">Name</label>
-          <p className="text-gray-700">Dipto Mistry</p>
+          <p className="text-gray-700">{name}</p>
         </div>
         <div className="mb-4">
           <label className="block font-medium">Age</label>
-          <p className="text-gray-700">35</p>
+          <p className="text-gray-700">{age}</p>
         </div>
         <div className="mb-4">
           <label className="block font-medium">Gender</label>
-          <p className="text-gray-700">Male</p>
+          <p className="text-gray-700">{sex}</p>
         </div>
        </div>
       </div>

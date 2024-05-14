@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useAuth } from '../../auth/AuthContext';
 import CustomDialog from './acceptModal';
+
 
 const AppointmentTable = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,31 +13,65 @@ const AppointmentTable = () => {
   const doctorId = user.user_id;
   const [open, setOpen] = useState(false);
   const [appointmentId, setAppointmentId] = useState(null);
+  
+  const navigate = useNavigate();
+  // Helper function to calculate age from DOB
+const calculateAge = (dob) => {
+  const today = new Date();
+  const birthDate = new Date(dob);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
 
-  const handlePrescribe = async (appointmentId) => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/accept-appointment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          appointmentId,
-          doctorId,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        setOpen(false);
-        alert(data.message);
-        console.log('Prescription accepted successfully');
-      } else {
-        console.error('Failed to accept appointment:', data.message);
-      }
-    } catch (error) {
-      console.error('An error occurred while accepting appointment:', error);
-    }
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
   }
+
+  return age;
+};
+  const handlePrescribe = async (appointmentId) => {
+    console.log("ad", appointmentId, doctorId);
+    try {
+        const response = await fetch(`http://localhost:8000/api/accept-appointment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                appointmentId,
+                doctorId,
+            }),
+        });
+        const data = await response.json();
+        console.log(data);
+
+        if (data.success) {
+            setOpen(false);
+            alert(data.message);
+            console.log('Prescription accepted successfully');
+
+            // Extract user information
+            const { Name, Sex,DOB } = data.user;
+          
+
+            
+        // Assuming calculateAge is a function to calculate age from date of birth
+        const age = calculateAge(DOB); 
+            navigate('/dashboard/doctor/prescription', { state: { Name, Sex,age } })
+           //navigate('/dashboard/doctor/prescription');
+
+            // Navigate to prescription page
+            //window.location.href = '/dashboard/doctor/prescription';
+        } else {
+            console.error('Failed to accept appointment:', data.message);
+        }
+    } catch (error) {
+        console.error('An error occurred while accepting appointment:', error);
+    }
+}
+
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -122,6 +158,7 @@ const AppointmentTable = () => {
                       console.log(appointment.AppointmentID);
                       setOpen(true);
                       setAppointmentId(appointment.AppointmentID);
+                   
                     }
                   }>Prescribe</Button>
                 ) : (
