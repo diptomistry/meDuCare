@@ -17,9 +17,10 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
         
         // Simulate email verification process
         const emailVerified = true;
-
+        console.log("Email Verified",emailVerified);
+        
         handleEmailVerification(emailVerified); 
-        console.log("Email Verified");
+      
       };
   useEffect(() => {
     const handleKeyDown = (e) => {

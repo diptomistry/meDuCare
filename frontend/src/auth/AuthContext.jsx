@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
    
     useEffect(() => {
-        console.log("i am here");
+       console.log("i am here");
         const token = localStorage.getItem('token');
         if (token) {
             
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
     };
     useEffect(() => {
         // This code runs after `user` is updated
-        console.log(user);
+       // console.log(user);
     }, [user]); // 
 
     const login = (userData) => {

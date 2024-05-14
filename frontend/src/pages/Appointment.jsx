@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Button from '../layouts/Button';
+
 
 const AppointmentTable = () => {
   const [appointments, setAppointments] = useState([]);
@@ -64,18 +66,15 @@ const AppointmentTable = () => {
                   <span className="bg-blue-500 text-white rounded py-1 px-2">
                     {appointment.Status}
                   </span>
-                ) : appointment.Status === 'Approved' ? (
-                  <span className="bg-green-500 text-white rounded py-1 px-2">
-                    {appointment.Status}
-                  </span>
+                ) : appointment.Status === 'Pending' ? (
+                 
+                  <Button title={'Prescribe'}></Button>
                 ) : (
-                  <span className="bg-red-500 text-white rounded py-1 px-2">
-                    {appointment.Status}
-                  </span>
+                    <Button title={'Prescribe'}></Button>
                 )}
               </td>
               <td className="px-4 py-2">
-                {appointment.Prescription ? appointment.Prescription : 'Not Added'}
+                {appointment.Status==="Pending" ? <Button title={'Prescribe'}></Button> : <Button title={'View'}></Button>}
               </td>
             </tr>
           ))}
