@@ -4,6 +4,8 @@ import Pagination from '@mui/material/Pagination';
 import { format, subDays } from 'date-fns';
 import { useAuth } from '../../auth/AuthContext';
 import { Stack } from '@mui/material';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import StockPDFDocument from './StockPDFDocument';// Assuming StockPDFDocument is in a separate file
 
 function ViewStocks() {
     const [stocks, setStocks] = useState([]);
@@ -22,7 +24,7 @@ function ViewStocks() {
     useEffect(() => {
         if(currentPage === 1) fetchStocks();
         setCurrentPage(1);
-    }, currentPage);
+    }, [currentPage]);
 
     const fetchStocks = async () => {
         try {
@@ -109,6 +111,9 @@ function ViewStocks() {
                 </table>
                 <Stack spacing={2} className="mt-2 flex justify-center items-center">
                     <Pagination count={Math.ceil(stocks.length / itemsPerPage)} page={currentPage} onChange={handlePageChange} hidePrevButton={true} />
+                    <PDFDownloadLink className='underline hover:text-hoverColor' document={<StockPDFDocument stocks={stocks} />} fileName="stocks.pdf">
+                        {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download PDF')}
+                    </PDFDownloadLink>
                 </Stack>
             </div>
         </div>
