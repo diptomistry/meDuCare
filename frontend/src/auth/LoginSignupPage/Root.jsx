@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import log from "../../assets/img/signin3.svg";
 import register from "../../assets/img/signup.svg";
@@ -9,69 +9,75 @@ import EmailRecoveryOTP from "./EmailRecoveryOTP";
 import axios from "axios";
 import { useAuth } from "../../auth/AuthContext";
 
-
 const SlidingLoginSignup = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [userType, setUserType] = useState([]);
   const [emailRecovery, setEmailRecovery] = useState(false);
   const [emailRecoveryOTP, setEmailRecoveryOTP] = useState(false);
   const [departments, setDepartments] = useState([]);
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [fromSignIn,setFromSignIn]=useState(true);
-  const { login ,user} = useAuth();
+  
+  const [fromSignIn, setFromSignIn] = useState(true);
+  const { login, user } = useAuth();
   const navigate = useNavigate();
-
   
 
-  const handleEmailVerification =async  (isVerified) => {
-    setEmailVerified(isVerified);
-    console.log("Email verified:", emailVerified);
+ 
+
+
+  const handleEmailVerification = async (isVerified) => {
+  
+   
+
+    console.log("Email verified:222", isVerified);
     const { confirmPassword, ...userData } = formData;
     const [showDialog, setShowDialog] = useState(false);
     //add debug to formData
-   
-    console.log("data", userData);
-    
-      try {
-        const response = await axios.post('http://localhost:8000/api/users/create-user', userData);
-        alert(response.data.message);
-        if(response.data.message==='User created successfully') resetForm();
-        alert(response.data.message);
 
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error creating user:', error);
-        alert('Failed to create user: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
-      }
-      
+    // console.log("data", userData);
+if(isVerified)
+    try {
+  console.log('userData');
+      const response = await axios.post(
+        "http://localhost:8000/api/users/create-user",
+        userData
+      );
+      alert(response.data.message);
+      if (response.data.message === "User created successfully") resetForm();
+      alert(response.data.message);
 
-   
-   
+      // console.log(response.data);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      alert(
+        "Failed to create user: " +
+          (error.response && error.response.data.message
+            ? error.response.data.message
+            : "Check your network connection")
+      );
+    }
 
     // You can perform any other actions based on the verification status here
   };
 
-
   const resetForm = () => {
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      user_type: '',
-      department_id: '',
-      dob: '',
-      password: '',
-      confirm_pass: '',
-      department: '',
-      session: '',
-      registration_no: '',
-      registered_from:'web'
+      name: "",
+      email: "",
+      phone: "",
+      user_type: "",
+      department_id: "",
+      dob: "",
+      password: "",
+      confirm_pass: "",
+      department: "",
+      session: "",
+      registration_no: "",
+      registered_from: "web",
     });
   };
 
   const openForm = () => {
     setEmailRecovery(true);
-    
   };
 
   const closeForm = () => {
@@ -84,12 +90,11 @@ const SlidingLoginSignup = () => {
     setFromSignIn(!fromSignIn);
   };
 
-const handleUserTypeChange = (e) => {
+  const handleUserTypeChange = (e) => {
     setFormData({ ...formData, user_type: e.target.value });
-   //setUserType(e.target.value);
-   console.log("type changed");
-   console.log(e.target.value); 
-
+    //setUserType(e.target.value);
+    console.log("type changed");
+    console.log(e.target.value);
   };
   const handleDepartmentChange = (e) => {
     setFormData({ ...formData, department: e.target.value });
@@ -115,68 +120,70 @@ const handleUserTypeChange = (e) => {
     setFormData({ ...formData, department_id: e.target.value });
   };
   const genderChange = (e) => {
-    setFormData({ ...formData,gender: e.target.value });
+    setFormData({ ...formData, gender: e.target.value });
   };
-const handleEmailChange = (e) => {
-  setFormData({ ...formData, email: e.target.value });
-};
-const handleRegistrationNoChange = (e) => {
-  setFormData({ ...formData, registration_no: e.target.value });
-};
-const handleSessionChange = (e) => {
-  setFormData({ ...formData, session: e.target.value });
-};
+  const handleEmailChange = (e) => {
+    setFormData({ ...formData, email: e.target.value });
+  };
+  const handleRegistrationNoChange = (e) => {
+    setFormData({ ...formData, registration_no: e.target.value });
+  };
+  const handleSessionChange = (e) => {
+    setFormData({ ...formData, session: e.target.value });
+  };
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    user_type: '',
-    gender: '',
-    department_id: '',
-    dob: '',
-    password: '',
-    confirm_pass: '',
-    department: '',
-    session: '',
-    registration_no: '',
-    registered_from:'Web',
-    debug:true
-  
-    
+    name: "",
+    email: "",
+    phone: "",
+    user_type: "",
+    gender: "",
+    department_id: "",
+    dob: "",
+    password: "",
+    confirm_pass: "",
+    department: "",
+    session: "",
+    registration_no: "",
+    registered_from: "Web",
+    debug: true,
   });
   useEffect(() => {
     const getDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/doctors/get-departments');
+        const response = await axios.get(
+          "http://localhost:8000/api/doctors/get-departments"
+        );
         setDepartments(response.data.data);
-        console.log('Departments:', response.data.data);
+        console.log("Departments:", response.data.data);
       } catch (error) {
-        console.error('Error fetching departments:', error);
-       // alert('Failed to fetch departments: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
+        console.error("Error fetching departments:", error);
+        // alert('Failed to fetch departments: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
       }
     };
     const getRoles = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/roles/get-roles');
+        const response = await axios.get(
+          "http://localhost:8000/api/roles/get-roles"
+        );
         console.log(response.data);
         setUserType(response.data.roles);
-        console.log('Roles:', response.data.roles);
+        console.log("Roles:", response.data.roles);
       } catch (error) {
-        console.error('Error fetching roles:', error);
+        console.error("Error fetching roles:", error);
         //alert('Failed to fetch roles: ' + (error.response && error.response.data.message ? error.response.data.message : 'Check your network connection'));
       }
     };
     getRoles();
 
-    getDepartments( );
-  } , []);
- 
+    getDepartments();
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = (e) => {
     e.preventDefault();
-    
+
     const loginFormData = {
       email: email,
       password: password,
@@ -184,68 +191,58 @@ const handleSessionChange = (e) => {
 
     console.log(loginFormData);
     try {
-        fetch("http://localhost:8000/api/users/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(loginFormData),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-  
-            if (data.success) {
-             
-              localStorage.setItem("token", data.user.token);
-             
-              login(data.user);
+      fetch("http://localhost:8000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginFormData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
 
+          if (data.success) {
+            localStorage.setItem("token", data.user.token);
 
-             
-              
-              
-  
-             
-              if (data.user.status === "Pending") {
-                alert(
-                  "Your account is not approved yet. Please wait for approval."
-                );
-                return;
-              }
-              navigate('/dashboard');
-  
-              //  localStorage.setItem("user", JSON.stringify(data.user));
-              // if (data.user.role === "admin") {
-                console.log("admin");
-                // window.location.href = "/dashboard/admin";
-              // } else {
-              //   // window.location.href = "/get-started/doctor";
-              // }
-  
-              console.log("Login successful");
-              // window.location.href = "/get-started/doctor";
-            } else {
-              console.log("Login failed");
-              alert(data.message);
+            login(data.user);
+
+            if (data.user.status === "Pending") {
+              alert(
+                "Your account is not approved yet. Please wait for approval."
+              );
+              return;
             }
-          });
-      } catch (error) {
-        console.log(error);
-      }
-   
+            navigate("/dashboard");
+
+            //  localStorage.setItem("user", JSON.stringify(data.user));
+            // if (data.user.role === "admin") {
+            console.log("admin");
+            // window.location.href = "/dashboard/admin";
+            // } else {
+            //   // window.location.href = "/get-started/doctor";
+            // }
+
+            console.log("Login successful");
+            // window.location.href = "/get-started/doctor";
+          } else {
+            console.log("Login failed");
+            alert(data.message);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
 
     // e.preventDefault();
     // window.location.href = "/dashboard";
     console.log("Login clicked");
   };
-  
- // const fromSignIn = false;
 
+  // const fromSignIn = false;
 
   return (
     <div>
-      
       <div
         className={`relative w-full bg-white min-h-[800px] lg:min-h-screen overflow-hidden   before:content-[''] before:absolute before:w-[1500px] before:h-[1500px] lg:before:h-[2000px] lg:before:w-[2000px] lg:before:top-[-10%]  before:top-[initial] lg:before:right-[48%] before:right-[initial]  max-lg:before:left-[30%] max-sm:bottom-[72%]   max-md:before:left-1/2  max-lg:before:bottom-[68%]  before:z-[6] before:rounded-[50%]    max-md:p-6     lg:before:-translate-y-1/2  max-lg:before:-translate-x-1/2  before:bg-backgroundColor before:transition-all before:duration-[2s] lg:before:duration-[1.8s]  ${
           isSignUpMode
@@ -253,9 +250,13 @@ const handleSessionChange = (e) => {
             : ""
         }`}
       >
-        {emailRecovery && fromSignIn &&  <EmailRecovery closeForm={closeForm} handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn } />
-
-}
+        {emailRecovery && fromSignIn && (
+          <EmailRecovery
+            closeForm={closeForm}
+            handleEmailVerification={handleEmailVerification}
+            fromSignIn={fromSignIn}
+          />
+        )}
 
         <div className="absolute w-full h-full top-0 left-0">
           <div
@@ -266,7 +267,7 @@ const handleSessionChange = (e) => {
             } `}
           >
             <form
-            method="POST"
+              method="POST"
               action="#"
               className={` flex items-center justify-center flex-col   transition-all duration-[0.2s] delay-[0.7s] overflow-hidden col-[1_/_2] row-[1_/_2] px-20 py-0  z-20 max-md:px-6 max-md:py-0 ${
                 isSignUpMode ? " opacity-0 z-10 " : " "
@@ -286,7 +287,7 @@ const handleSessionChange = (e) => {
                           name="email"
                           id="email"
                           value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                          onChange={(e) => setEmail(e.target.value)}
                           class="bg-[#d5f2ec] border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full pl-10 p-2.5"
                           placeholder="Email"
                           required
@@ -299,7 +300,7 @@ const handleSessionChange = (e) => {
                           name="password"
                           id="password"
                           value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                          onChange={(e) => setPassword(e.target.value)}
                           class="bg-[#d5f2ec] border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full pl-10 p-2.5"
                           placeholder="Password"
                           required
@@ -335,7 +336,7 @@ const handleSessionChange = (e) => {
                         type="submit"
                         class="w-full text-white bg-brightColor hover:bg-hoverColor focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center "
                         onClick={handleLogin}
-                     >
+                      >
                         Sign in
                       </button>
                     </form>
@@ -403,8 +404,14 @@ const handleSessionChange = (e) => {
                 isSignUpMode ? "opacity-100 z-20 " : "  "
               }`}
             >
-              {emailRecoveryOTP && <EmailRecoveryOTP closeForm={closeForm} handleEmailVerification={handleEmailVerification} fromSignIn ={fromSignIn }  />}
-             
+              {emailRecoveryOTP && (
+                <EmailRecoveryOTP
+                  closeForm={closeForm}
+                  handleEmailVerification={handleEmailVerification}
+                  fromSignIn={fromSignIn}
+                />
+              )}
+
               {!emailRecoveryOTP && (
                 <form action="#">
                   <div className=" flex flex-col items-center">
@@ -423,45 +430,46 @@ const handleSessionChange = (e) => {
                           id="user_type"
                           class="bg-[#d5f2ec] border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                           value={formData.user_type}
-                    onChange={handleUserTypeChange}
+                          onChange={handleUserTypeChange}
                         >
                           <option selected>Account Type</option>
                           {userType.map((role) => (
-                    <option value={role.RoleName}>{role.RoleName}</option>
-                  ))
-                  }
+                            <option value={role.RoleName}>
+                              {role.RoleName}
+                            </option>
+                          ))}
                         </select>
 
-                        {formData.user_type  !== "student" && (
+                        {formData.user_type !== "student" && (
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg"
                             type="text"
                             placeholder="Enter your name"
                             value={formData.name}
-              onChange={handleNameChange}
+                            onChange={handleNameChange}
                           />
                         )}
-                        {formData.user_type  === "student" && (
+                        {formData.user_type === "student" && (
                           <div className="flex gap-2">
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="text"
                               placeholder=" Your name"
                               value={formData.name}
-              onChange={handleNameChange}
+                              onChange={handleNameChange}
                             />
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                               type="text"
                               placeholder="Dept name"
-                              
                               value={formData.department}
                               onChange={handleDepartmentChange}
                             />
                           </div>
                         )}
 
-                        {(formData.user_type  === "doctor" || formData.user_type  === "student") && (
+                        {(formData.user_type === "doctor" ||
+                          formData.user_type === "student") && (
                           <div className="flex gap-2 ">
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
@@ -480,25 +488,27 @@ const handleSessionChange = (e) => {
                           </div>
                         )}
 
-                        {formData.user_type  !== "doctor" && formData.user_type  !== "student" && (
-                          <input
-                            className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
-                            type="email"
-                            placeholder="Enter your email"
-                            value={formData.email}
+                        {formData.user_type !== "doctor" &&
+                          formData.user_type !== "student" && (
+                            <input
+                              className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
+                              type="email"
+                              placeholder="Enter your email"
+                              value={formData.email}
                               onChange={handleEmailChange}
-                          />
-                        )}
-                        {formData.user_type  !== "doctor" && formData.user_type  !== "student" && (
-                          <input
-                            className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
-                            type="tel"
-                            placeholder="Enter your phone"
-                            value={formData.phone}
-                            onChange={handlePhoneChange}
-                          />
-                        )}
-                        {formData.user_type  === "doctor" && (
+                            />
+                          )}
+                        {formData.user_type !== "doctor" &&
+                          formData.user_type !== "student" && (
+                            <input
+                              className="py-3 px-2 bg-[#d5f2ec] rounded-lg "
+                              type="tel"
+                              placeholder="Enter your phone"
+                              value={formData.phone}
+                              onChange={handlePhoneChange}
+                            />
+                          )}
+                        {formData.user_type === "doctor" && (
                           <select
                             id="department"
                             class="bg-[#d5f2ec] border border-gray-300 text-gray-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
@@ -506,14 +516,14 @@ const handleSessionChange = (e) => {
                             onChange={hanndleDesignationChange}
                           >
                             <option selected>Department</option>
-                            {
-                      departments.map(department => (
-                        <option value={department.DepartmentID}>{department.Name}</option>
-                      ))
-                   }
+                            {departments.map((department) => (
+                              <option value={department.DepartmentID}>
+                                {department.Name}
+                              </option>
+                            ))}
                           </select>
                         )}
-                        {formData.user_type  === "student" && (
+                        {formData.user_type === "student" && (
                           <div className="flex gap-2">
                             <input
                               className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
@@ -563,37 +573,38 @@ const handleSessionChange = (e) => {
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                             type="password"
                             onChange={handlePasswordChange}
-                  value={formData.password}
+                            value={formData.password}
                             placeholder="Password"
                           />
                           <input
                             className="py-3 px-2 bg-[#d5f2ec] rounded-lg w-1/2"
                             type="password"
                             value={formData.confirm_pass}
-                  onChange={handleConfirmPasswordChange}
+                            onChange={handleConfirmPasswordChange}
                             placeholder="Confirm Pass..."
                           />
                         </div>
 
-                         {<button
-                          className="mt-5 tracking-wide font-semibold bg-brightColor text-gray-100 w-full py-4 rounded-lg hover:bg-hoverColor transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                          onClick={() => setEmailRecoveryOTP(true)}
-                          
-                        >
-                          <svg
-                            className="w-6 h-6 -ml-2"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            strokeLinecap="round"
-                            stroke-linejoin="round"
+                        {
+                          <button
+                            className="mt-5 tracking-wide font-semibold bg-brightColor text-gray-100 w-full py-4 rounded-lg hover:bg-hoverColor transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                            onClick={() => setEmailRecoveryOTP(true)}
                           >
-                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                            <circle cx="8.5" cy="7" r="4" />
-                            <path d="M20 8v6M23 11h-6" />
-                          </svg>
-                          <span className="ml-3">Sign Up</span>
-                        </button>} 
+                            <svg
+                              className="w-6 h-6 -ml-2"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              strokeLinecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                              <circle cx="8.5" cy="7" r="4" />
+                              <path d="M20 8v6M23 11h-6" />
+                            </svg>
+                            <span className="ml-3">Sign Up</span>
+                          </button>
+                        }
                       </div>
                     </div>
                   </div>
