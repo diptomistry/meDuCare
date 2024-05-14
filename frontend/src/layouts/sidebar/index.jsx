@@ -246,22 +246,7 @@ const Sidebar = () => {
                 ))}
               </div>
             )}
-            <button onClick={
-              ()=>{
-              logout();
-                localStorage.removeItem("token");
-                window.location.href="/"
-              }
-            }>
-             <div className="flex  flex-row  text-sm z-50  max-h-48 my-auto  whitespace-pre   w-full  font-medium rounded-lg bg-white px-3 py-2 items-center justify-center ">
-             
-              
-                <SlLogout size={23} className="min-w-max  mr-2" />
-                <p className="hidden sm:inline-block">Logout</p>
-             
-           
-            </div>
-            </button>
+          
 
             
           </ul>
@@ -278,6 +263,22 @@ const Sidebar = () => {
               </div>
             </div>
           )} */}
+         <button onClick={
+              ()=>{
+              logout();
+                localStorage.removeItem("token");
+                window.location.href="/"
+              }
+            }>
+            <div className={`flex  flex-row  text-sm z-50   my-auto  whitespace-pre     font-medium rounded-lg bg-blue-100 px-3 py-2 items-center justify-center ml-2 mr-2`}>
+             
+              
+                <SlLogout size={23} className="min-w-max  mr-2" />
+                <p className={` ${open?"block":"hidden"}`}>Logout</p>
+             
+           
+            </div>
+            </button>
         </div>
         <motion.div
           onClick={() => {
