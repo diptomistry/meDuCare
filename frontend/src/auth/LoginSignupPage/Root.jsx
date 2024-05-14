@@ -21,7 +21,7 @@ const SlidingLoginSignup = () => {
 
   const navigate = useNavigate();
   const [sentOtp, setSentOtp] = useState(null);
-  //const { login } = useAuth();
+  const { login } = useAuth();
 
   const handleEmailVerification = async (otp) => {
     console.log("OTP sent to email:", sentOtp);

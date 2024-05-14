@@ -26,6 +26,7 @@ const SubMenu = ({ data }) => {
       </li>
       <motion.ul
         animate={
+        
           subMenuOpen
             ? {
                 height: "fit-content",
