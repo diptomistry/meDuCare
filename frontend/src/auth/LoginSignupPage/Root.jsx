@@ -15,28 +15,31 @@ const SlidingLoginSignup = () => {
   const [emailRecovery, setEmailRecovery] = useState(false);
   const [emailRecoveryOTP, setEmailRecoveryOTP] = useState(false);
   const [departments, setDepartments] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
   
   const [fromSignIn, setFromSignIn] = useState(true);
-  const { login, user } = useAuth();
+ 
   const navigate = useNavigate();
+  const [sentOtp, setSentOtp] = useState(null); 
   
 
  
 
 
-  const handleEmailVerification = async (isVerified) => {
+  const handleEmailVerification = async (otp) => {
   
-   
-
-    console.log("Email verified:222", isVerified);
+    console.log("OTP sent to email:", sentOtp);
+  
+    console.log("Email verified:222", otp);
     const { confirmPassword, ...userData } = formData;
-    const [showDialog, setShowDialog] = useState(false);
-    //add debug to formData
+    console.log("data", formData);
+    const enteredOtp = otp.join("");
+console.log("check",enteredOtp);
 
-    // console.log("data", userData);
-if(isVerified)
+    //add debug to formData
+    if (parseInt(enteredOtp) === sentOtp)
     try {
-  console.log('userData');
+
       const response = await axios.post(
         "http://localhost:8000/api/users/create-user",
         userData
@@ -55,6 +58,8 @@ if(isVerified)
             : "Check your network connection")
       );
     }
+    else
+    alert("Invalid OTP");
 
     // You can perform any other actions based on the verification status here
   };
@@ -149,6 +154,7 @@ if(isVerified)
     debug: true,
   });
   useEffect(() => {
+    
     const getDepartments = async () => {
       try {
         const response = await axios.get(
@@ -240,7 +246,38 @@ if(isVerified)
   };
 
   // const fromSignIn = false;
+const handleSignUP =  async () => {
+  const email=formData.email;
+  try {
+    const response = await fetch("http://localhost:8000/api/users/send-otp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json();
+    if (data.success) {
+      // If OTP is sent successfully, update the sentOtp state
+      setSentOtp(data.otp);
+      
+      
+    } else {
+      // Handle error if OTP sending fails
+      console.error("Error sending OTP:", data.message);
+    }
+  } catch (error) {
+    console.error("Error sending OTP:", error.message);
+  }
+  //useffect to setSentotp
 
+
+setEmailRecoveryOTP(true);
+}
+useEffect(() => {
+  // This useEffect hook will execute whenever sentOtp changes
+  console.log("sentOtp updated:", sentOtp);
+}, [sentOtp]);
   return (
     <div>
       <div
@@ -409,6 +446,7 @@ if(isVerified)
                   closeForm={closeForm}
                   handleEmailVerification={handleEmailVerification}
                   fromSignIn={fromSignIn}
+                 
                 />
               )}
 
@@ -588,7 +626,7 @@ if(isVerified)
                         {
                           <button
                             className="mt-5 tracking-wide font-semibold bg-brightColor text-gray-100 w-full py-4 rounded-lg hover:bg-hoverColor transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                            onClick={() => setEmailRecoveryOTP(true)}
+                            onClick={handleSignUP}
                           >
                             <svg
                               className="w-6 h-6 -ml-2"
