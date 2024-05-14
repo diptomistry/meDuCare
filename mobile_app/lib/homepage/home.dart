@@ -105,7 +105,7 @@ final photoProvider = FutureProvider<List<Photo>>((ref) async {
 // Define a provider for fetching department data from the API
 final departmentsProvider = FutureProvider<List<Department>>((ref) async {
   Dio _dio = Dio();
-  var response = await _dio.get(apiUrl+'/admin/get-departments'); // Replace 'apiUrl' with your API endpoint
+  var response = await _dio.get(apiUrl+'/doctors/get-departments'); // Replace 'apiUrl' with your API endpoint
   //print(response.data);
 
   // Check if the response data is in the expected format
