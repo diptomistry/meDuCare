@@ -144,12 +144,6 @@ CREATE TABLE Notices (
     Link VARCHAR(200)
 );
 
-CREATE TABLE DutyRoster (
-    DutyID INT AUTO_INCREMENT PRIMARY KEY,
-    DoctorID INT,
-    FOREIGN KEY (DoctorID) REFERENCES Doctors (DoctorID)
-);
-
 CREATE TABLE Slot (
     SlotID INT AUTO_INCREMENT PRIMARY KEY,
     StartTime TIME,
@@ -163,9 +157,9 @@ CREATE TABLE SlotDay (
 );
 
 CREATE TABLE DoctorSlot (
-    DutyID INT,
+    DoctorID INT,
     SlotID INT,
-    FOREIGN KEY (DutyID) REFERENCES DutyRoster (DutyID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors (DoctorID),
     FOREIGN KEY (SlotID) REFERENCES Slot (SlotID)
 );
 

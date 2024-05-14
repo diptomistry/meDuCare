@@ -26,30 +26,74 @@ router.post('/duty-roster', async (req, res) => {
 
 router.get('/get-duty-roster', async (req, res) => {
     try {
-        const [rows] = await pool.query(`
-            SELECT
-                DutyRoster.DutyID,
-                Doctors.DoctorID,
-                Users.Name AS DoctorName,
-                Slot.SlotID,
-                Slot.StartTime,
-                Slot.EndTime,
-                Department.Name AS DepartmentName
-            FROM DutyRoster
-            JOIN Doctors ON DutyRoster.DoctorID = Doctors.DoctorID
-            JOIN Users ON Doctors.UserID = Users.UserID
-            JOIN DoctorSlot ON DutyRoster.DutyID = DoctorSlot.DutyID
-            JOIN Slot ON DoctorSlot.SlotID = Slot.SlotID
-            JOIN Department ON Doctors.DepartmentID = Department.DepartmentID
-            ORDER BY DutyRoster.DutyID ASC;
-        `);
-        res.json({ success: true, dutyRoster: rows });
+      const [rows] = await pool.query(`
+        SELECT
+          Doctors.DoctorID,
+          Users.Name AS DoctorName,
+          Slot.SlotID,
+          Slot.StartTime,
+          Slot.EndTime,
+          Department.Name AS DepartmentName,
+          DATE(Slot.StartTime) AS SlotDate
+        FROM DoctorSlot
+        JOIN Doctors ON DoctorSlot.DoctorID = Doctors.DoctorID
+        JOIN Users ON Doctors.UserID = Users.UserID
+        JOIN Slot ON DoctorSlot.SlotID = Slot.SlotID
+        JOIN Department ON Doctors.DepartmentID = Department.DepartmentID
+        WHERE DATE(Slot.StartTime) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 6 DAY)
+        ORDER BY Doctors.DoctorID ASC, SlotDate ASC;
+      `);
+  
+      const dutyRoster = rows.reduce((acc, row) => {
+        const doctorIndex = acc.findIndex(doctor => doctor.DoctorID === row.DoctorID);
+  
+        if (doctorIndex === -1) {
+          acc.push({
+            DoctorID: row.DoctorID,
+            DoctorName: row.DoctorName,
+            Slots: [
+              {
+                SlotID: row.SlotID,
+                StartTime: row.StartTime,
+                EndTime: row.EndTime,
+                DepartmentName: row.DepartmentName
+              }
+            ]
+          });
+        } else {
+          acc[doctorIndex].Slots.push({
+            SlotID: row.SlotID,
+            StartTime: row.StartTime,
+            EndTime: row.EndTime,
+            DepartmentName: row.DepartmentName
+          });
+        }
+  
+        return acc;
+      }, []);
+  
+      res.json({ success: true, dutyRoster });
     } catch (error) {
-        console.error('Failed to fetch duty roster:', error);
-        res.status(500).json({ success: false, message: error.message });
+      console.error('Failed to fetch duty roster:', error);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  });
+
+
+
+
+//assign slot 
+router.post('/assign-slot', async (req, res) => {
+    const { doctorId, slotId } = req.body;
+    console.log(doctorId, slotId);
+    try {
+        const [result] = await pool.query('INSERT INTO DoctorSlot (DoctorID, SlotID) VALUES (?, ?)', [doctorId, slotId]);
+        res.json({ message: 'Slot assigned successfully' });
+    } catch (error) {
+        console.log('Failed to assign slot:', error);
+        res.status(500).json({ success:false,message: 'An error occurred while assigning the slot' });
     }
 });
-
 
 
 router.post('/create-slot', async (req, res) => {

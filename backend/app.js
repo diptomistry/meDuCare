@@ -58,5 +58,5 @@ app.listen(process.env.APP_PORT, () => {
 
 // const hashedPassword = await bcryptjs.hash('admin1234', 10);
 // console.log(hashedPassword);
-const token = await bcryptjs.hash('pharma@gmail.com', 10);
-console.log(token);
+// const token = await bcryptjs.hash('pharma@gmail.com', 10);
+// console.log(token);

@@ -158,6 +158,17 @@ const Sidebar = () => {
             </li>
             :null
             }
+            {
+              role==='dispensary_officer' || role ==='admin'?<li>
+              <NavLink
+                to={"/dashboard/dispensary/all-prescriptions"}
+                className="link"
+              >
+                <BsPerson size={23} className="min-w-max" />
+                Prescriptions
+              </NavLink>
+            </li>:null
+            }
             <li>
               <NavLink
                 to={"/dashboard/profile"}
