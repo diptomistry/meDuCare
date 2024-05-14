@@ -1,15 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:mobile_app/appointment/BookingInfoScreen.dart';
-import 'package:mobile_app/auth/login_signup.dart';
-import 'package:mobile_app/endpoints.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:mobile_app/widgets/loadingDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../endpoints.dart';
+
+class AppointmentScreen extends StatefulWidget {
+  @override
+  _AppointmentScreenState createState() => _AppointmentScreenState();
+}
 
 class Appointment {
   final bool success;
@@ -37,23 +39,6 @@ class Appointment {
   }
 }
 
-final appointmentProvider = FutureProvider<Appointment>((ref) async {
-   // Replace this with your actual API URL
-  final response = await http.get(Uri.parse(apiUrl + '/book-appointment'));
-
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> data = json.decode(response.body);
-    return Appointment.fromJson(data);
-  } else {
-    throw Exception('Failed to load appointment');
-  }
-});
-
-class AppointmentScreen extends StatefulWidget {
-  @override
-  _AppointmentScreenState createState() => _AppointmentScreenState();
-}
-
 class _AppointmentScreenState extends State<AppointmentScreen> {
   late DateTime selectedDate;
   int selectedIndex = 0;
@@ -61,7 +46,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String? selectedConcern;
   String? description;
 
-  final List<String> concerns = ['Migraine', 'Diabetes', 'Other']; // Add more concerns if needed
+  final List<String> concerns = [
+    'Migraine',
+    'Diabetes',
+    'Covid-19',
+    'Heart Disease',
+    'Cancer',
+    'Dengue',
+    'Other'
+  ]; // Add more concerns if needed
 
   @override
   void initState() {
@@ -73,182 +66,187 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: primaryColor,
-            statusBarBrightness: Brightness.dark,
-            systemNavigationBarColor: primaryColor
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: Theme.of(context).primaryColor,
+          title: Text(
+            'Appointment',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        backgroundColor: primaryColor,
-        title: Text('Appointment',
-          //   style: GoogleFonts.poppins(
-          //   color: Colors.black,
-          //   fontWeight: FontWeight.w600,
-          //   fontSize: 15,
-          //
-          // ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Choose Date',
-                style: TextStyle(fontSize: 18.0),
-              ),
+        body: SingleChildScrollView(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Choose Date',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
-            Container(
-              height: 100.0, // Set height according to your requirement
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  DateTime currentDate = DateTime.now().add(Duration(days: index));
-                  return SlideableContainer(
-                    date: currentDate,
-                    onSelectDate: () {
-                      setState(() {
-                        selectedDate = currentDate;
-                        selectedIndex = index;
-                      });
-                    },
-                    isSelected: index == selectedIndex,
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Choose time',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-            Container(
-              height: 80.0, // Set height according to your requirement
-              child: selectedIndex != -1
-                  ? ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 17, // Timeslots from 9:00 PM to 1:00 AM
-                itemBuilder: (context, index) {
-                  DateTime currentTime =
-                  _getStartingTime(selectedDate).add(Duration(hours: index));
-                  return TimeSlotContainer(
-                    time: currentTime,
-                    onSelectTime: () {
-                      setState(() {
-                        selectedTime = currentTime;
-                      });
-                      print(
-                          'Selected date and time: ${DateFormat('MMM d, h:00 a').format(selectedTime)}');
-                    },
-                    isSelected: selectedTime == currentTime,
-                  );
-                },
-              )
-                  : Center(child: Text('Please select a date first')),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Select Concern',
-                  border: OutlineInputBorder(),
-                ),
-                value: selectedConcern,
-                items: concerns.map((concern) {
-                  return DropdownMenuItem<String>(
-                    value: concern,
-                    child: Text(concern),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedConcern = value;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                onChanged: (value) {
-                  setState(() {
-                    description = value;
-                  });
-                },
-                maxLines: 5, // Increase height by allowing multiple lines
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (selectedDate != null &&
-                        selectedTime != null &&
-                        selectedConcern != null &&
-                        description != null &&
-                        description!.isNotEmpty) {
-                      // All fields are selected, proceed with booking
-                      // Here you can implement the booking logic
-                      _fetchAppointment(context,selectedDate,selectedConcern!);
-                    } else {
-                      // Not all required fields are selected, show error message
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Error'),
-                            content: Text('Please fill out all the required fields.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
+          ),
+          Container(
+            height: 100.0,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                DateTime currentDate =
+                    DateTime.now().add(Duration(days: index));
+                return SlideableContainer(
+                  date: currentDate,
+                  onSelectDate: () {
+                    setState(() {
+                      selectedDate = currentDate;
+                      selectedIndex = index;
+                    });
                   },
-                  child: Text('Book Appointment'),
+                  isSelected: index == selectedIndex,
+                );
+              },
+            ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(16.0),
+          //   child: Text(
+          //     'Choose Time',
+          //     style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          //   ),
+          // ),
+          // Container(
+          //   height: 80.0,
+          //   child: selectedIndex != -1
+          //       ? ListView.builder(
+          //           scrollDirection: Axis.horizontal,
+          //           itemCount: 17,
+          //           itemBuilder: (context, index) {
+          //             DateTime currentTime = _getStartingTime(selectedDate)
+          //                 .add(Duration(hours: index));
+          //             return TimeSlotContainer(
+          //               time: currentTime,
+          //               onSelectTime: () {
+          //                 setState(() {
+          //                   selectedTime = currentTime;
+          //                 });
+          //                 print(
+          //                     'Selected date and time: ${DateFormat('MMM d, h:00 a').format(selectedTime)}');
+          //               },
+          //               isSelected: selectedTime == currentTime,
+          //             );
+          //           },
+          //         )
+          //       : Center(child: Text('Please select a date first')),
+          // ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: 'Select Concern',
+                border: OutlineInputBorder(),
+              ),
+              value: selectedConcern,
+              items: concerns.map((concern) {
+                return DropdownMenuItem<String>(
+                  value: concern,
+                  child: Text(concern),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedConcern = value;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  description = value;
+                });
+              },
+              maxLines: 5,
+              decoration: InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: GestureDetector(
+                onTap: () {
+                  if (selectedDate != null &&
+                      // selectedTime != null &&
+                      selectedConcern != null &&
+                      description != null &&
+                      description!.isNotEmpty) {
+                    _fetchAppointment(context, selectedDate, selectedConcern!);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content:
+                              Text('Please fill out all the required fields.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 16.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    'Book Appointment',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ])));
   }
 
-  // Function to get the starting time for time slots
   DateTime _getStartingTime(DateTime selectedDate) {
-    DateTime startingTime =
-    DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 21); // 9:00 PM
+    DateTime startingTime = DateTime(
+        selectedDate.year, selectedDate.month, selectedDate.day, 9); // 9:00 AM
 
-    // If selected date is today and current time is after 9:00 PM, start from the next hour
-    if (selectedDate.day == DateTime.now().day && DateTime.now().hour >= 21) {
+    if (selectedDate.day == DateTime.now().day && DateTime.now().hour >= 9) {
       startingTime = startingTime.add(Duration(hours: 1));
     }
 
     return startingTime;
   }
 
-  Future<void> _fetchAppointment(BuildContext context, DateTime appointmentDateTime, String concern) async {
+  Future<void> _fetchAppointment(BuildContext context,
+      DateTime appointmentDateTime, String concern) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userId');
-    // Replace this with your actual API URL
     if (userId != null) {
       final response = await http.post(
         Uri.parse(apiUrl + '/book-appointment'),
@@ -261,7 +259,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         final appointment = Appointment.fromJson(data);
-        _showAppointmentDialog(context, appointment);
+        // _showAppointmentDialog(context, appointment);
+        showSuccessDialog(context, '', appointment.message);
       } else {
         throw Exception('Failed to load appointment: ${response.statusCode}');
       }
@@ -269,6 +268,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       throw Exception('User not logged in');
     }
   }
+
   void _showAppointmentDialog(BuildContext context, Appointment appointment) {
     showDialog(
       context: context,
@@ -304,7 +304,10 @@ class SlideableContainer extends StatelessWidget {
   final VoidCallback onSelectDate;
   final bool isSelected;
 
-  SlideableContainer({required this.date, required this.onSelectDate, required this.isSelected});
+  SlideableContainer(
+      {required this.date,
+      required this.onSelectDate,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -316,10 +319,10 @@ class SlideableContainer extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(16.0),
-        height: 80.0, // Adjust height as needed
-        width: 120.0, // Adjust width as needed
+        height: 80.0,
+        width: 120.0,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.red : Colors.blue,
+          color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300],
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Column(
@@ -327,11 +330,18 @@ class SlideableContainer extends StatelessWidget {
           children: [
             Text(
               formattedDate,
-              style: TextStyle(fontSize: 16.0), // Adjust font size as needed
+              style: TextStyle(
+                fontSize: 16.0,
+                color: isSelected ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               formattedDay,
-              style: TextStyle(fontSize: 14.0), // Adjust font size as needed
+              style: TextStyle(
+                fontSize: 14.0,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
             ),
           ],
         ),
@@ -345,7 +355,10 @@ class TimeSlotContainer extends StatelessWidget {
   final VoidCallback onSelectTime;
   final bool isSelected;
 
-  TimeSlotContainer({required this.time, required this.onSelectTime, required this.isSelected});
+  TimeSlotContainer(
+      {required this.time,
+      required this.onSelectTime,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -357,13 +370,17 @@ class TimeSlotContainer extends StatelessWidget {
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.red : Colors.grey,
+          color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300],
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Center(
           child: Text(
             formattedTime,
-            style: TextStyle(fontSize: 16.0), // Adjust font size as needed
+            style: TextStyle(
+              fontSize: 16.0,
+              color: isSelected ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),
