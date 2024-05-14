@@ -15,6 +15,22 @@ const AppointmentTable = () => {
   const [appointmentId, setAppointmentId] = useState(null);
   
   const navigate = useNavigate();
+  // Helper function to calculate age from DOB
+const calculateAge = (dob) => {
+  const today = new Date();
+  const birthDate = new Date(dob);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+};
   const handlePrescribe = async (appointmentId) => {
     console.log("ad", appointmentId, doctorId);
     try {
@@ -37,12 +53,13 @@ const AppointmentTable = () => {
             console.log('Prescription accepted successfully');
 
             // Extract user information
-            const { Name, Sex } = data.user;
-            console.log('User Info:');
-            console.log('Name:', Name);
+            const { Name, Sex,DOB } = data.user;
+          
+
+            
         // Assuming calculateAge is a function to calculate age from date of birth
-            console.log('Gender:', Sex);
-            navigate('/dashboard/doctor/prescription', { state: { Name, Sex } })
+        const age = calculateAge(DOB); 
+            navigate('/dashboard/doctor/prescription', { state: { Name, Sex,age } })
            //navigate('/dashboard/doctor/prescription');
 
             // Navigate to prescription page

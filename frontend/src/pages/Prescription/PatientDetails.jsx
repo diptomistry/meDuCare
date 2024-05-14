@@ -1,7 +1,7 @@
 import React from 'react'
 import Button from '../../layouts/Button';
 
-const PatientDetails = ({ name = 'Unknown', sex = 'Unknown' }) => {
+const PatientDetails = ({ name = 'Unknown', sex = 'Unknown' ,age='Unknown'}) => {
   
     return (
       <div className='bg-blue-200 rounded-lg p-5'>
@@ -18,7 +18,7 @@ const PatientDetails = ({ name = 'Unknown', sex = 'Unknown' }) => {
         </div>
         <div className="mb-4">
           <label className="block font-medium">Age</label>
-          <p className="text-gray-700">35</p>
+          <p className="text-gray-700">{age}</p>
         </div>
         <div className="mb-4">
           <label className="block font-medium">Gender</label>
