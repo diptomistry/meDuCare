@@ -86,10 +86,6 @@ ORDER BY
     }
 });
 
-
-
-
-
 //assign slot 
 router.post('/assign-slot', async (req, res) => {
     const { doctorId, slotIds } = req.body;
@@ -133,7 +129,7 @@ router.post('/create-slot', async (req, res) => {
         console.error('Failed to create slot:', error);
         res.status(200).json({ success: false, message: error.message });
     }
-}  );
+});
 
 router.get('/slots', async (req, res) => {
     try {
