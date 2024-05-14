@@ -336,7 +336,7 @@ router.post('/', verifyToken,async (req, res,next) => {
 
 
 router.post('/send-otp',  async (req, res) => {
-  const {  email,debug} = req.body;
+  var {  email,debug} = req.body;
   if(!debug){
     debug=false;
   }
@@ -345,14 +345,9 @@ router.post('/send-otp',  async (req, res) => {
   
   try {
     
-    const [results] = await pool.execute('SELECT * FROM Users WHERE Email = ?', [email]);
-   // console.log(results);
+   
 
-    if (results.length >= 0) {
-      return res.status(200).json({success:false, message: 'User already exists' });
-    }
-
-    const user = results[0];
+   
    
 
     
@@ -367,13 +362,7 @@ router.post('/send-otp',  async (req, res) => {
     const otp = min + Math.floor(randomNumber / 65535 * (max - min + 1));
     if(debug) otp=1234;
 
-  try{  const updateOtpQuery = 'UPDATE Users SET otp = ? WHERE Email = ?';
-
-    await pool.query(updateOtpQuery, [otp, email]);}
-    catch (error) {
-      console.error('Error updating otp:', error);
-     // res.status(200).json({ success: false, message: 'An error occurred while updating the otp' });
-    }
+ 
 
     // 3. Send the OTP to the user's email
     const transporter = nodemailer.createTransport({
