@@ -21,7 +21,7 @@ const SlidingLoginSignup = () => {
  
   const navigate = useNavigate();
   const [sentOtp, setSentOtp] = useState(null); 
-  
+  const { login } = useAuth();
 
  
 

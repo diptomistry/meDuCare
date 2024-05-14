@@ -6,13 +6,17 @@ import { NavLink, useLocation } from "react-router-dom";
 const SubMenu = ({ data }) => {
   const { pathname } = useLocation();
   const [subMenuOpen, setSubMenuOpen] = useState(false);
+  const handleSubmenuOpen = () => {
+    setSubMenuOpen(!subMenuOpen);
+    console.log(subMenuOpen);
+  };
   return (
     <>
       <li
         className={`link ${
           pathname.includes(data.name) && "text-brightColor"
         }`}
-        onClick={() => setSubMenuOpen(!subMenuOpen)}
+        onClick={handleSubmenuOpen}
       >
         <data.icon size={23} className="min-w-max" />
         <p className="flex-1 capitalize">{data.name}</p>

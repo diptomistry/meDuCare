@@ -51,6 +51,7 @@ function App() {
      
         <Route path="/eprescription" element={<Root />} />
         <Route path="/medicine" element={<MedicineEntry />} />
+        <Route path="/doctor" element={<DoctorRootLayout />} />
         
        
     
