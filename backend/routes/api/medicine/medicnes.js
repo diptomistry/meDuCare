@@ -177,30 +177,112 @@ router.post('/prescribe-medicines', async (req, res) => {
 });
 router.get('/get-prescriptions/:userId', async (req, res) => {
     const { userId } = req.params;
-
     try {
-        const [prescriptions] = await pool.query(`
-            SELECT Prescriptions.*, MedicinePrescription.*, Medicines.*
-            FROM Prescriptions
-            INNER JOIN appoinment_doctors ON Prescriptions.PrescriptionID = appoinment_doctors.PrescriptionID
-            INNER JOIN Doctors ON appoinment_doctors.DoctorID = Doctors.DoctorID
-            INNER JOIN Medicines ON MedicinePrescription.MedicineID = Medicines.MedicineID
-            INNER JOIN MedicinePrescription ON Prescriptions.MedicinePrescriptionID = MedicinePrescription.MedicinePrescriptionID
-            WHERE Doctors.UserID = ?
+        // Step 1: Join appoinment_doctors and Appointments to get appointments for the user
+        const [userAppointments] = await pool.query(`
+            SELECT appoinment_doctors.AppointmentID
+            FROM appoinment_doctors
+            INNER JOIN Appointments ON appoinment_doctors.AppointmentID = Appointments.AppointmentID
+            WHERE Appointments.UserID = ?
         `, [userId]);
-        
-        if (prescriptions.length === 0) {
-            return res.status(404).json({ success: false, message: 'No prescriptions found for this user' });
+
+        if (userAppointments.length === 0) {
+            return res.status(404).json({ success: false, message: 'No appointments found for this user' });
         }
-        
-        res.status(200).json({ success: true, data: prescriptions });
+
+        // Get appointment IDs from the results
+        const appointmentIds = userAppointments.map(row => row.AppointmentID);
+
+        // Step 2: Subquery to retrieve Prescription IDs for the user's appointments
+        const subquery = `SELECT PrescriptionID FROM appoinment_doctors WHERE AppointmentID IN (?)`;
+
+        // Step 3: Join Prescriptions, MedicinePresription, and Medicines
+        const [prescriptions] = await pool.query(`
+            SELECT Prescriptions.*, MedicinePresription.*, Medicines.*
+            FROM Prescriptions
+            INNER JOIN MedicinePresription ON Prescriptions.MedicinePrescriptionID = MedicinePresription.MedicinePrescriptionID
+            INNER JOIN Medicines ON MedicinePresription.MedicineID = Medicines.MedicineID
+            WHERE Prescriptions.PrescriptionID IN (${subquery})
+        `, [appointmentIds]);
+
+        return res.status(200).json({ success: true, data: prescriptions }); // Return prescriptions with related information
     } catch (error) {
         console.error('Error retrieving prescriptions:', error);
-        res.status(500).json({ success: false, message: 'Failed to retrieve prescriptions' });
+        return res.status(500).json({ success: false, message: 'Failed to retrieve prescriptions' });
+    }
+});
+
+router.post('/get-prescriptions', async (req, res) => {
+    const { status } = req.body;
+    try {
+        // Step 1: Select appointments based on the provided status
+        const [appointments] = await pool.query(`
+            SELECT Appointments.AppointmentID, Appointments.UserID
+            FROM Appointments
+            WHERE Appointments.Status = ?
+        `, [status]);
+
+        if (appointments.length === 0) {
+            return res.status(404).json({ success: false, message: `No appointments found with status: ${status}` });
+        }
+
+        // Get appointment IDs and User IDs from the results
+        const appointmentIds = appointments.map(row => row.AppointmentID);
+        const userIds = appointments.map(row => row.UserID);
+
+        // Step 2: Subquery to retrieve Prescription IDs for the filtered appointments
+        const subquery = `SELECT PrescriptionID FROM appoinment_doctors WHERE AppointmentID IN (?)`;
+
+        // Step 3: Join Prescriptions, MedicinePresription, Medicines, and Users
+        const [prescriptions] = await pool.query(`
+            SELECT Prescriptions.*, MedicinePresription.*, Medicines.*, Users.Name AS UserName, Users.Email AS UserEmail, Users.DOB AS UserDOB, Users.Sex AS UserSex, Users.Phone AS UserPhone, Users.Image AS UserImage
+            FROM Prescriptions
+            INNER JOIN MedicinePresription ON Prescriptions.MedicinePrescriptionID = MedicinePresription.MedicinePrescriptionID
+            INNER JOIN Medicines ON MedicinePresription.MedicineID = Medicines.MedicineID
+            INNER JOIN appoinment_doctors ON Prescriptions.PrescriptionID = appoinment_doctors.PrescriptionID
+            INNER JOIN Appointments ON appoinment_doctors.AppointmentID = Appointments.AppointmentID
+            INNER JOIN Users ON Appointments.UserID = Users.UserID
+            WHERE Prescriptions.PrescriptionID IN (${subquery})
+        `, [appointmentIds]);
+
+        return res.status(200).json({ success: true, data: prescriptions }); // Return prescriptions with related information
+    } catch (error) {
+        console.error('Error retrieving prescriptions:', error);
+        return res.status(500).json({ success: false, message: 'Failed to retrieve prescriptions' });
     }
 });
 
 
+
+
+
+router.post('/dispense-medicine', async (req, res) => {
+    const { medicineId, quantity } = req.body;
+
+    try {
+        // Step 1: Retrieve medicine information
+        const [medicine] = await pool.query('SELECT * FROM Medicines WHERE MedicineID = ?', [medicineId]);
+
+        if (medicine.length === 0) {
+            return res.status(404).json({ success: false, message: 'Medicine not found' });
+        }
+
+        // Step 2: Check stock availability
+        const currentStock = medicine[0].StockQuantity;
+        if (currentStock < quantity) {
+            return res.status(400).json({ success: false, message: 'Insufficient stock' });
+        }
+
+        // Step 3: Update stock quantity
+        const updatedStock = currentStock - quantity;
+        await pool.query('UPDATE Medicines SET StockQuantity = ? WHERE MedicineID = ?', [updatedStock, medicineId]);
+
+        return res.status(200).json({ success: true, message: 'Medicine dispensed successfully', updatedStock });
+    } catch (error) {
+        console.error('Error dispensing medicine:', error);
+        return res.status(500).json({ success: false, message: 'Failed to dispense medicine' });
+    }
+});
 
 
 //get appointment for a specific user

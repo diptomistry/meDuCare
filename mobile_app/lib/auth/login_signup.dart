@@ -212,11 +212,26 @@ class SignupCard extends StatefulWidget {
 }
 
 class _SignupCardState extends State<SignupCard> {
+  final List<String> Options = ['Student', 'Teacher', 'Staff'];
+  late String selectedOption = 'Student';
   // Define the list of gender options
-  final List<String> genderOptions = ['Student', 'Teacher', 'Staff'];
+  final List<String> genderOptions = ['Male', 'Female'];
 
   // Define a variable to store the selected gender
-  late String selectedGender = 'Student';
+  late String selectedGender = 'Male';
+
+  // Define controllers for the text fields
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController deptController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController regNoController = TextEditingController();
+  final TextEditingController sessionController = TextEditingController();
+  final TextEditingController dobController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  bool signUpSuccessful = false;
 
   @override
   Widget build(BuildContext context) {
@@ -229,6 +244,17 @@ class _SignupCardState extends State<SignupCard> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                signUpSuccessful
+                    ? Text(
+                  'Sign Up Successful',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                )
+                    : Container(),
+                SizedBox(height: signUpSuccessful ? 10 : 0),
                 Text(
                   'Authority Sign Up',
                   style: TextStyle(
@@ -246,47 +272,136 @@ class _SignupCardState extends State<SignupCard> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // DropdownButton for role selection
+                // DropdownButton for gender selection
                 DropdownButtonFormField(
                   decoration: InputDecoration(
-                      labelText: 'Role',
+                    filled: true,
+                    fillColor: Colors.lightBlue[50], // Background color
                   ),
-                  value: selectedGender,
+                  value: selectedOption,
                   onChanged: (newValue) {
-                    // Update the selected role
+                    // Update the selected gender
                     setState(() {
-                      selectedGender = newValue.toString();
+                      selectedOption = newValue.toString();
                     });
                   },
-                  items: genderOptions.map((role) {
+                  items: Options.map((gender) {
                     return DropdownMenuItem(
-                      value: role,
-                      child: Text(role),
+                      value: gender,
+                      child: Text(gender),
                     );
                   }).toList(),
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Full Name'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: nameController,
+                        decoration: InputDecoration(labelText: 'Your Name', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: deptController,
+                        decoration: InputDecoration(labelText: 'Dept Name', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Email'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: emailController,
+                        decoration: InputDecoration(labelText: 'Enter your Email', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: phoneController,
+                        decoration: InputDecoration(labelText: 'Enter your Phone', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Age'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: regNoController,
+                        decoration: InputDecoration(labelText: 'Reg. No', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: sessionController,
+                        decoration: InputDecoration(labelText: 'Session', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: dobController,
+                        decoration: InputDecoration(labelText: 'DOB', filled: true, fillColor: Colors.lightBlue[50]),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: DropdownButtonFormField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.lightBlue[50], // Background color
+                        ),
+                        value: selectedGender,
+                        onChanged: (newValue) {
+                          // Update the selected gender
+                          setState(() {
+                            selectedGender = newValue.toString();
+                          });
+                        },
+                        items: genderOptions.map((gender) {
+                          return DropdownMenuItem(
+                            value: gender,
+                            child: Text(gender),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: passwordController,
+                        decoration: InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.lightBlue[50]),
+                        obscureText: true,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: confirmPasswordController,
+                        decoration: InputDecoration(labelText: 'Confirm Password', filled: true, fillColor: Colors.lightBlue[50]),
+                        obscureText: true,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Handle signup logic here
-                  },
+                  onPressed: _signUp,
                   child: Text('Signup'),
                 ),
               ],
@@ -296,6 +411,181 @@ class _SignupCardState extends State<SignupCard> {
       ),
     );
   }
+
+  Future<void> _signUp() async {
+    if (!_validateForm()) {
+      return; // Exit if form is not valid
+    }
+
+    // Get user input data
+    final String password = passwordController.text;
+    final String email = emailController.text;
+    final String dob = dobController.text;
+    final String name = nameController.text;
+    final String gender = selectedGender.toLowerCase(); // Ensure lowercase for API
+    final String phone = phoneController.text;
+    final String userType = selectedOption.toLowerCase(); // Ensure lowercase for API
+    final String confirmPass = confirmPasswordController.text;
+    final String department = deptController.text;
+    final String session = sessionController.text;
+    final String regNo = regNoController.text;
+    final String registeredFrom = "Mobile";
+
+    try {
+      // Request OTP from the server
+      final otpResponse = await Dio().post(apiUrl + '/users/send-otp', data: {"email": email});
+      if (otpResponse.statusCode == 200) {
+        // OTP sent successfully, show dialog to enter OTP
+        final otp = otpResponse.data['otp'];
+        print(otp);
+        final enteredOtp = await _showOtpDialog();
+        print(enteredOtp);
+        if (enteredOtp == otp.toString()) {
+          // OTP verification successful, proceed with signup
+          final signUpResponse = await Dio().post(apiUrl + '/users/create-user', data: {
+            "password": password,
+            "email": email,
+            "dob": dob,
+            "name": name,
+            "gender": gender,
+            "phone": phone,
+            "user_type": userType.toLowerCase(),
+            "confirm_pass": confirmPass,
+            "department": department,
+            "session": session,
+            "registration_no": regNo,
+            "registered_from": registeredFrom,
+            // Include OTP in the signup request
+          });
+
+          if (signUpResponse.statusCode == 200) {
+            // Signup successful
+            setState(() {
+              signUpSuccessful = true;
+            });
+          } else {
+            // Signup failed
+            final errorMessage = signUpResponse.data['message'];
+            _showErrorMessage(errorMessage);
+            //_showErrorMessage(errorMessage);
+          }
+        } else {
+          // Incorrect OTP
+          _showErrorMessage('Incorrect OTP. Please try again.');
+        }
+      } else {
+        // Failed to send OTP
+        _showErrorMessage('Failed to send OTP. Please try again.');
+      }
+    } catch (e) {
+      // Error connecting to server
+      _showErrorMessage('Failed to connect to the server.');
+    }
+  }
+
+
+// Function to store signup information in the database
+  Future<void> _storeInDatabase(String name, String email, String dob, String gender, String phone, String userType, String department, String session, String regNo, String registeredFrom) async {
+    try {
+      // Make an API call to store the data in the database
+      final response = await Dio().post(apiUrl + '/users/create-user', data: {
+        "name": name,
+        "email": email,
+        "dob": dob,
+        "gender": gender,
+        "phone": phone,
+        "user_type": userType,
+        "department": department,
+        "session": session,
+        "registration_no": regNo,
+        "registered_from": registeredFrom,
+      });
+
+      if (response.statusCode != 200) {
+        // Database storage failed
+        _showErrorMessage('Failed to store user information in the database.');
+      }
+    } catch (e) {
+      // Error connecting to server
+      _showErrorMessage('Failed to connect to the server.');
+    }
+  }
+
+
+  Future<String?> _showOtpDialog() async {
+    return await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController otpController = TextEditingController(); // Controller for OTP TextField
+        return AlertDialog(
+          title: Text('Enter OTP'),
+          content: TextField(
+            controller: otpController, // Assign controller to TextField
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(labelText: 'OTP'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without returning any value
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final enteredOtp = otpController.text; // Get the entered OTP
+                Navigator.of(context).pop(enteredOtp); // Return entered OTP when submitting
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Signup Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  bool _validateForm() {
+    if (nameController.text.isEmpty ||
+        deptController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        regNoController.text.isEmpty ||
+        sessionController.text.isEmpty ||
+        dobController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
+      return false;
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      return false;
+    }
+
+    return true;
+  }
 }
+
+
 
 

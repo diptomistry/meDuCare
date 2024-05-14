@@ -127,8 +127,7 @@ router.get('/get-doctors', async (req, res) => {
    u.DOB,
    u.Sex,
    u.Image,
-   dp.Name AS DepartmentName,
-   dp.Description AS DepartmentDescription
+   dp.Name AS DepartmentName
 FROM Doctors d
 JOIN Users u ON d.UserID = u.UserID
 JOIN Department dp ON d.DepartmentID = dp.DepartmentID
@@ -141,6 +140,7 @@ WHERE u.Status != 'Pending'
 
 }
 });
+
 
 
 
