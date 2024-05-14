@@ -123,7 +123,7 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm}) => {
   }, [timer]);
   const handleResendCode = () => {
     // Code to resend the verification code
-    setTimer(10); // Reset the timer to 1 minute
+    setTimer(40); // Reset the timer to 1 minute
     setIsButtonDisabled(false);
   };
 

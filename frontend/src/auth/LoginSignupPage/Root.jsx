@@ -16,50 +16,45 @@ const SlidingLoginSignup = () => {
   const [emailRecoveryOTP, setEmailRecoveryOTP] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
-  
+
   const [fromSignIn, setFromSignIn] = useState(true);
- 
+
   const navigate = useNavigate();
-  const [sentOtp, setSentOtp] = useState(null); 
-  const { login } = useAuth();
-
- 
-
+  const [sentOtp, setSentOtp] = useState(null);
+  //const { login } = useAuth();
 
   const handleEmailVerification = async (otp) => {
-  
     console.log("OTP sent to email:", sentOtp);
-  
+
     console.log("Email verified:222", otp);
     const { confirmPassword, ...userData } = formData;
     console.log("data", formData);
     const enteredOtp = otp.join("");
-console.log("check",enteredOtp);
+    console.log("check", enteredOtp);
 
     //add debug to formData
     if (parseInt(enteredOtp) === sentOtp)
-    try {
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/users/create-user",
+          userData
+        );
+        alert(response.data.message);
+        if (response.data.message === "User created successfully") resetForm();
+        alert(response.data.message);
+        setEmailRecoveryOTP(false);
 
-      const response = await axios.post(
-        "http://localhost:8000/api/users/create-user",
-        userData
-      );
-      alert(response.data.message);
-      if (response.data.message === "User created successfully") resetForm();
-      alert(response.data.message);
-
-      // console.log(response.data);
-    } catch (error) {
-      console.error("Error creating user:", error);
-      alert(
-        "Failed to create user: " +
-          (error.response && error.response.data.message
-            ? error.response.data.message
-            : "Check your network connection")
-      );
-    }
-    else
-    alert("Invalid OTP");
+        // console.log(response.data);
+      } catch (error) {
+        console.error("Error creating user:", error);
+        alert(
+          "Failed to create user: " +
+            (error.response && error.response.data.message
+              ? error.response.data.message
+              : "Check your network connection")
+        );
+      }
+    else alert("Invalid OTP");
 
     // You can perform any other actions based on the verification status here
   };
@@ -154,7 +149,6 @@ console.log("check",enteredOtp);
     debug: true,
   });
   useEffect(() => {
-    
     const getDepartments = async () => {
       try {
         const response = await axios.get(
@@ -246,38 +240,35 @@ console.log("check",enteredOtp);
   };
 
   // const fromSignIn = false;
-const handleSignUP =  async () => {
-  const email=formData.email;
-  try {
-    const response = await fetch("http://localhost:8000/api/users/send-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-    const data = await response.json();
-    if (data.success) {
-      // If OTP is sent successfully, update the sentOtp state
-      setSentOtp(data.otp);
-      
-      
-    } else {
-      // Handle error if OTP sending fails
-      console.error("Error sending OTP:", data.message);
+  const handleSignUP = async () => {
+    const email = formData.email;
+    try {
+      const response = await fetch("http://localhost:8000/api/users/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        // If OTP is sent successfully, update the sentOtp state
+        setSentOtp(data.otp);
+      } else {
+        // Handle error if OTP sending fails
+        console.error("Error sending OTP:", data.message);
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error.message);
     }
-  } catch (error) {
-    console.error("Error sending OTP:", error.message);
-  }
-  //useffect to setSentotp
+    //useffect to setSentotp
 
-
-setEmailRecoveryOTP(true);
-}
-useEffect(() => {
-  // This useEffect hook will execute whenever sentOtp changes
-  console.log("sentOtp updated:", sentOtp);
-}, [sentOtp]);
+    setEmailRecoveryOTP(true);
+  };
+  useEffect(() => {
+    // This useEffect hook will execute whenever sentOtp changes
+    console.log("sentOtp updated:", sentOtp);
+  }, [sentOtp]);
   return (
     <div>
       <div
@@ -446,7 +437,6 @@ useEffect(() => {
                   closeForm={closeForm}
                   handleEmailVerification={handleEmailVerification}
                   fromSignIn={fromSignIn}
-                 
                 />
               )}
 
