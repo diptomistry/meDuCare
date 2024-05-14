@@ -115,14 +115,27 @@ router.get('/get-appointments', async (req, res) => {
 });
 
 router.post('/accept-appointment', async (req, res) => {
-    const { appointmentId, doctorId } = req.body;
+    var { appointmentId, doctorId } = req.body;
+    
+
+    console.log(appointmentId);
 
     try {
+//fund doctor id form user id by join on users table and get doctor id from doctors table
+        //
+        const [doctor] = await pool.query('SELECT * FROM Users JOIN Doctors ON Users.UserID = Doctors.UserID WHERE Users.UserID = ?', [doctorId]);
+        console.log(doctor);
+        if (doctor.length === 0) {
+            return res.status(200).json({ success: false, message: 'Doctor not found' });
+        }
+        doctorId=doctor[0].DoctorID;
+        console.log(doctorId);
+
         // Check if the appointment exists and is pending
         const [appointment] = await pool.query('SELECT * FROM Appointments WHERE AppointmentID = ? AND Status = ?', [appointmentId, 'Pending']);
         if (appointment.length === 0) {
-            // console.log(appointment);
-            return res.status(404).json({ success: false, message: 'Appointment not found or already accepted',prescription_id:appointment[0].appointmentId });
+            console.log(appointment);
+            return res.status(200).json({ success: false, message: 'Appointment not found or already accepted' });
         }
 
         // Check if the appointment is already accepted by another doctor
@@ -140,7 +153,7 @@ router.post('/accept-appointment', async (req, res) => {
         res.status(200).json({ success: true, message: 'Appointment accepted successfully' ,prescription_id:resultE.insertId});
     } catch (error) {
         console.error('Failed to accept appointment:', error);
-        res.status(500).json({ success: false, message: 'Failed to accept appointment' });
+        res.status(200).json({ success: false, message: 'Failed to accept appointment' });
     }
 });
 router.post('/prescribe-medicines', async (req, res) => {

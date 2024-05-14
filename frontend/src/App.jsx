@@ -39,7 +39,7 @@ import AddMedicine from "./role-based-access/senior-officer/AddMedicine.jsx";
 import ShowMedicines from "./role-based-access/senior-officer/AllMedicines.jsx";
 import RequestMedicine from "./role-based-access/dispensary/RequestMedicine.jsx";
 import ViewStocks from "./role-based-access/dispensary/DIspensaryStocks.jsx";
-import AppointmentTable from "./pages/Appointment.jsx";
+import AppointmentTable from "./role-based-access/doctor/Appointment.jsx";
 import PrescriptionList from "./role-based-access/dispensary/AllPrescriptions.jsx";
 function App() {
   return (
