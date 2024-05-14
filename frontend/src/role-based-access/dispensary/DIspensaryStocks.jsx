@@ -4,8 +4,10 @@ import Pagination from '@mui/material/Pagination';
 import { format, subDays } from 'date-fns';
 import { useAuth } from '../../auth/AuthContext';
 import { Stack } from '@mui/material';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import StockPDFDocument from './StockPDFDocument';// Assuming StockPDFDocument is in a separate file
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import Button from '../../layouts/Button';
+
 
 function ViewStocks() {
     const [stocks, setStocks] = useState([]);
@@ -24,7 +26,7 @@ function ViewStocks() {
     useEffect(() => {
         if(currentPage === 1) fetchStocks();
         setCurrentPage(1);
-    }, [currentPage]);
+    }, currentPage);
 
     const fetchStocks = async () => {
         try {
@@ -53,6 +55,56 @@ function ViewStocks() {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = stocks.slice(indexOfFirstItem, indexOfLastItem);
+    const downloadStocksDataPDF = () => {
+        const doc = new jsPDF();
+        const tableRows = [];
+    
+        // Add table headers
+        const tableHeader = ['Name', 'Price', 'Stock Quantity'];
+        tableRows.push(tableHeader);
+    
+        // Add stock data to table rows
+        stocks.forEach(medicine => {
+            const { Name, Price, StockQuantity } = medicine;
+            const tableData = [Name, Price, StockQuantity];
+            tableRows.push(tableData);
+        });
+    
+        // Set document properties
+        doc.setFont('helvetica');
+        doc.setFontSize(12);
+        doc.text('Stocks and Medicines', 20, 20);
+    
+        // Draw the table
+        const startY = 30; // Start at y = 30
+        const rowHeight = 10; // Row height
+        const tableWidth = 180; // Table width
+        const tableX = 20; // X position of the table
+    
+        doc.autoTable({
+            startY,
+            head: [tableRows[0]],
+            body: tableRows.slice(1),
+            styles: {
+                fontSize: 9,
+                cellPadding: 2,
+                halign: 'left',
+                valign: 'middle',
+            },
+            columnStyles: {
+                0: { cellWidth: 60 }, // Name column width
+                1: { cellWidth: 30 }, // Price column width
+                2: { cellWidth: 30 }, // Stock Quantity column width
+            },
+            margin: { top: 30, bottom: 20 },
+            tableWidth,
+            tableX,
+        });
+    
+        // Save the PDF
+        doc.save('stocks_data.pdf');
+    };
+    
 
     return (
         <div className="max-w-4xl mx-auto my-10 p-5 bg-white shadow-lg rounded">
@@ -70,6 +122,9 @@ function ViewStocks() {
                     value={endDate}
                     onChange={e => setEndDate(e.target.value)}
                 />
+                <button onClick={downloadStocksDataPDF}>
+                    <Button title={"Download PDF"}></Button>
+                </button>
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white shadow rounded">
@@ -111,9 +166,6 @@ function ViewStocks() {
                 </table>
                 <Stack spacing={2} className="mt-2 flex justify-center items-center">
                     <Pagination count={Math.ceil(stocks.length / itemsPerPage)} page={currentPage} onChange={handlePageChange} hidePrevButton={true} />
-                    <PDFDownloadLink className='underline hover:text-hoverColor' document={<StockPDFDocument stocks={stocks} />} fileName="stocks.pdf">
-                        {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download PDF')}
-                    </PDFDownloadLink>
                 </Stack>
             </div>
         </div>
