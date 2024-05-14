@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 import ChangePassword from "./ChangePassword";
 
-const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
+const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm}) => {
     // console.log(fromSignIn);
     // console.log(handleEmailVerification);
-   
-
+ 
+    const [otp, setOtp] = useState(""); 
     const handleEmailVerified = () => {
+      console.log("Entered OTP:", otp);
         //if fromsignin is true then set showchange password to true
        if(fromSignIn){
         console.log("fromSignIn")
               setShowChangePassword(true);
   
          }
+         
+
+
         
         
         // Simulate email verification process
-        const emailVerified = true;
-        console.log("Email Verified",emailVerified);
-        
-        handleEmailVerification(emailVerified); 
+       //const emailVerified = true;
+       // console.log("Email Verified",emailVerified);
+       
+        handleEmailVerification(otp); 
       
       };
+      
+      
   useEffect(() => {
     const handleKeyDown = (e) => {
       const form = document.getElementById("otp-form");
@@ -100,7 +106,7 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
     };
   }, []);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [timer, setTimer] = useState(10); // 1 minute in seconds
+  const [timer, setTimer] = useState(40); // 1 minute in seconds
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   useEffect(() => {
     let interval;
@@ -163,27 +169,35 @@ const EmailRecoveryOTP = ({handleEmailVerification,fromSignIn,closeForm }) => {
               </a>
             </div>
             <div className="flex items-center justify-center gap-3">
-              <input
-                type="text"
-                className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                pattern="\d*"
-                maxLength="1"
-              />
-              <input
-                type="text"
-                className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                maxLength="1"
-              />
-              <input
-                type="text"
-                className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                maxLength="1"
-              />
-              <input
-                type="text"
-                className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                maxLength="1"
-              />
+            <input
+  type="text"
+  className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+  maxLength="1"
+  value={otp[0] || ""}
+  onChange={(e) => setOtp((prevOtp) => [e.target.value, prevOtp[1], prevOtp[2], prevOtp[3]])}
+/>
+<input
+  type="text"
+  className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+  maxLength="1"
+  value={otp[1] || ""}
+  onChange={(e) => setOtp((prevOtp) => [prevOtp[0], e.target.value, prevOtp[2], prevOtp[3]])}
+/>
+<input
+  type="text"
+  className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+  maxLength="1"
+  value={otp[2] || ""}
+  onChange={(e) => setOtp((prevOtp) => [prevOtp[0], prevOtp[1], e.target.value, prevOtp[3]])}
+/>
+<input
+  type="text"
+  className="w-14 h-14 text-center text-2xl font-extrabold text-slate-900 bg-slate-100 border border-transparent hover:border-slate-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+  maxLength="1"
+  value={otp[3] || ""}
+  onChange={(e) => setOtp((prevOtp) => [prevOtp[0], prevOtp[1], prevOtp[2], e.target.value])}
+/>
+
             </div>
             <div className="max-w-[260px] mx-auto mt-4">
               {!isButtonDisabled ? (
