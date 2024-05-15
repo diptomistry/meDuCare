@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app/appointment/search_doctor.dart';
+import 'package:mobile_app/appointment/AppointmentScreen.dart';
 import 'package:mobile_app/endpoints.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -282,7 +282,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SearchDoctor()),
+                                    builder: (context) => AppointmentScreen()),
                               );
                             },
                             child: Container(
@@ -292,7 +292,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                                   vertical: 10.0, horizontal: 0),
                               padding: EdgeInsets.all(20.0),
                               decoration: BoxDecoration(
-                                color: primaryColor.withOpacity(0.3),
+                                color: primaryColor.withOpacity(0.24),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Column(
@@ -301,13 +301,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                                   Icon(
                                     Icons.calendar_today_rounded,
                                     size: 50.0,
-                                    color: Colors.black,
+                                    color: primaryColor.withOpacity(0.9),
                                   ),
                                   SizedBox(height: 10.0),
                                   Text(
                                     'Book an Appointment',
                                     style: TextStyle(
                                       fontSize: 16.0,
+                                      color: primaryColor.withOpacity(0.9),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -332,7 +333,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                                   vertical: 10.0, horizontal: 10.0),
                               padding: EdgeInsets.all(20.0),
                               decoration: BoxDecoration(
-                                color: primaryColor.withOpacity(0.3),
+                                color: primaryColor.withOpacity(0.24),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Column(
@@ -341,13 +342,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                                   Icon(
                                     Icons.medical_services,
                                     size: 50.0,
-                                    color: Colors.black,
+                                    color: primaryColor.withOpacity(0.9),
                                   ),
                                   SizedBox(height: 10.0),
                                   Text(
                                     'Past Prescriptions',
                                     style: TextStyle(
                                       fontSize: 16.0,
+                                      color: primaryColor.withOpacity(0.9),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -382,8 +384,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                         itemBuilder: (context, index) {
                           Photo photo = photos[index];
                           return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.only(left: 8),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
