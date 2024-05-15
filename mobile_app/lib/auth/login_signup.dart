@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_app/auth/riverpod.dart';
 import 'package:mobile_app/endpoints.dart';
-import 'package:mobile_app/homepage/home.dart';
+import 'package:mobile_app/widgets/bottomBar.dart';
 import 'package:mobile_app/widgets/loadingDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
@@ -183,7 +183,7 @@ class _LoginCardState extends ConsumerState<LoginCard> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                MyHomePage()), // Pass user to MyHomePage
+                                CustomBottomNavigationBar()), // Pass user to MyHomePage
                       );
                     } else {
                       // Show login error message

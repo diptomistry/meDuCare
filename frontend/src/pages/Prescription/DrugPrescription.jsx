@@ -5,7 +5,7 @@ import { SearchResultsList } from "./MedicineSearch/SearchResultsList";
 
 
 
-const DrugPrescription = () => {
+const DrugPrescription = ({getMedicines}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Days");
   const [beforeFood, setBeforeFood] = useState(false);
@@ -23,24 +23,9 @@ const DrugPrescription = () => {
   };
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
+  const [medicineId, setMedicineId] = useState(1);
 
-  // const fetchData = (value) => {
-  //   fetch("http://localhost:8000/api/get-medicines")
-  //     .then((response) => response.json())
-  //     .then((json) => {
-  //       const medicineNames = json.data.map((medicine) => medicine.Name);
-  //      // console.log("medicineNames:",medicineNames);
-       
-  //       const results = medicineNames.filter((medicine) =>
-  //          medicine.toLowerCase().includes(value.toLowerCase())
-  //       );
-  //       setResults(results);
-  //       console.log("sdf:",results);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching medicines:', error);
-  //     });
-  // };
+
   
 
   const fetchData = (value) => {
@@ -55,8 +40,11 @@ const DrugPrescription = () => {
             medicine.Name.toLowerCase().includes(value.toLowerCase())
           );
         });
+        const Data=json.data;
+        //const medicineId = json.data.length > 0 ? json.data[0].MedicineID : 2;
+        const medicineId=1;
         setResults(results);
-        console.log(results);
+        console.log("medic:",medicineId );
       });
   };
 
@@ -99,16 +87,16 @@ const DrugPrescription = () => {
   };
   // console.log(countValues);
   const [quantity, setQuantity] = useState([0, 0, 0]);
-  const [instruction, setInstruction] = useState("Not Specified");
+  const [afterBefore, setafterBefore] = useState("Not Specified");
   const [finalDuration, setFinalDuration] = useState(0);
   const handleQuantity = () => {
     setQuantity(countValues.join("-"));
   };
-  const handleInstruction = () => {
+  const handleafterBefore = () => {
     if (beforeFood) {
-      setInstruction("Before Food");
+      setafterBefore("Before Food");
     } else if (afterFood) {
-      setInstruction("After Food");
+      setafterBefore("After Food");
     }
   };
   const handleFinalDuration = () => {
@@ -123,7 +111,7 @@ useEffect(() => {
    
   const handleAddToMedicine = () => {
     handleQuantity();
-    handleInstruction();
+    handleafterBefore();
     handleFinalDuration();
     setShowSelectedItems(false);
   
@@ -138,24 +126,29 @@ useEffect(() => {
       
       existingItem.quantity = countValues.join('-');
       existingItem.duration = duration+' '+selectedOption;
-      existingItem.instruction = beforeFood ? "Before Food" : afterFood ? "After Food" : "Not Specified";
+      existingItem.afterBefore = beforeFood ? "Before Food" : afterFood ? "After Food" : "Not Specified";
     } else {
       // Push a new item
       newData.push({
+        medicineId,
         selectedItems: lastSelectedItem,
         quantity: countValues.join('-'),
         duration: duration+' '+selectedOption,
-        instruction: beforeFood ? "Before Food" : afterFood ? "After Food" : "Not Specified",
+        afterBefore: beforeFood ? "Before Food" : afterFood ? "After Food" : "Not Specified",
       });
     }
   
     setData(newData);
+    const dataToSend = newData.map(({ selectedItems, ...rest }) => rest);
+    getMedicines(dataToSend);
+    
    
   };
   const handleDelete = (index) => {
     const newData = [...data];
     newData.splice(index, 1);
     setData(newData);
+   
   };
   const handleUnckeck = () => {
     setAfterFood(false);
@@ -331,7 +324,7 @@ useEffect(() => {
           <strong>Duration:</strong> {item.duration} 
         </p>
         <p>
-          <strong>Time:</strong> {item.instruction}
+          <strong>Time:</strong> {item.afterBefore}
         </p>
         <button
           className="text-red-600 hover:text-red-700 mt-2"

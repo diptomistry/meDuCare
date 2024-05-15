@@ -250,6 +250,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   onPressed: () {
                     // Handle logout icon tap
                     userNotifier.logoutUser();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginCard()),
+                        (_) => false);
                   },
                 ),
               ],
@@ -369,24 +373,37 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     ],
                   ),
 
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: photos.length,
-                      itemBuilder: (context, index) {
-                        Photo photo = photos[index];
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(color: Colors.grey.withOpacity(0.1))
-                                ]),
-                            child: Image.network((photo.imageUrl)),
-                          ),
-                        );
-                      }),
+                  SizedBox(
+                    height: hi * 0.22,
+                    width: wi,
+                    child: ListView.builder(
+                        // padding: EdgeInsets.symmetric(horizontal: 10),
+                        // shrinkWrap: true,
+                        itemCount: photos.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          Photo photo = photos[index];
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                // margin: EdgeInsets.symmetric(horizontal: 10),
+                                //  padding: EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1))
+                                    ]),
+                                child: Image.network((photo.imageUrl),
+                                    fit: BoxFit.contain),
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
                   SizedBox(height: 10.0), // Add space before the new section
                   Text(
                     'Category',

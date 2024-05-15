@@ -75,7 +75,9 @@ class UserNotifier extends StateNotifier<User?> {
     }
   }
 
-  void logoutUser() {
+  void logoutUser() async {
+    var preferences = await SharedPreferences.getInstance();
+    preferences.clear();
     state = null;
   }
 }

@@ -163,6 +163,7 @@ router.post('/accept-appointment', async (req, res) => {
 });
 router.post('/prescribe-medicines', async (req, res) => {
     const { appointmentId, doctorId, medicines, instructions, tests,prescription_id } = req.body;
+    console.log(req.body);
 
     if (!appointmentId || !doctorId || !medicines || !instructions || !tests) {
         return res.status(200).json({ success: false, message: 'All fields must be provided' });

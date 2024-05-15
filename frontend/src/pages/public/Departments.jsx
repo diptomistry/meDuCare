@@ -133,95 +133,104 @@ const [editingDepartmentId, setEditingDepartmentId] = useState(null);
     executeDelete();
   };
 
-return (
+  return (
     <div>
-        <div className="lg:flex md:columns-2 max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-            <div className="flex-1 p-4">
-                <h2>{isEditing?'Update Department':'Create Department'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                            Department Name:
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            value={name}
-                            onChange={handleNameChange}
-                            className="mt-1 p-2 border rounded-md w-full"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                            About the department:
-                        </label>
-                        <input
-                            type="text"
-                            id="description"
-                            value={description}
-                            onChange={handleDescriptionChange}
-                            className="mt-1 p-2 border rounded-md w-full"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="file" className="block text-sm font-medium text-gray-700">
-                            Department Image (Optional):
-                        </label>
-                        <input type="file" id="file" onChange={handleFileChange} className="mt-1" />
-                    </div>
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
-                        disabled={uploading} // Disable button while uploading
-                    >
-                        {uploading ? 'Uploading...' : isEditing?'Update Department':'Create Department'}
-                    </button>
-                </form>
+      <div className="lg:flex md:columns-2 max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <div className="flex-1 p-4">
+          <h2>{isEditing ? 'Update Department' : 'Create Department'}</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Department Name:
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={handleNameChange}
+                className="mt-1 p-2 border rounded-md w-full"
+              />
             </div>
-            <div className="flex flex-col p-4">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Departments</h2>
-                <ul className="list-none space-y-3">
-                {departments.map((department) => (
-  <li key={department.DepartmentID} className="flex justify-between items-center p-3 bg-white shadow rounded-lg">
-    <div>
-      <h3 className="text-lg font-semibold text-blue-700">{department.Name}</h3>
-      <p className="text-sm text-gray-600">{department.Description}</p>
-    </div>
-    <div className='flex justify-center px-2 mr-2 mx-4 p-2'>
-
-      <button onClick={() => handleEdit(department)} className="p-2 ml-2 rounded-full bg-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-        <FaEdit/>
-      </button>
-      <button onClick={() => handleDelete(department.DepartmentID)} className="p-2 rounded-full bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-        <FaTimes />
-      </button>
-    </div>
-  </li>
-))}
-
-                </ul>
+            <div className="mb-4">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                About the department:
+              </label>
+              <input
+                type="text"
+                id="description"
+                value={description}
+                onChange={handleDescriptionChange}
+                className="mt-1 p-2 border rounded-md w-full"
+              />
             </div>
+            <div className="mb-4">
+              <label htmlFor="file" className="block text-sm font-medium text-gray-700">
+                Department Image (Optional):
+              </label>
+              <input type="file" id="file" onChange={handleFileChange} className="mt-1" />
+            </div>
+            <button
+              type="submit"
+              className="bg-backgroundColor text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+              disabled={uploading} // Disable button while uploading
+            >
+              {uploading ? 'Uploading...' : isEditing ? 'Update Department' : 'Create Department'}
+            </button>
+          </form>
         </div>
-
-        <Dialog
-            open={openDialog}
-            onClose={() => setOpenDialog(false)}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">Confirm Action</DialogTitle>
-            <DialogContent>
-                <div id="alert-dialog-description">{dialogMessage}</div>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => setOpenDialog(false)} color="primary">
-                    Cancel
-                </Button>
-                <Button onClick={confirmDeleteFunc} color="primary" autoFocus>
-                    Confirm
-                </Button>
-            </DialogActions>
-        </Dialog>
+        <div className="flex flex-col p-4">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Departments</h2>
+          <ul className="list-none space-y-3">
+            {departments.map((department) => (
+              <li key={department.DepartmentID} className="flex justify-between items-center p-3 bg-white shadow rounded-lg">
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-700">{department.Name}</h3>
+                  <p className="text-sm text-gray-600">{department.Description}</p>
+                </div>
+                <div className="flex justify-center px-2 mr-2 mx-4 p-2">
+                  <button
+                    onClick={() => handleEdit(department)}
+                    className="p-2 ml-2 rounded-full bg-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    aria-label="Edit Department"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(department.DepartmentID)}
+                    className="p-2 rounded-full bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                    aria-label="Delete Department"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+                <div><img src={department.Image}></img></div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+  
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Action</DialogTitle>
+        <DialogContent>
+          <div id="alert-dialog-description">{dialogMessage}</div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteFunc} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
-)};
+  );
+}
+  
 export default DepartmentsManage;

@@ -54,12 +54,13 @@ const calculateAge = (dob) => {
 
             // Extract user information
             const { Name, Sex,DOB } = data.user;
+            const prescription_id=data.prescription_id;
           
 
             
         // Assuming calculateAge is a function to calculate age from date of birth
         const age = calculateAge(DOB); 
-            navigate('/dashboard/doctor/prescription', { state: { Name, Sex,age } })
+            navigate('/dashboard/doctor/prescription', { state: { Name, Sex,age,prescription_id,appointmentId,doctorId } })
            //navigate('/dashboard/doctor/prescription');
 
             // Navigate to prescription page
