@@ -6,6 +6,8 @@ import 'package:mobile_app/endpoints.dart';
 import 'package:mobile_app/homepage/home.dart';
 import 'package:mobile_app/widgets/loadingDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui';
+
 
 class User {
   final int userId;
