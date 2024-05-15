@@ -42,6 +42,7 @@ const Root = () => {
       const data = await response.json();
       alert(data.message);
       console.log(data);
+      window.location.href = '/dashboard/doctor/appointment';
       // Handle success or error response from the API
     } catch (error) {
       console.error('Error sending prescription:', error);
