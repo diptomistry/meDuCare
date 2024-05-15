@@ -157,18 +157,7 @@ const Sidebar = () => {
                 Stocks
               </NavLink>
             </li>:null}
-            {
-              role==='doctor'?<li>
-              <NavLink
-                to={"/dashboard/doctor/prescription"}
-                className="link"
-              >
-                <BsPerson size={23} className="min-w-max" />
-                Presctiptions
-              </NavLink>
-            </li>
-            :null
-            }
+       
             {
               role==='doctor'?<li>
               <NavLink
