@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_app/appointment/appointmentlist.dart';
 import 'package:mobile_app/homepage/home.dart';
 import 'package:mobile_app/widgets/bottomBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'auth/login_signup.dart';
 import 'auth/riverpod.dart'; // Import the loginSignup widget
+/*void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Appointments',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: AppointmentListPage(),
+    );
+  }
+}*/
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +45,7 @@ void main() {
           useMaterial3: true,
           // scaffoldBackgroundColor: Colors.grey[200], // Set the background color
         ),
-        // home: SplashScrren(), // Set the home to loginSignup widget
+         //home: SplashScrren(), // Set the home to loginSignup widget
         initialRoute: "/", // Set the initial route to the splash screen
         routes: {
           "/": (context) => SplashScrren(), // Route for splash screen
