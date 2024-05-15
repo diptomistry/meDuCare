@@ -24,6 +24,7 @@ const Doctors = () => {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
+  
   // const data = [
   //   {
   //     img: "/src/assets/img/doc1.jpg",
@@ -66,12 +67,12 @@ const Doctors = () => {
     speed: 500,
     arrows: false,
     slidesToShow: 3,
-    slidesToScroll: 1,
+    slidesToScroll: 3,
     responsive: [
       {
         breakpoint: 1023,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 1,
           slidesToScroll: 3,
           infinite: true,
           dots: true,
@@ -80,7 +81,7 @@ const Doctors = () => {
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 1,
           slidesToScroll: 2,
           initialSlide: 2,
         },
