@@ -1,12 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_app/appointment/AppointmentScreen.dart';
-import 'package:mobile_app/endpoints.dart';
-import 'package:mobile_app/homepage/home.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile_app/endpoints.dart';
 
 class Doctor {
   final int doctorId;
@@ -42,6 +39,7 @@ class Doctor {
     );
   }
 }
+
 // Define a provider to fetch the list of doctors from the API
 final doctorsProvider = FutureProvider<List<Doctor>>((ref) async {
   final response = await http.get(Uri.parse(apiUrl + '/doctors/get-doctors'));
@@ -57,14 +55,8 @@ final doctorsProvider = FutureProvider<List<Doctor>>((ref) async {
 class SearchDoctor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Medicine App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: DoctorSearchScreen(),
-      debugShowCheckedModeBanner: false, // Add this line to remove the debug banner
+    return Scaffold(
+      body: DoctorSearchScreen(),
     );
   }
 }
@@ -74,20 +66,23 @@ class DoctorSearchScreen extends StatefulWidget {
   _DoctorSearchScreenState createState() => _DoctorSearchScreenState();
 }
 
-
 class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
   String searchText = '';
   int _currentIndex = 0;
   List<String> selectedSpecializations = [];
-  List<String> doctors=[];
-  List<String> allSpecializations = ['Cardiologist', 'Dermatologist', 'Pediatrician'];
+  List<String> doctors = [];
+  List<String> allSpecializations = [
+    'Cardiologist',
+    'Dermatologist',
+    'Pediatrician'
+  ];
 
   // API endpoint
   //static const String apiUrl = 'YOUR_API_ENDPOINT';
 
   // Method to fetch doctors from the API
   Future<List<String>> fetchDoctors() async {
-    final response = await http.get(Uri.parse(apiUrl+'/doctors/get-doctors'));
+    final response = await http.get(Uri.parse(apiUrl + '/doctors/get-doctors'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['data'];
@@ -105,12 +100,13 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        automaticallyImplyLeading: false,
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.black54),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         title: Text(
           'Find a Doctor',
           style: TextStyle(color: Colors.black54),
@@ -175,21 +171,6 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: FloatingNavbar(
-        backgroundColor: Colors.purple,
-        onTap: (int val) {
-          setState(() {
-            _currentIndex = val;
-          });
-        },
-        currentIndex: _currentIndex,
-        items: [
-          FloatingNavbarItem(icon: Icons.home, title: ''),
-          FloatingNavbarItem(icon: Icons.search, title: ''),
-          FloatingNavbarItem(icon: Icons.chat_bubble_outline, title: ''),
-          FloatingNavbarItem(icon: Icons.settings, title: ''),
-        ],
-      ),
     );
   }
 
@@ -239,7 +220,9 @@ class _DoctorSearchScreenState extends State<DoctorSearchScreen> {
               children: [
                 DropdownButtonFormField(
                   hint: Text('Select Specialization'),
-                  value: selectedSpecializations.isNotEmpty ? selectedSpecializations[0] : null,
+                  value: selectedSpecializations.isNotEmpty
+                      ? selectedSpecializations[0]
+                      : null,
                   onChanged: (value) {
                     setState(() {
                       selectedSpecializations.clear();
@@ -305,7 +288,8 @@ class DoctorDetailsContainer extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 30.0,
-            backgroundColor: Colors.blue, // Placeholder color for doctor picture
+            backgroundColor:
+                Colors.blue, // Placeholder color for doctor picture
             // Add doctor picture here
           ),
           SizedBox(width: 16.0),
@@ -323,29 +307,34 @@ class DoctorDetailsContainer extends StatelessWidget {
                   style: TextStyle(fontSize: 16.0, color: Colors.black54),
                 ),
                 SizedBox(height: 8.0),
-                ElevatedButton(
-                  onPressed: () {
-                    // Use context here for navigation or other actions requiring context
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AppointmentScreen()),
-                    );
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.orangeAccent), // Set button background color
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.calendar_month, color: Colors.white),
-                      SizedBox(width: 8.0),
-                      Text(
-                        'Book Appointment',
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     // Use context here for navigation or other actions requiring context
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => AppointmentScreen()),
+                //     );
+                //   },
+                //   style: ButtonStyle(
+                //     backgroundColor: MaterialStateProperty.all<Color>(
+                //         Colors.orangeAccent), // Set button background color
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Icon(Icons.calendar_month, color: Colors.white),
+                //       SizedBox(width: 8.0),
+                //       Text(
+                //         'Book Appointment',
+                //         style: TextStyle(
+                //             fontSize: 16.0,
+                //             fontWeight: FontWeight.bold,
+                //             color: Colors.white),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),
