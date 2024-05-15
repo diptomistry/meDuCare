@@ -83,6 +83,7 @@ class _PastPrescriptionsPageState extends State<PastPrescriptionsPage> {
       setState(() {
         prescriptions =
             data.map((item) => Prescription.fromJson(item)).toList();
+        isLoading = true;
       });
     } else {
       throw Exception('Failed to load prescriptions');
@@ -95,63 +96,65 @@ class _PastPrescriptionsPageState extends State<PastPrescriptionsPage> {
       appBar: AppBar(
         title: Text('Past Prescriptions'),
       ),
-      body: prescriptions != null
-          ? ListView.builder(
-              itemCount: prescriptions.length,
-              itemBuilder: (context, index) {
-                final prescription = prescriptions[index];
-                return Card(
-                  elevation: 4,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Icons.medical_services_rounded,
-                        color: Colors.blue),
-                    title: Text(
-                      prescription.name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 8),
-                        Text(
-                          'Quantity: ${prescription.quantity}',
-                          style: TextStyle(color: Colors.grey[700]),
+      body: isLoading
+          ? prescriptions.isEmpty
+              ? Container()
+              : ListView.builder(
+                  itemCount: prescriptions.length,
+                  itemBuilder: (context, index) {
+                    final prescription = prescriptions[index];
+                    return Card(
+                      elevation: 4,
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        leading: Icon(Icons.medical_services_rounded,
+                            color: Colors.blue),
+                        title: Text(
+                          prescription.name,
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          'Duration: ${prescription.duration}',
-                          style: TextStyle(color: Colors.grey[700]),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 8),
+                            Text(
+                              'Quantity: ${prescription.quantity}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'Duration: ${prescription.duration}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'After/Before: ${prescription.afterBefore}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'Description: ${prescription.description}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'Price: \$${prescription.price}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'Entry Date: ${DateFormat('yyyy-MM-dd').format(prescription.entryDate)}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            Text(
+                              'Expiry Date: ${DateFormat('yyyy-MM-dd').format(prescription.expiryDate)}',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            SizedBox(height: 8),
+                          ],
                         ),
-                        Text(
-                          'After/Before: ${prescription.afterBefore}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        Text(
-                          'Description: ${prescription.description}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        Text(
-                          'Price: \$${prescription.price}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        Text(
-                          'Entry Date: ${DateFormat('yyyy-MM-dd').format(prescription.entryDate)}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        Text(
-                          'Expiry Date: ${DateFormat('yyyy-MM-dd').format(prescription.expiryDate)}',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                        SizedBox(height: 8),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
+                      ),
+                    );
+                  },
+                )
           : Center(
               child: CircularProgressIndicator(),
             ),
